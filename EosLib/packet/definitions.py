@@ -25,13 +25,10 @@ class Device(IntEnum):
 struct_format_string = "!" \
                        "d" \
                        "B" \
-                       "9x" \
-                       "" \
                        "d" \
                        "B" \
                        "B" \
-                       "B" \
-                       "7x"
+                       "B"
 
 
 class PacketFormatError(Exception):
