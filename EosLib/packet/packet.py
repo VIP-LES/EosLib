@@ -6,87 +6,99 @@ from EosLib.packet import definitions
 from EosLib.packet.definitions import PacketFormatError
 
 
-class Packet:
-    def __init__(self, send_time: datetime.datetime = None, send_seq_num: int = None,
-                 data_generate_time: datetime.datetime = None, data_packet_type: definitions.PacketType = None,
-                 data_packet_sender: definitions.Device = None, data_packet_priority: int = None,
-                 body: bytes = None, is_transmitter: bool = False):
-        """
-
-        :param send_time: A datetime object of when the packet is transmitted.
-        :param send_seq_num: The sequence number assigned at the transmitter.
-        :param data_generate_time: A datetime object of when the data packet is first created
-        :param data_packet_type: A PacketType enum representing the type of packet
-        :param data_packet_sender: A Device enum representing which device created the packet
-        :param data_packet_priority: A Priority int, ideally set by a Priority enum
-        :param body: A bytes object representing the body of the packet
-        :param is_transmitter: A boolean that is true if the packet is being edited by a transmitter, used for
-        validation only
-        """
-        self.send_time = send_time
+class TransmitHeader:
+    def __init__(self, send_seq_num: int, send_time: datetime.datetime = datetime.datetime.now()):
         self.send_seq_num = send_seq_num
-        self.data_generate_time = data_generate_time
-        self.data_packet_type = data_packet_type
-        self.data_packet_sender = data_packet_sender
-        self.data_packet_priority = data_packet_priority
-        self.body = body
-        self.is_radio = is_transmitter
+        self.send_time = send_time
 
     def __eq__(self, other):
-        return (math.isclose(self.send_time.timestamp(), other.send_time.timestamp()) and
-                self.send_seq_num == other.send_seq_num and
-                math.isclose(self.data_generate_time.timestamp(), other.data_generate_time.timestamp()) and
-                self.data_packet_type == other.data_packet_type and
-                self.data_packet_sender == other.data_packet_sender and
-                self.data_packet_priority == other.data_packet_priority and
-                self.body == other.body)
+        return (self.send_seq_num == other.send_seq_num and
+                math.isclose(self.send_time.timestamp(), other.send_time.timestamp()))
 
     # TODO: Expand validation criteria
     def validate_transmit_header(self):
-        """Checks that the packet has a valid transmit header and throws a PacketFormatError exception if it does not.
-
-        :return: True if packet transmit header is valid
-        """
         if self.send_time is None or self.send_seq_num is None:
-            raise PacketFormatError("Packet not correctly defined")
-        else:
-            return True
+            raise PacketFormatError("Transmit header has invalid value")
+        return True
+
+    def encode(self):
+        self.validate_transmit_header()
+        return struct.pack(definitions.transmit_header_struct_format_string, definitions.transmit_header_preamble,
+                           self.send_seq_num, self.send_time.timestamp())
+
+
+class DataHeader:
+    def __init__(self, data_packet_generate_time: datetime.datetime = datetime.datetime.now(),
+                 data_packet_type: definitions.PacketType = None, data_packet_sender: definitions.Device = None,
+                 data_packet_priority: definitions.Priority = None,
+                 ):
+        self.data_packet_sender = data_packet_sender
+        self.data_packet_type = data_packet_type
+        self.data_packet_priority = data_packet_priority
+        self.data_packet_generate_time = data_packet_generate_time
+
+    def __eq__(self, other):
+        return (self.data_packet_priority == other.data_packet_priority and
+                self.data_packet_type == other.data_packet_type and
+                self.data_packet_sender == other.data_packet_sender and
+                math.isclose(self.data_packet_generate_time.timestamp(), other.data_packet_generate_time.timestamp()))
 
     # TODO: Expand validation criteria
     def validate_data_header(self):
-        """Checks that the packet has a valid data header and throws a PacketFormatError exception if it does not.
+        if (self.data_packet_sender is None or self.data_packet_type is None or
+                self.data_packet_priority is None or self.data_packet_generate_time is None):
+            raise PacketFormatError("Data header has invalid value")
+        return True
 
-        :return: True if packet data header is valid
-        """
-        if (self.data_generate_time is None or self.data_packet_type is None or self.data_packet_sender is None or
-                self.data_packet_priority is None or self.body is None):
-            raise PacketFormatError("Packet not correctly defined")
-        else:
-            return True
+    def encode(self):
+        self.validate_data_header()
+        return struct.pack(definitions.data_header_struct_format_string, definitions.data_header_preamble,
+                           self.data_packet_generate_time.timestamp(), self.data_packet_type, self.data_packet_sender,
+                           self.data_packet_priority)
+
+
+class Packet:
+    def __init__(self, body: bytes = None, data_header: DataHeader = None, transmit_header: TransmitHeader = None):
+        self.body = body
+        self.data_header = data_header
+        self.transmit_header = transmit_header
+
+    def __eq__(self, other):
+        return (self.data_header == other.data_header and
+                self.transmit_header == other.transmit_header and
+                self.body == other.body)
 
     def encode_packet(self) -> bytes:
         """Validates and then returns the byte string version of the initialized packet.
 
         :return: Validated packet byte string
         """
-        if self.is_radio:
-            self.validate_transmit_header()
+        packet_bytes = b''
+        if self.transmit_header is not None:
+            packet_bytes += self.transmit_header.encode()
 
-        self.validate_data_header()
-
-        send_time_float = self.send_time.timestamp()
-        send_seq_num_char = self.send_seq_num
-
-        data_generate_time_float = self.data_generate_time.timestamp()
-        data_packet_type_char = self.data_packet_type.value
-        data_packet_sender_char = self.data_packet_sender.value
-        data_packet_priority_char = self.data_packet_priority
-
-        packet_bytes = struct.pack(definitions.struct_format_string, send_time_float, send_seq_num_char,
-                                   data_generate_time_float, data_packet_type_char, data_packet_sender_char,
-                                   data_packet_priority_char)
+        packet_bytes += self.data_header.encode()
         packet_bytes += self.body
+
         return packet_bytes
+
+
+def decode_transmit_header(header_bytes: bytes):
+    if header_bytes[0] != definitions.transmit_header_preamble:
+        raise PacketFormatError("Not a valid transmit header")
+
+    unpacked = struct.unpack(definitions.transmit_header_struct_format_string, header_bytes)
+    decoded_header = TransmitHeader(unpacked[1], datetime.datetime.fromtimestamp(unpacked[2]))
+    return decoded_header
+
+
+def decode_data_header(header_bytes: bytes):
+    if header_bytes[0] != definitions.data_header_preamble:
+        raise PacketFormatError("Not a valid data header")
+
+    unpacked = struct.unpack(definitions.data_header_struct_format_string, header_bytes)
+    decoded_header = DataHeader(datetime.datetime.fromtimestamp(unpacked[1]), unpacked[2], unpacked[3], unpacked[4])
+    return decoded_header
 
 
 def decode_packet(packet_bytes: bytes) -> Packet:
@@ -95,19 +107,19 @@ def decode_packet(packet_bytes: bytes) -> Packet:
     :param packet_bytes: The bytes object to be decoded
     :return: The decoded Packet object
     """
-    header_bytes = packet_bytes[0:struct.calcsize(definitions.struct_format_string)]
-    unpacked = struct.unpack(definitions.struct_format_string, header_bytes)
+    decoded_packet = Packet()
+    if packet_bytes[0] == definitions.transmit_header_preamble:
+        decoded_transmit_header = decode_transmit_header(
+            packet_bytes[0:struct.calcsize(definitions.transmit_header_struct_format_string)])
+        decoded_packet.transmit_header = decoded_transmit_header
+        packet_bytes = packet_bytes[struct.calcsize(definitions.transmit_header_struct_format_string):]
 
-    send_timestamp = datetime.datetime.fromtimestamp(unpacked[0])
-    send_seq_num = unpacked[1]
-    data_generate_time = datetime.datetime.fromtimestamp(unpacked[2])
-    data_packet_type = definitions.PacketType(unpacked[3])
-    data_packet_device = definitions.Device(unpacked[4])
-    data_packet_priority = definitions.Priority(unpacked[5])
+    if packet_bytes[0] == definitions.data_header_preamble:
+        decoded_data_header = decode_data_header(
+            packet_bytes[0:struct.calcsize(definitions.data_header_struct_format_string)])
+        decoded_packet.data_header = decoded_data_header
+        packet_bytes = packet_bytes[struct.calcsize(definitions.data_header_struct_format_string):]
 
-    data_packet_body = packet_bytes[struct.calcsize(definitions.struct_format_string):]
-
-    decoded_packet = Packet(send_timestamp, send_seq_num, data_generate_time, data_packet_type, data_packet_device,
-                            data_packet_priority, data_packet_body)
+    decoded_packet.body = packet_bytes
 
     return decoded_packet
