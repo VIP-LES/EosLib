@@ -1,8 +1,8 @@
-from enum import Enum, IntEnum, unique
+from enum import IntEnum, unique
 
 
 @unique
-class PacketType(Enum):
+class PacketType(IntEnum):
     TELEMETRY = 0,
     WARNING = 1,
     ERROR = 2
@@ -10,27 +10,27 @@ class PacketType(Enum):
 
 @unique
 class Priority(IntEnum):
-    NO_TRANSMIT = -1,
+    NO_TRANSMIT = 255,
     URGENT = 1,
     TELEMETRY = 2,
     DATA = 10
 
 
 @unique
-class Device(Enum):
+class Device(IntEnum):
     ALTIMETER = 1,
     GPS = 2,
 
 
 struct_format_string = "!" \
                        "d" \
-                       "c" \
+                       "B" \
                        "9x" \
                        "" \
                        "d" \
-                       "c" \
-                       "c" \
-                       "c" \
+                       "B" \
+                       "B" \
+                       "B" \
                        "7x"
 
 if __name__ == "__main__":
