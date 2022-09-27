@@ -1,7 +1,8 @@
-import definitions
 import datetime
 import struct
-from definitions import PacketFormatError
+
+from EosLib.packet import definitions
+from EosLib.packet.definitions import PacketFormatError
 
 
 class Packet:
@@ -22,12 +23,16 @@ class Packet:
     def validate_transmit_header(self):
         if self.send_time is None or self.send_seq_num is None:
             raise PacketFormatError("Packet not correctly defined")
+        else:
+            return True
 
     # TODO: Expand validation criteria
     def validate_data_header(self):
         if (self.data_generate_time is None or self.data_packet_type is None or self.data_packet_sender is None or
                 self.data_packet_priority is None or self.body is None):
             raise PacketFormatError("Packet not correctly defined")
+        else:
+            return True
 
     def encode_packet(self):
         if self.is_radio:
