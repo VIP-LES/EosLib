@@ -55,9 +55,9 @@ def decode_packet(packet_bytes: bytes):
     send_timestamp = datetime.datetime.fromtimestamp(unpacked[0])
     send_seq_num = unpacked[1]
     data_generate_time = datetime.datetime.fromtimestamp(unpacked[2])
-    data_packet_type = unpacked[3]
-    data_packet_device = unpacked[4]
-    data_packet_priority = unpacked[5]
+    data_packet_type = definitions.PacketType(unpacked[3])
+    data_packet_device = definitions.Device([4])
+    data_packet_priority = definitions.Priority([5])
 
     data_packet_body = packet_bytes[struct.calcsize(definitions.struct_format_string):]
 
@@ -65,11 +65,3 @@ def decode_packet(packet_bytes: bytes):
                             data_packet_priority, data_packet_body)
 
     return decoded_packet
-
-
-if __name__ == "__main__":
-    print(definitions.Priority.TELEMETRY)
-    test_packet = Packet(datetime.datetime.now(), 254, datetime.datetime.now(), definitions.PacketType.TELEMETRY,
-                         definitions.Device.GPS, definitions.Priority.NO_TRANSMIT, bytes("Hello", 'utf-8'))
-    test_packet_bytes = test_packet.encode_packet()
-    print(decode_packet(test_packet_bytes))
