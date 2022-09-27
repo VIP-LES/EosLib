@@ -52,3 +52,31 @@ def test_encode_decode_packet():
     decoded_packet = decode_packet(encoded_packet)
 
     assert model_packet == decoded_packet
+
+
+def test_encode_decode_data_only_packet():
+    model_packet = get_valid_packet()
+    test_packet = get_valid_packet()
+
+    model_packet.transmit_header = None
+    test_packet.transmit_header = None
+
+    encoded_packet = test_packet.encode_packet()
+    decoded_packet = decode_packet(encoded_packet)
+
+    assert model_packet == decoded_packet
+
+
+def test_encode_decode_body_only_packet():
+    model_packet = get_valid_packet()
+    test_packet = get_valid_packet()
+
+    model_packet.transmit_header = None
+    model_packet.data_header = None
+    test_packet.transmit_header = None
+    test_packet.data_header = None
+
+    encoded_packet = test_packet.encode_packet()
+    decoded_packet = decode_packet(encoded_packet)
+
+    assert model_packet == decoded_packet
