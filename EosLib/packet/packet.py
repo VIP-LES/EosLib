@@ -1,4 +1,5 @@
 import datetime
+import math
 import struct
 
 from EosLib.packet import definitions
@@ -20,9 +21,9 @@ class Packet:
         self.is_radio = is_radio
 
     def __eq__(self, other):
-        return (self.send_time == other.send_time and
+        return (math.isclose(self.send_time.timestamp(), other.send_time.timestamp()) and
                 self.send_seq_num == other.send_seq_num and
-                self.data_generate_time == other.data_generate_time and
+                math.isclose(self.data_generate_time.timestamp(), other.data_generate_time.timestamp()) and
                 self.data_packet_type == other.data_packet_type and
                 self.data_packet_sender == other.data_packet_sender and
                 self.data_packet_priority == other.data_packet_priority and
