@@ -19,6 +19,15 @@ class Packet:
         self.body = body
         self.is_radio = is_radio
 
+    def __eq__(self, other):
+        return (self.send_time == other.send_time and
+                self.send_seq_num == other.send_seq_num and
+                self.data_generate_time == other.data_generate_time and
+                self.data_packet_type == other.data_packet_type and
+                self.data_packet_sender == other.data_packet_sender and
+                self.data_packet_priority == other.data_packet_priority and
+                self.body == other.body)
+
     # TODO: Expand validation criteria
     def validate_transmit_header(self):
         if self.send_time is None or self.send_seq_num is None:
@@ -63,8 +72,8 @@ def decode_packet(packet_bytes: bytes):
     send_seq_num = unpacked[1]
     data_generate_time = datetime.datetime.fromtimestamp(unpacked[2])
     data_packet_type = definitions.PacketType(unpacked[3])
-    data_packet_device = definitions.Device([4])
-    data_packet_priority = definitions.Priority([5])
+    data_packet_device = definitions.Device(unpacked[4])
+    data_packet_priority = definitions.Priority(unpacked[5])
 
     data_packet_body = packet_bytes[struct.calcsize(definitions.struct_format_string):]
 
