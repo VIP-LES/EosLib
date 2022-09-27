@@ -20,3 +20,18 @@ class Priority(IntEnum):
 class Device(Enum):
     ALTIMETER = 1,
     GPS = 2,
+
+
+struct_format_string = "!" \
+                       "d" \
+                       "c" \
+                       "9x" \
+                       "" \
+                       "d" \
+                       "c" \
+                       "c" \
+                       "c" \
+                       "7x"
+
+if __name__ == "__main__":
+    print(struct_format_string)
