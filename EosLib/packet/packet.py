@@ -8,6 +8,11 @@ from EosLib.packet.definitions import PacketFormatError
 
 class TransmitHeader:
     def __init__(self, send_seq_num: int, send_time: datetime.datetime = datetime.datetime.now()):
+        """Initializes a TransmitHeader object
+
+        :param send_seq_num: The sequence number assigned at the transmitter
+        :param send_time: The time the packet is sent to the transmitter
+        """
         self.send_seq_num = send_seq_num
         self.send_time = send_time
 
@@ -17,11 +22,19 @@ class TransmitHeader:
 
     # TODO: Expand validation criteria
     def validate_transmit_header(self):
+        """Checks that all fields in the TransmitHeader object are valid and throws an exception if they aren't.
+
+        :return: True if valid
+        """
         if self.send_time is None or self.send_seq_num is None:
             raise PacketFormatError("Transmit header has invalid value")
         return True
 
     def encode(self):
+        """ Checks that the header is valid and returns a bytes object if it is.
+
+        :return: A bytes object containing the encoded header
+        """
         self.validate_transmit_header()
         return struct.pack(definitions.transmit_header_struct_format_string, definitions.transmit_header_preamble,
                            self.send_seq_num, self.send_time.timestamp())
@@ -45,12 +58,20 @@ class DataHeader:
 
     # TODO: Expand validation criteria
     def validate_data_header(self):
+        """Checks that all fields in the TransmitHeader object are valid and throws an exception if they aren't.
+
+        :return: True if valid
+        """
         if (self.data_packet_sender is None or self.data_packet_type is None or
                 self.data_packet_priority is None or self.data_packet_generate_time is None):
             raise PacketFormatError("Data header has invalid value")
         return True
 
     def encode(self):
+        """ Checks that the header is valid and returns a bytes object if it is.
+
+        :return: A bytes object containing the encoded header
+        """
         self.validate_data_header()
         return struct.pack(definitions.data_header_struct_format_string, definitions.data_header_preamble,
                            self.data_packet_generate_time.timestamp(), self.data_packet_type, self.data_packet_sender,
@@ -59,6 +80,12 @@ class DataHeader:
 
 class Packet:
     def __init__(self, body: bytes = None, data_header: DataHeader = None, transmit_header: TransmitHeader = None):
+        """Initializes a Packet object
+
+        :param body: A bytes object containing the
+        :param data_header: A DataHeader object to be added to the packet
+        :param transmit_header: A TransmitHeader object to be added to the packet
+        """
         self.body = body
         self.data_header = data_header
         self.transmit_header = transmit_header
@@ -85,7 +112,12 @@ class Packet:
         return packet_bytes
 
 
-def decode_transmit_header(header_bytes: bytes):
+def decode_transmit_header(header_bytes: bytes) -> TransmitHeader:
+    """Checks if the given bytes start with a TransmitHeader and, if so, decodes it.
+
+    :param header_bytes: The bytes containing a transmit header at the front
+    :return: a decoded TransmitHeader
+    """
     if header_bytes[0] != definitions.transmit_header_preamble:
         raise PacketFormatError("Not a valid transmit header")
 
@@ -94,7 +126,12 @@ def decode_transmit_header(header_bytes: bytes):
     return decoded_header
 
 
-def decode_data_header(header_bytes: bytes):
+def decode_data_header(header_bytes: bytes) -> DataHeader:
+    """Checks if the given bytes start with a DataHeader and, if so, decodes it.
+
+    :param header_bytes: The bytes containing a data header at the front
+    :return:
+    """
     if header_bytes[0] != definitions.data_header_preamble:
         raise PacketFormatError("Not a valid data header")
 
