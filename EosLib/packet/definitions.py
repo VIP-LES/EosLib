@@ -1,4 +1,4 @@
-from enum import Enum, unique
+from enum import Enum, IntEnum, unique
 
 
 @unique
@@ -9,7 +9,7 @@ class PacketType(Enum):
 
 
 @unique
-class Priority(Enum):
+class Priority(IntEnum):
     NO_TRANSMIT = -1,
     URGENT = 1,
     TELEMETRY = 2,
