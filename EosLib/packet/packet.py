@@ -20,9 +20,8 @@ class Packet:
 
     # TODO: Expand validation criteria
     def validate_transmit_header(self):
-        if self.is_radio:
-            if self.send_time is None or self.send_seq_num is None:
-                raise PacketFormatError("Packet not correctly defined")
+        if self.send_time is None or self.send_seq_num is None:
+            raise PacketFormatError("Packet not correctly defined")
 
     # TODO: Expand validation criteria
     def validate_data_header(self):
@@ -31,7 +30,9 @@ class Packet:
             raise PacketFormatError("Packet not correctly defined")
 
     def encode_packet(self):
-        self.validate_transmit_header()
+        if self.is_radio:
+            self.validate_transmit_header()
+
         self.validate_data_header()
 
         send_time_float = self.send_time.timestamp()
