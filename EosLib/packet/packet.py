@@ -1,6 +1,7 @@
 import definitions
 import datetime
 import struct
+from definitions import PacketFormatError
 
 
 class Packet:
@@ -21,13 +22,13 @@ class Packet:
     def validate_transmit_header(self):
         if self.is_radio:
             if self.send_time is None or self.send_seq_num is None:
-                raise Exception("Packet not correctly defined")
+                raise PacketFormatError("Packet not correctly defined")
 
     # TODO: Expand validation criteria
     def validate_data_header(self):
         if (self.data_generate_time is None or self.data_packet_type is None or self.data_packet_sender is None or
                 self.data_packet_priority is None or self.body is None):
-            raise Exception("Packet not correctly defined")
+            raise PacketFormatError("Packet not correctly defined")
 
     def encode_packet(self):
         self.validate_transmit_header()

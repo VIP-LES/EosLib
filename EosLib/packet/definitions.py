@@ -33,5 +33,6 @@ struct_format_string = "!" \
                        "B" \
                        "7x"
 
-if __name__ == "__main__":
-    print(struct_format_string)
+
+class PacketFormatError(Exception):
+    pass
