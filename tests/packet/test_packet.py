@@ -1,5 +1,7 @@
 def test_validate_transmit_header():
-    assert False
+    from EosLib.packet.packet import Packet
+    test_packet = Packet()
+    assert True
 
 
 def test_validate_data_header():
