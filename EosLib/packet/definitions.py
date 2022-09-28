@@ -22,21 +22,5 @@ class Device(IntEnum):
     GPS = 2,
 
 
-transmit_header_struct_format_string = "!" \
-                                       "B" \
-                                       "B" \
-                                       "d" \
-
-data_header_struct_format_string = "!" \
-                                   "B" \
-                                   "d" \
-                                   "B" \
-                                   "B" \
-                                   "B"
-
-transmit_header_preamble = 1
-data_header_preamble = 0
-
-
 class PacketFormatError(Exception):
     pass

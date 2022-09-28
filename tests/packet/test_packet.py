@@ -2,6 +2,8 @@ import datetime
 
 import pytest
 
+import EosLib.packet.definitions as definitions
+from EosLib.packet.definitions import PacketFormatError
 from EosLib.packet.packet import *
 
 
@@ -49,7 +51,7 @@ def test_encode_decode_packet():
     test_packet = get_valid_packet()
 
     encoded_packet = test_packet.encode_packet()
-    decoded_packet = decode_packet(encoded_packet)
+    decoded_packet = Packet.decode_packet(encoded_packet)
 
     assert model_packet == decoded_packet
 
@@ -62,7 +64,7 @@ def test_encode_decode_data_only_packet():
     test_packet.transmit_header = None
 
     encoded_packet = test_packet.encode_packet()
-    decoded_packet = decode_packet(encoded_packet)
+    decoded_packet = Packet.decode_packet(encoded_packet)
 
     assert model_packet == decoded_packet
 
@@ -77,6 +79,6 @@ def test_encode_decode_body_only_packet():
     test_packet.data_header = None
 
     encoded_packet = test_packet.encode_packet()
-    decoded_packet = decode_packet(encoded_packet)
+    decoded_packet = Packet.decode_packet(encoded_packet)
 
     assert model_packet == decoded_packet
