@@ -2,6 +2,7 @@ import struct
 
 from EosLib.packet.transmit_header import TransmitHeader
 from EosLib.packet.data_header import DataHeader
+from EosLib.packet.definitions import PacketFormatError
 
 
 class Packet:
@@ -21,12 +22,30 @@ class Packet:
                 self.transmit_header == other.transmit_header and
                 self.body == other.body)
 
+    def validate_packet(self):
+        if self.data_header is None:
+            raise PacketFormatError("All packets must have a data header")
+        else:
+            self.data_header.validate_data_header()
+
+        if self.transmit_header is not None:
+            self.transmit_header.validate_transmit_header()
+
+        if len(self.body) == 0:
+            raise PacketFormatError("All packets must have a body")
+
+        return True
+
     def encode_packet(self) -> bytes:
         """Validates and then returns the byte string version of the initialized packet.
 
         :return: Validated packet byte string
         """
+
+        self.validate_packet()
+
         packet_bytes = b''
+
         if self.transmit_header is not None:
             packet_bytes += self.transmit_header.encode()
 

@@ -1,15 +1,14 @@
-import datetime
+from datetime import datetime
 
 import pytest
 
 import EosLib.packet.definitions as definitions
-from EosLib.packet.definitions import PacketFormatError
 from EosLib.packet.packet import *
 
 
 def get_valid_packet():
-    transmit_header = TransmitHeader(0, datetime.datetime.now())
-    data_header = DataHeader(datetime.datetime.now(), definitions.PacketType.TELEMETRY,
+    transmit_header = TransmitHeader(0, datetime.now())
+    data_header = DataHeader(datetime.now(), definitions.PacketType.TELEMETRY,
                              definitions.Device.GPS, definitions.Priority.TELEMETRY)
 
     return Packet(bytes("Hello World", 'utf-8'), data_header, transmit_header)
@@ -46,6 +45,16 @@ def test_validate_bad_data_header_type():
         test_packet.data_header.validate_data_header()
 
 
+def test_validate_body_only_packet():
+    model_packet = get_valid_packet()
+
+    model_packet.transmit_header = None
+    model_packet.data_header = None
+
+    with pytest.raises(PacketFormatError):
+        model_packet.encode_packet()
+
+
 def test_encode_decode_packet():
     model_packet = get_valid_packet()
     test_packet = get_valid_packet()
@@ -69,16 +78,3 @@ def test_encode_decode_data_only_packet():
     assert model_packet == decoded_packet
 
 
-def test_encode_decode_body_only_packet():
-    model_packet = get_valid_packet()
-    test_packet = get_valid_packet()
-
-    model_packet.transmit_header = None
-    model_packet.data_header = None
-    test_packet.transmit_header = None
-    test_packet.data_header = None
-
-    encoded_packet = test_packet.encode_packet()
-    decoded_packet = Packet.decode_packet(encoded_packet)
-
-    assert model_packet == decoded_packet
