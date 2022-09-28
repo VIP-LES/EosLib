@@ -41,54 +41,32 @@ class Packet:
 
         return packet_bytes
 
+    @staticmethod
+    def decode_packet(packet_bytes: bytes):
+        """Takes a bytes object and decodes it into a Packet object.
 
-def decode_transmit_header(header_bytes: bytes) -> TransmitHeader:
-    """Checks if the given bytes start with a TransmitHeader and, if so, decodes it.
+        :param packet_bytes: The bytes object to be decoded
+        :return: The decoded Packet object
+        """
+        decoded_packet = Packet()
+        if packet_bytes[0] == definitions.transmit_header_preamble:
+            decoded_transmit_header = TransmitHeader.decode(
+                packet_bytes[0:struct.calcsize(definitions.transmit_header_struct_format_string)])
+            decoded_packet.transmit_header = decoded_transmit_header
+            packet_bytes = packet_bytes[struct.calcsize(definitions.transmit_header_struct_format_string):]
 
-    :param header_bytes: The bytes containing a transmit header at the front
-    :return: a decoded TransmitHeader
-    """
-    if header_bytes[0] != definitions.transmit_header_preamble:
-        raise PacketFormatError("Not a valid transmit header")
+        if packet_bytes[0] == definitions.data_header_preamble:
+            decoded_data_header = DataHeader.decode(
+                packet_bytes[0:struct.calcsize(definitions.data_header_struct_format_string)])
+            decoded_packet.data_header = decoded_data_header
+            packet_bytes = packet_bytes[struct.calcsize(definitions.data_header_struct_format_string):]
 
-    unpacked = struct.unpack(definitions.transmit_header_struct_format_string, header_bytes)
-    decoded_header = TransmitHeader(unpacked[1], datetime.datetime.fromtimestamp(unpacked[2]))
-    return decoded_header
+        decoded_packet.body = packet_bytes
 
-
-def decode_data_header(header_bytes: bytes) -> DataHeader:
-    """Checks if the given bytes start with a DataHeader and, if so, decodes it.
-
-    :param header_bytes: The bytes containing a data header at the front
-    :return:
-    """
-    if header_bytes[0] != definitions.data_header_preamble:
-        raise PacketFormatError("Not a valid data header")
-
-    unpacked = struct.unpack(definitions.data_header_struct_format_string, header_bytes)
-    decoded_header = DataHeader(datetime.datetime.fromtimestamp(unpacked[1]), unpacked[2], unpacked[3], unpacked[4])
-    return decoded_header
+        return decoded_packet
 
 
-def decode_packet(packet_bytes: bytes) -> Packet:
-    """Takes a bytes object and decodes it into a Packet object.
 
-    :param packet_bytes: The bytes object to be decoded
-    :return: The decoded Packet object
-    """
-    decoded_packet = Packet()
-    if packet_bytes[0] == definitions.transmit_header_preamble:
-        decoded_transmit_header = decode_transmit_header(
-            packet_bytes[0:struct.calcsize(definitions.transmit_header_struct_format_string)])
-        decoded_packet.transmit_header = decoded_transmit_header
-        packet_bytes = packet_bytes[struct.calcsize(definitions.transmit_header_struct_format_string):]
 
-    if packet_bytes[0] == definitions.data_header_preamble:
-        decoded_data_header = decode_data_header(
-            packet_bytes[0:struct.calcsize(definitions.data_header_struct_format_string)])
-        decoded_packet.data_header = decoded_data_header
-        packet_bytes = packet_bytes[struct.calcsize(definitions.data_header_struct_format_string):]
 
-    decoded_packet.body = packet_bytes
 
-    return decoded_packet

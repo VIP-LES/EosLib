@@ -42,3 +42,18 @@ class DataHeader:
         return struct.pack(definitions.data_header_struct_format_string, definitions.data_header_preamble,
                            self.data_packet_generate_time.timestamp(), self.data_packet_type, self.data_packet_sender,
                            self.data_packet_priority)
+
+    @staticmethod
+    def decode(header_bytes: bytes):
+        """Checks if the given bytes start with a DataHeader and, if so, decodes it.
+
+        :param header_bytes: The bytes containing a data header at the front
+        :return:
+        """
+        if header_bytes[0] != definitions.data_header_preamble:
+            raise PacketFormatError("Not a valid data header")
+
+        unpacked = struct.unpack(definitions.data_header_struct_format_string, header_bytes)
+        decoded_header = DataHeader(datetime.fromtimestamp(unpacked[1]), unpacked[2], unpacked[3], unpacked[4])
+        return decoded_header
+
