@@ -1,9 +1,8 @@
-from datetime import datetime
-
 import pytest
-
 import EosLib.packet.definitions as definitions
-from EosLib.packet.packet import *
+
+from datetime import datetime
+from EosLib.packet.packet import TransmitHeader, DataHeader, Packet, PacketFormatError
 
 
 def get_valid_packet():
