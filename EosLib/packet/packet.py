@@ -4,78 +4,8 @@ import struct
 
 from EosLib.packet import definitions
 from EosLib.packet.definitions import PacketFormatError
-
-
-class TransmitHeader:
-    def __init__(self, send_seq_num: int, send_time: datetime.datetime = datetime.datetime.now()):
-        """Initializes a TransmitHeader object
-
-        :param send_seq_num: The sequence number assigned at the transmitter
-        :param send_time: The time the packet is sent to the transmitter
-        """
-        self.send_seq_num = send_seq_num
-        self.send_time = send_time
-
-    def __eq__(self, other):
-        return (self.send_seq_num == other.send_seq_num and
-                math.isclose(self.send_time.timestamp(), other.send_time.timestamp()))
-
-    # TODO: Expand validation criteria
-    def validate_transmit_header(self):
-        """Checks that all fields in the TransmitHeader object are valid and throws an exception if they aren't.
-
-        :return: True if valid
-        """
-        if self.send_time is None or self.send_seq_num is None:
-            raise PacketFormatError("Transmit header has invalid value")
-        return True
-
-    def encode(self):
-        """ Checks that the header is valid and returns a bytes object if it is.
-
-        :return: A bytes object containing the encoded header
-        """
-        self.validate_transmit_header()
-        return struct.pack(definitions.transmit_header_struct_format_string, definitions.transmit_header_preamble,
-                           self.send_seq_num, self.send_time.timestamp())
-
-
-class DataHeader:
-    def __init__(self, data_packet_generate_time: datetime.datetime = datetime.datetime.now(),
-                 data_packet_type: definitions.PacketType = None, data_packet_sender: definitions.Device = None,
-                 data_packet_priority: definitions.Priority = None,
-                 ):
-        self.data_packet_sender = data_packet_sender
-        self.data_packet_type = data_packet_type
-        self.data_packet_priority = data_packet_priority
-        self.data_packet_generate_time = data_packet_generate_time
-
-    def __eq__(self, other):
-        return (self.data_packet_priority == other.data_packet_priority and
-                self.data_packet_type == other.data_packet_type and
-                self.data_packet_sender == other.data_packet_sender and
-                math.isclose(self.data_packet_generate_time.timestamp(), other.data_packet_generate_time.timestamp()))
-
-    # TODO: Expand validation criteria
-    def validate_data_header(self):
-        """Checks that all fields in the TransmitHeader object are valid and throws an exception if they aren't.
-
-        :return: True if valid
-        """
-        if (self.data_packet_sender is None or self.data_packet_type is None or
-                self.data_packet_priority is None or self.data_packet_generate_time is None):
-            raise PacketFormatError("Data header has invalid value")
-        return True
-
-    def encode(self):
-        """ Checks that the header is valid and returns a bytes object if it is.
-
-        :return: A bytes object containing the encoded header
-        """
-        self.validate_data_header()
-        return struct.pack(definitions.data_header_struct_format_string, definitions.data_header_preamble,
-                           self.data_packet_generate_time.timestamp(), self.data_packet_type, self.data_packet_sender,
-                           self.data_packet_priority)
+from EosLib.packet.transmit_header import TransmitHeader
+from EosLib.packet.data_header import DataHeader
 
 
 class Packet:
