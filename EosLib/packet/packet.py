@@ -2,7 +2,7 @@ import struct
 
 from EosLib.packet.transmit_header import TransmitHeader
 from EosLib.packet.data_header import DataHeader
-from EosLib.packet.definitions import PacketFormatError
+from EosLib.packet.definitions import PacketFormatError, HeaderPreamble
 
 
 class Packet:
@@ -63,13 +63,13 @@ class Packet:
         :return: The decoded Packet object
         """
         decoded_packet = Packet()
-        if packet_bytes[0] == TransmitHeader.transmit_header_preamble:
+        if packet_bytes[0] == HeaderPreamble.TRANSMIT:
             decoded_transmit_header = TransmitHeader.decode(
                 packet_bytes[0:struct.calcsize(TransmitHeader.transmit_header_struct_format_string)])
             decoded_packet.transmit_header = decoded_transmit_header
             packet_bytes = packet_bytes[struct.calcsize(TransmitHeader.transmit_header_struct_format_string):]
 
-        if packet_bytes[0] == DataHeader.data_header_preamble:
+        if packet_bytes[0] == HeaderPreamble.DATA:
             decoded_data_header = DataHeader.decode(
                 packet_bytes[0:struct.calcsize(DataHeader.data_header_struct_format_string)])
             decoded_packet.data_header = decoded_data_header

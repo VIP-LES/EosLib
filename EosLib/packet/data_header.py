@@ -1,14 +1,13 @@
 import math
 import struct
-from datetime import datetime
 
+from datetime import datetime
 from EosLib.packet import definitions
-from EosLib.packet.definitions import PacketFormatError
+from EosLib.packet.definitions import PacketFormatError, HeaderPreamble
 
 
 class DataHeader:
 
-    data_header_preamble = 0
     data_header_struct_format_string = "!" \
                                        "B" \
                                        "d" \
@@ -48,7 +47,7 @@ class DataHeader:
         :return: A bytes object containing the encoded header
         """
         self.validate_data_header()
-        return struct.pack(DataHeader.data_header_struct_format_string, DataHeader.data_header_preamble,
+        return struct.pack(DataHeader.data_header_struct_format_string, HeaderPreamble.DATA,
                            self.data_packet_generate_time.timestamp(), self.data_packet_type, self.data_packet_sender,
                            self.data_packet_priority)
 
@@ -59,7 +58,7 @@ class DataHeader:
         :param header_bytes: The bytes containing a data header at the front
         :return:
         """
-        if header_bytes[0] != DataHeader.data_header_preamble:
+        if header_bytes[0] != HeaderPreamble.DATA:
             raise PacketFormatError("Not a valid data header")
 
         unpacked = struct.unpack(DataHeader.data_header_struct_format_string, header_bytes)

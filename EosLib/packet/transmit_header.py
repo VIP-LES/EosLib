@@ -1,13 +1,12 @@
 import math
 import struct
-from datetime import datetime
 
-from EosLib.packet.definitions import PacketFormatError
+from datetime import datetime
+from EosLib.packet.definitions import PacketFormatError, HeaderPreamble
 
 
 class TransmitHeader:
 
-    transmit_header_preamble = 1
     transmit_header_struct_format_string = "!" \
                                            "B" \
                                            "B" \
@@ -42,7 +41,7 @@ class TransmitHeader:
         :return: A bytes object containing the encoded header
         """
         self.validate_transmit_header()
-        return struct.pack(TransmitHeader.transmit_header_struct_format_string, TransmitHeader.transmit_header_preamble,
+        return struct.pack(TransmitHeader.transmit_header_struct_format_string, HeaderPreamble.TRANSMIT,
                            self.send_seq_num, self.send_time.timestamp())
 
     @staticmethod
@@ -52,7 +51,7 @@ class TransmitHeader:
         :param header_bytes: The bytes containing a transmit header at the front
         :return: a decoded TransmitHeader
         """
-        if header_bytes[0] != TransmitHeader.transmit_header_preamble:
+        if header_bytes[0] != HeaderPreamble.TRANSMIT:
             raise PacketFormatError("Not a valid transmit header")
 
         unpacked = struct.unpack(TransmitHeader.transmit_header_struct_format_string, header_bytes)

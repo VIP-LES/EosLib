@@ -22,5 +22,11 @@ class Device(IntEnum):
     GPS = 2,
 
 
+@unique
+class HeaderPreamble(IntEnum):
+    DATA = 0,
+    TRANSMIT = 1
+
+
 class PacketFormatError(Exception):
     pass
