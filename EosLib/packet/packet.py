@@ -49,8 +49,7 @@ class Packet:
         if self.transmit_header is not None:
             packet_bytes += self.transmit_header.encode()
 
-        if self.data_header is not None:
-            packet_bytes += self.data_header.encode()
+        packet_bytes += self.data_header.encode()
 
         packet_bytes += self.body
 
