@@ -2,7 +2,6 @@ import math
 import struct
 from datetime import datetime
 
-from EosLib.packet import definitions
 from EosLib.packet.definitions import PacketFormatError
 
 
