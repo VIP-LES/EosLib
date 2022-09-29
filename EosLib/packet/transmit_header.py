@@ -12,7 +12,9 @@ class TransmitHeader:
                                            "B" \
                                            "d"
 
-    def __init__(self, send_seq_num: int, send_time: datetime = datetime.now()):
+    def __init__(self,
+                 send_seq_num: int = None,
+                 send_time: datetime = datetime.now()):
         """Initializes a TransmitHeader object
 
         :param send_seq_num: The sequence number assigned at the transmitter

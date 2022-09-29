@@ -10,14 +10,16 @@ class DataHeader:
 
     data_header_struct_format_string = "!" \
                                        "B" \
-                                       "d" \
                                        "B" \
                                        "B" \
-                                       "B"
+                                       "B" \
+                                       "d"
 
-    def __init__(self, data_packet_generate_time: datetime = datetime.now(),
-                 data_packet_type: definitions.PacketType = None, data_packet_sender: definitions.Device = None,
-                 data_packet_priority: definitions.Priority = None,
+    def __init__(self,
+                 data_packet_type: definitions.PacketType = None,
+                 data_packet_sender: definitions.PacketDevice = None,
+                 data_packet_priority: definitions.PacketPriority = None,
+                 data_packet_generate_time: datetime = datetime.now()
                  ):
         self.data_packet_sender = data_packet_sender
         self.data_packet_type = data_packet_type
@@ -47,9 +49,12 @@ class DataHeader:
         :return: A bytes object containing the encoded header
         """
         self.validate_data_header()
-        return struct.pack(DataHeader.data_header_struct_format_string, HeaderPreamble.DATA,
-                           self.data_packet_generate_time.timestamp(), self.data_packet_type, self.data_packet_sender,
-                           self.data_packet_priority)
+        return struct.pack(DataHeader.data_header_struct_format_string,
+                           HeaderPreamble.DATA,
+                           self.data_packet_type,
+                           self.data_packet_sender,
+                           self.data_packet_priority,
+                           self.data_packet_generate_time.timestamp())
 
     @staticmethod
     def decode(header_bytes: bytes):
@@ -62,5 +67,5 @@ class DataHeader:
             raise PacketFormatError("Not a valid data header")
 
         unpacked = struct.unpack(DataHeader.data_header_struct_format_string, header_bytes)
-        decoded_header = DataHeader(datetime.fromtimestamp(unpacked[1]), unpacked[2], unpacked[3], unpacked[4])
+        decoded_header = DataHeader(unpacked[1], unpacked[2], unpacked[3], datetime.fromtimestamp(unpacked[4]))
         return decoded_header
