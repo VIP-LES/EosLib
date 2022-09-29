@@ -13,15 +13,22 @@ about the transmission of the packet, typically via radio.
 
 ### `DataHeader` Contents
 
-| Field                | Variable Type           | Valid Range              | Required? |
-|----------------------|-------------------------|--------------------------|-----------|
-| Packet Generate Time | datetime                | Any valid date           | Yes\*     |
-| Packet Type          | PacketType enum         | Values in PacketType     | Yes       |
-| Packet Sender        | PacketDevice enum       | Values in Device         | Yes       |
-| Packet Priority      | PacketPriority enum\*\* | Values in PacketPriority | Yes       |
+| Field                | Variable Type           | Valid Range                  | Required? |
+|----------------------|-------------------------|------------------------------|-----------|
+| Packet Type          | PacketType enum         | Values in PacketType         | Yes       |
+| Packet Sender        | PacketDevice enum       | Values in Device             | Yes       |
+| Packet Priority      | PacketPriority enum\*\* | Values in PacketPriority\*\* | Yes       |
+| Packet Generate Time | datetime                | Any valid date               | Yes\*     |
+
+
+### `TransmitHeader` Contents
+
+| Field                  | Variable Type | Valid Range    | Required? |
+|------------------------|---------------|----------------|-----------|
+| Packet Sequence Number | Int           | 0-255          | Yes       |
+| Packet Timestamp       | datetime      | Any valid date | Yes\*     |
 
 \* If no Timestamp is provided, a default value of `datetime.now()` is provided.
 
 \*\* Packet Priority can be any integer value between 0-255, but sensible defaults are provided via the PacketPriority 
 enum
-
