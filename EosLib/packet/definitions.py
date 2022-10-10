@@ -9,7 +9,7 @@ class PacketType(IntEnum):
 
 
 @unique
-class Priority(IntEnum):
+class PacketPriority(IntEnum):
     NO_TRANSMIT = 255,
     URGENT = 1,
     TELEMETRY = 2,
@@ -17,7 +17,7 @@ class Priority(IntEnum):
 
 
 @unique
-class Device(IntEnum):
+class PacketDevice(IntEnum):
     ALTIMETER = 1,
     GPS = 2,
 

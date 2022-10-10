@@ -7,8 +7,10 @@ from EosLib.packet.packet import TransmitHeader, DataHeader, Packet, PacketForma
 
 def get_valid_packet():
     transmit_header = TransmitHeader(0, datetime.now())
-    data_header = DataHeader(datetime.now(), definitions.PacketType.TELEMETRY,
-                             definitions.Device.GPS, definitions.Priority.TELEMETRY)
+    data_header = DataHeader(definitions.PacketType.TELEMETRY,
+                             definitions.PacketDevice.GPS,
+                             definitions.PacketPriority.TELEMETRY,
+                             datetime.now())
 
     return Packet(bytes("Hello World", 'utf-8'), data_header, transmit_header)
 
