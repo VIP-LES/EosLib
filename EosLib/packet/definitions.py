@@ -1,5 +1,7 @@
 from enum import IntEnum, unique
 
+RADIO_MAX_BYTES = 255
+
 
 @unique
 class PacketType(IntEnum):
@@ -26,7 +28,3 @@ class PacketDevice(IntEnum):
 class HeaderPreamble(IntEnum):
     DATA = 0,
     TRANSMIT = 1
-
-
-class PacketFormatError(Exception):
-    pass

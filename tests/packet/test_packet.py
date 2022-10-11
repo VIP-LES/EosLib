@@ -3,6 +3,7 @@ import EosLib.packet.definitions as definitions
 
 from datetime import datetime
 from EosLib.packet.packet import TransmitHeader, DataHeader, Packet, PacketFormatError
+from EosLib.packet.exceptions import DataHeaderFormatError, TransmitHeaderFormatError
 
 
 def get_valid_packet():
@@ -23,14 +24,14 @@ def test_validate_good_transmit_header():
 def test_validate_bad_transmit_header_num():
     test_packet = get_valid_packet()
     test_packet.transmit_header.send_seq_num = None
-    with pytest.raises(PacketFormatError):
+    with pytest.raises(TransmitHeaderFormatError):
         test_packet.transmit_header.validate_transmit_header()
 
 
 def test_validate_bad_transmit_header_time():
     test_packet = get_valid_packet()
     test_packet.transmit_header.send_time = None
-    with pytest.raises(PacketFormatError):
+    with pytest.raises(TransmitHeaderFormatError):
         test_packet.transmit_header.validate_transmit_header()
 
 
@@ -42,7 +43,14 @@ def test_validate_good_data_header():
 def test_validate_bad_data_header_type():
     test_packet = get_valid_packet()
     test_packet.data_header.data_packet_type = None
-    with pytest.raises(PacketFormatError):
+    with pytest.raises(DataHeaderFormatError):
+        test_packet.data_header.validate_data_header()
+
+
+def test_validate_bad_data_sender():
+    test_packet = get_valid_packet()
+    test_packet.data_header.data_packet_sender = 256
+    with pytest.raises(DataHeaderFormatError):
         test_packet.data_header.validate_data_header()
 
 
@@ -79,3 +87,16 @@ def test_encode_decode_data_only_packet():
     assert model_packet == decoded_packet
 
 
+def test_body_too_large():
+    test_packet = get_valid_packet()
+    test_packet.body = bytearray(250)
+    with pytest.raises(PacketFormatError):
+        test_packet.encode_packet()
+
+
+def test_allow_large_body_no_transmit():
+    test_packet = get_valid_packet()
+    test_packet.body = bytearray(250)
+    test_packet.data_header.data_packet_priority = definitions.PacketPriority.NO_TRANSMIT
+
+    assert test_packet.encode_packet()
