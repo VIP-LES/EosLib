@@ -26,5 +26,5 @@ class PacketDevice(IntEnum):
 
 @unique
 class HeaderPreamble(IntEnum):
-    DATA = 0,
+    DATA = 2,
     TRANSMIT = 1

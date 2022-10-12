@@ -32,7 +32,7 @@ class Packet:
         if self.transmit_header is not None:
             self.transmit_header.validate_transmit_header()
 
-        if len(self.body) == 0:
+        if self.body is None or len(self.body) == 0:
             raise PacketFormatError("All packets must have a body")
 
         if self.data_header.data_packet_priority != PacketPriority.NO_TRANSMIT:

@@ -54,11 +54,33 @@ def test_validate_bad_data_sender():
         test_packet.data_header.validate_data_header()
 
 
+def test_validate_bad_data_priority():
+    test_packet = get_valid_packet()
+    test_packet.data_header.data_packet_priority = 256
+    with pytest.raises(DataHeaderFormatError):
+        test_packet.data_header.validate_data_header()
+
+
+def test_validate_bad_data_time():
+    test_packet = get_valid_packet()
+    test_packet.data_header.data_packet_generate_time = None
+    with pytest.raises(DataHeaderFormatError):
+        test_packet.data_header.validate_data_header()
+
+
 def test_validate_body_only_packet():
     model_packet = get_valid_packet()
 
     model_packet.transmit_header = None
     model_packet.data_header = None
+
+    with pytest.raises(PacketFormatError):
+        model_packet.encode_packet()
+
+
+def test_validate_empty_body_packet():
+    model_packet = get_valid_packet()
+    model_packet.body = None
 
     with pytest.raises(PacketFormatError):
         model_packet.encode_packet()
@@ -100,3 +122,17 @@ def test_allow_large_body_no_transmit():
     test_packet.data_header.data_packet_priority = definitions.PacketPriority.NO_TRANSMIT
 
     assert test_packet.encode_packet()
+
+
+def test_standalone_data_header_validate():
+    test_header = bytearray(10)
+
+    with pytest.raises(PacketFormatError):
+        DataHeader.decode(test_header)
+
+
+def test_standalone_transmit_header_validate():
+    test_header = bytearray(10)
+
+    with pytest.raises(PacketFormatError):
+        TransmitHeader.decode(test_header)
