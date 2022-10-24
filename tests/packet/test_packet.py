@@ -42,28 +42,28 @@ def test_validate_good_data_header():
 
 def test_validate_bad_data_header_type():
     test_packet = get_valid_packet()
-    test_packet.data_header.data_packet_type = None
+    test_packet.data_header.data_type = None
     with pytest.raises(DataHeaderFormatError):
         test_packet.data_header.validate_data_header()
 
 
 def test_validate_bad_data_sender():
     test_packet = get_valid_packet()
-    test_packet.data_header.data_packet_sender = 256
+    test_packet.data_header.sender = 256
     with pytest.raises(DataHeaderFormatError):
         test_packet.data_header.validate_data_header()
 
 
 def test_validate_bad_data_priority():
     test_packet = get_valid_packet()
-    test_packet.data_header.data_packet_priority = 256
+    test_packet.data_header.priority = 256
     with pytest.raises(DataHeaderFormatError):
         test_packet.data_header.validate_data_header()
 
 
 def test_validate_bad_data_time():
     test_packet = get_valid_packet()
-    test_packet.data_header.data_packet_generate_time = None
+    test_packet.data_header.generate_time = None
     with pytest.raises(DataHeaderFormatError):
         test_packet.data_header.validate_data_header()
 
@@ -119,7 +119,7 @@ def test_body_too_large():
 def test_allow_large_body_no_transmit():
     test_packet = get_valid_packet()
     test_packet.body = bytearray(250)
-    test_packet.data_header.data_packet_priority = definitions.PacketPriority.NO_TRANSMIT
+    test_packet.data_header.priority = definitions.PacketPriority.NO_TRANSMIT
 
     assert test_packet.encode_packet()
 

@@ -35,7 +35,7 @@ class Packet:
         if self.body is None or len(self.body) == 0:
             raise PacketFormatError("All packets must have a body")
 
-        if self.data_header.data_packet_priority != PacketPriority.NO_TRANSMIT:
+        if self.data_header.priority != PacketPriority.NO_TRANSMIT:
             total_length = struct.calcsize(TransmitHeader.transmit_header_struct_format_string) + \
                            struct.calcsize(DataHeader.data_header_struct_format_string) + \
                            len(self.body)
