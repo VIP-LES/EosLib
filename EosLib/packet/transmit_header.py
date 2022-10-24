@@ -2,7 +2,8 @@ import math
 import struct
 
 from datetime import datetime
-from EosLib.packet.definitions import PacketFormatError, HeaderPreamble
+from EosLib.packet.definitions import HeaderPreamble
+from EosLib.packet.exceptions import TransmitHeaderFormatError
 
 
 class TransmitHeader:
@@ -33,8 +34,12 @@ class TransmitHeader:
 
         :return: True if valid
         """
-        if self.send_time is None or self.send_seq_num is None:
-            raise PacketFormatError("Transmit header has invalid value")
+        if not isinstance(self.send_seq_num, int) or not 0 <= self.send_seq_num <= 255:
+            raise TransmitHeaderFormatError("Invalid Sequence Number")
+
+        if not isinstance(self.send_time, datetime):
+            raise TransmitHeaderFormatError("Invalid Send Time")
+
         return True
 
     def encode(self):
@@ -54,7 +59,7 @@ class TransmitHeader:
         :return: a decoded TransmitHeader
         """
         if header_bytes[0] != HeaderPreamble.TRANSMIT:
-            raise PacketFormatError("Not a valid transmit header")
+            raise TransmitHeaderFormatError("Not a valid transmit header")
 
         unpacked = struct.unpack(TransmitHeader.transmit_header_struct_format_string, header_bytes)
         decoded_header = TransmitHeader(unpacked[1], datetime.fromtimestamp(unpacked[2]))

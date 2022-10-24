@@ -3,7 +3,8 @@ import struct
 
 from datetime import datetime
 from EosLib.packet import definitions
-from EosLib.packet.definitions import PacketFormatError, HeaderPreamble
+from EosLib.packet.definitions import HeaderPreamble
+from EosLib.packet.exceptions import PacketFormatError, DataHeaderFormatError
 
 
 class DataHeader:
@@ -38,9 +39,18 @@ class DataHeader:
 
         :return: True if valid
         """
-        if (self.data_packet_sender is None or self.data_packet_type is None or
-                self.data_packet_priority is None or self.data_packet_generate_time is None):
-            raise PacketFormatError("Data header has invalid value")
+        if not isinstance(self.data_packet_sender, int) or not 0 <= self.data_packet_sender <= 255:
+            raise DataHeaderFormatError("Invalid Sender")
+
+        if not isinstance(self.data_packet_type, int) or not 0 <= self.data_packet_type <= 255:
+            raise DataHeaderFormatError("Invalid Type")
+
+        if not isinstance(self.data_packet_priority, int) or not 0 <= self.data_packet_priority <= 255:
+            raise DataHeaderFormatError("Invalid Priority")
+
+        if not isinstance(self.data_packet_generate_time, datetime):
+            raise DataHeaderFormatError("Invalid Generate Time")
+
         return True
 
     def encode(self):
