@@ -51,6 +51,14 @@ class TransmitHeader:
         return struct.pack(TransmitHeader.transmit_header_struct_format_string, HeaderPreamble.TRANSMIT,
                            self.send_seq_num, self.send_time.timestamp())
 
+    def encode_to_string(self):
+        """ Checks that the header is valid and returns a string if it is.
+
+        :return: A bytes object containing the encoded header
+        """
+        return "{send_seq_num}, {send_time}".format(send_seq_num=self.send_seq_num,
+                                                    send_time=self.send_time.isoformat())
+
     @staticmethod
     def decode(header_bytes: bytes):
         """Checks if the given bytes start with a TransmitHeader and, if so, decodes it.

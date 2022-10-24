@@ -66,6 +66,13 @@ class DataHeader:
                            self.priority,
                            self.generate_time.timestamp())
 
+    def encode_to_string(self):
+        self.validate_data_header()
+        return "{data_type}, {sender}, {priority}, {generate_time}".format(data_type=self.data_type,
+                                                                           sender=self.sender,
+                                                                           priority=self.priority,
+                                                                           generate_time=self.generate_time.isoformat())
+
     @staticmethod
     def decode(header_bytes: bytes):
         """Checks if the given bytes start with a DataHeader and, if so, decodes it.

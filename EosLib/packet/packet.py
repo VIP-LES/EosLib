@@ -10,7 +10,7 @@ class Packet:
     def __init__(self, body: bytes = None, data_header: DataHeader = None, transmit_header: TransmitHeader = None):
         """Initializes a Packet object
 
-        :param body: A bytes object containing the
+        :param body: A bytes object containing the body of the packet
         :param data_header: A DataHeader object to be added to the packet
         :param transmit_header: A TransmitHeader object to be added to the packet
         """
@@ -45,7 +45,7 @@ class Packet:
 
         return True
 
-    def encode_packet(self) -> bytes:
+    def encode(self) -> bytes:
         """Validates and then returns the byte string version of the initialized packet.
 
         :return: Validated packet byte string
@@ -64,8 +64,16 @@ class Packet:
 
         return packet_bytes
 
+    def encode_to_string(self):
+        self.validate_packet()
+
+        return "{transmit_header}, {data_header}, {body}".format(
+            transmit_header=self.transmit_header.encode_to_string(),
+            data_header=self.data_header.encode_to_string(),
+            body=self.body.decode())
+
     @staticmethod
-    def decode_packet(packet_bytes: bytes):
+    def decode(packet_bytes: bytes):
         """Takes a bytes object and decodes it into a Packet object.
 
         :param packet_bytes: The bytes object to be decoded
