@@ -1,4 +1,6 @@
+import datetime
 import struct
+
 
 from EosLib.packet.transmit_header import TransmitHeader
 from EosLib.packet.data_header import DataHeader
@@ -14,9 +16,9 @@ class Packet:
         :param data_header: A DataHeader object to be added to the packet
         :param transmit_header: A TransmitHeader object to be added to the packet
         """
-        self.body = body
-        self.data_header = data_header
-        self.transmit_header = transmit_header
+        self.body = body  # type: bytes
+        self.data_header = data_header  # type: DataHeader
+        self.transmit_header = transmit_header  # type: TransmitHeader
 
     def __eq__(self, other):
         return (self.data_header == other.data_header and
@@ -34,6 +36,9 @@ class Packet:
 
         if self.body is None or len(self.body) == 0:
             raise PacketFormatError("All packets must have a body")
+
+        if not isinstance(self.body, bytes):
+            raise PacketFormatError("Body should be of type bytes")
 
         if self.data_header.priority != PacketPriority.NO_TRANSMIT:
             total_length = struct.calcsize(TransmitHeader.transmit_header_struct_format_string) + \
@@ -96,8 +101,30 @@ class Packet:
 
         return decoded_packet
 
+    @staticmethod
+    def decode_from_string(packet_string: str):
+        """Takes a string and decodes it into a Packet object.
 
+        :param packet_string: The string to be decoded
+        :return: The decoded Packet object
+        """
 
+        decoded_packet = Packet()
+        decoded_transmit_header = TransmitHeader()
+        decoded_data_header = DataHeader()
 
+        packet_array = packet_string.split(', ')
 
+        decoded_transmit_header.send_seq_num = int(packet_array[0])
+        decoded_transmit_header.send_time = datetime.datetime.fromisoformat(packet_array[1])
 
+        decoded_data_header.data_type = int(packet_array[2])
+        decoded_data_header.sender = int(packet_array[3])
+        decoded_data_header.priority = int(packet_array[4])
+        decoded_data_header.generate_time = datetime.datetime.fromisoformat(packet_array[5])
+
+        decoded_packet.transmit_header = decoded_transmit_header
+        decoded_packet.data_header = decoded_data_header
+        decoded_packet.body = bytes(packet_array[6], 'utf-8')
+
+        return decoded_packet

@@ -93,6 +93,7 @@ def test_encode_decode_packet():
     encoded_packet = test_packet.encode()
     decoded_packet = Packet.decode(encoded_packet)
 
+    decoded_packet.encode()
     assert model_packet == decoded_packet
 
 
@@ -106,6 +107,7 @@ def test_encode_decode_data_only_packet():
     encoded_packet = test_packet.encode()
     decoded_packet = Packet.decode(encoded_packet)
 
+    decoded_packet.encode()
     assert model_packet == decoded_packet
 
 
@@ -118,7 +120,7 @@ def test_body_too_large():
 
 def test_allow_large_body_no_transmit():
     test_packet = get_valid_packet()
-    test_packet.body = bytearray(250)
+    test_packet.body = bytes(250)
     test_packet.data_header.priority = definitions.PacketPriority.NO_TRANSMIT
 
     assert test_packet.encode()
@@ -136,3 +138,12 @@ def test_standalone_transmit_header_validate():
 
     with pytest.raises(PacketFormatError):
         TransmitHeader.decode(test_header)
+
+
+def test_encode_and_decode_string():
+    test_packet = get_valid_packet()
+    test_string = test_packet.encode_to_string()
+    decoded_packet = Packet.decode_from_string(test_string)
+
+    decoded_packet.encode()
+    assert decoded_packet == test_packet
