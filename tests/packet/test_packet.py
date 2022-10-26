@@ -113,7 +113,15 @@ def test_encode_decode_data_only_packet():
 
 def test_body_too_large():
     test_packet = get_valid_packet()
-    test_packet.body = bytearray(250)
+    test_packet.body = bytes(250)
+    with pytest.raises(PacketFormatError):
+        test_packet.encode()
+
+
+def test_illegal_body_type():
+    test_packet = get_valid_packet()
+    test_packet.body = "Hello World"
+
     with pytest.raises(PacketFormatError):
         test_packet.encode()
 
