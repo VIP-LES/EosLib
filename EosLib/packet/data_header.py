@@ -28,6 +28,11 @@ class DataHeader:
         self.generate_time = generate_time
 
     def __eq__(self, other):
+        """ Compares two transmit headers for value equality
+
+        :param other: the other header to be compared
+        :return:
+        """
         return (self.priority == other.priority and
                 self.data_type == other.data_type and
                 self.sender == other.sender and
@@ -35,7 +40,7 @@ class DataHeader:
 
     # TODO: Expand validation criteria
     def validate_data_header(self):
-        """Checks that all fields in the TransmitHeader object are valid and throws an exception if they aren't.
+        """ Checks that all fields in the TransmitHeader object are valid and throws an exception if they aren't.
 
         :return: True if valid
         """
@@ -67,6 +72,10 @@ class DataHeader:
                            self.generate_time.timestamp())
 
     def encode_to_string(self):
+        """ Validates the data header and converts it to a comma separated string
+
+        :return: String encoded data header
+        """
         self.validate_data_header()
         return "{data_type}, {sender}, {priority}, {generate_time}".format(data_type=self.data_type,
                                                                            sender=self.sender,
@@ -78,7 +87,7 @@ class DataHeader:
         """Checks if the given bytes start with a DataHeader and, if so, decodes it.
 
         :param header_bytes: The bytes containing a data header at the front
-        :return:
+        :return: Data header bytes format
         """
         if header_bytes[0] != HeaderPreamble.DATA:
             raise PacketFormatError("Not a valid data header")

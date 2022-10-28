@@ -25,12 +25,17 @@ class TransmitHeader:
         self.send_time = send_time
 
     def __eq__(self, other):
+        """ Compares two transmit headers for value equality
+
+        :param other: the other header to be compared
+        :return:
+        """
         return (self.send_seq_num == other.send_seq_num and
                 math.isclose(self.send_time.timestamp(), other.send_time.timestamp()))
 
     # TODO: Expand validation criteria
     def validate_transmit_header(self):
-        """Checks that all fields in the TransmitHeader object are valid and throws an exception if they aren't.
+        """Checks that all fields in the TransmitHeader object are valid and throws an exception if any aren't.
 
         :return: True if valid
         """

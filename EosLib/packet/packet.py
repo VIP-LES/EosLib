@@ -21,11 +21,22 @@ class Packet:
         self.transmit_header = transmit_header  # type: TransmitHeader
 
     def __eq__(self, other):
+        """ Compares two packets for value equality
+
+        :param other: the other packet to be compared
+        :return: True if packets are equal, False otherwise
+        """
         return (self.data_header == other.data_header and
                 self.transmit_header == other.transmit_header and
                 self.body == other.body)
 
     def validate_packet(self):
+        """ Validates that all fields in the packet are valid and throws an exception if they aren't
+
+        :return: True if packet is valid
+
+        :raises: PacketFormatError if packet is not valid
+        """
         if self.data_header is None:
             raise PacketFormatError("All packets must have a data header")
         else:
@@ -70,7 +81,15 @@ class Packet:
         return packet_bytes
 
     def encode_to_string(self):
+        """ Takes a packet and encodes it into a csv string
+
+        :return: The csv string representation of the packet
+        """
         self.validate_packet()
+
+        # It's easier if we make all the encoded packet string arrays the same length, so we add a fake transmit header
+        if self.transmit_header is None:
+            self.transmit_header = TransmitHeader(0)
 
         return "{transmit_header}, {data_header}, {body}".format(
             transmit_header=self.transmit_header.encode_to_string(),
@@ -104,6 +123,8 @@ class Packet:
     @staticmethod
     def decode_from_string(packet_string: str):
         """Takes a string and decodes it into a Packet object.
+
+        The format is this: sequence num, send time, data type, sender, priority, generate time, body
 
         :param packet_string: The string to be decoded
         :return: The decoded Packet object

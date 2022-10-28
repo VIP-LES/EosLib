@@ -155,3 +155,14 @@ def test_encode_and_decode_string():
 
     decoded_packet.encode()
     assert decoded_packet == test_packet
+
+
+def test_encode_string_no_tx_header():
+    test_packet = get_valid_packet()
+    test_packet.transmit_header = None
+
+    test_string = test_packet.encode_to_string()
+    decoded_packet = Packet.decode_from_string(test_string)
+
+    decoded_packet.encode()
+    assert decoded_packet == test_packet
