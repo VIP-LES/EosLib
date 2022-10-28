@@ -81,9 +81,9 @@ class Packet:
         return packet_bytes
 
     def encode_to_string(self):
-        """ Takes a packet and encodes it into a csv string
+        """ Takes a packet and encodes it into a comma separated string
 
-        :return: The csv string representation of the packet
+        :return: The comma separated string representation of the packet
         """
         self.validate_packet()
 
