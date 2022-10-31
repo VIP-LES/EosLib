@@ -1,5 +1,5 @@
 import pytest
-import EosLib.packet.definitions as definitions
+import EosLib
 
 from datetime import datetime
 from EosLib.packet.packet import TransmitHeader, DataHeader, Packet, PacketFormatError
@@ -8,9 +8,9 @@ from EosLib.packet.exceptions import DataHeaderFormatError, TransmitHeaderFormat
 
 def get_valid_packet():
     transmit_header = TransmitHeader(0, datetime.now())
-    data_header = DataHeader(definitions.Type.TELEMETRY,
-                             definitions.Device.TEMPERATURE_HUMIDITY,
-                             definitions.Priority.TELEMETRY,
+    data_header = DataHeader(EosLib.Type.TELEMETRY,
+                             EosLib.Device.TEMPERATURE_HUMIDITY,
+                             EosLib.Priority.TELEMETRY,
                              datetime.now())
 
     return Packet(bytes("Hello World", 'utf-8'), data_header, transmit_header)
@@ -119,7 +119,7 @@ def test_body_too_large():
 def test_allow_large_body_no_transmit():
     test_packet = get_valid_packet()
     test_packet.body = bytearray(250)
-    test_packet.data_header.data_packet_priority = definitions.Priority.NO_TRANSMIT
+    test_packet.data_header.data_packet_priority = EosLib.Priority.NO_TRANSMIT
 
     assert test_packet.encode_packet()
 

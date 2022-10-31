@@ -1,8 +1,8 @@
 import struct
 
+import EosLib
 from EosLib.packet.transmit_header import TransmitHeader
 from EosLib.packet.data_header import DataHeader
-from EosLib.packet.definitions import HeaderPreamble, Priority, RADIO_MAX_BYTES
 from EosLib.packet.exceptions import PacketFormatError
 
 
@@ -35,12 +35,12 @@ class Packet:
         if self.body is None or len(self.body) == 0:
             raise PacketFormatError("All packets must have a body")
 
-        if self.data_header.data_packet_priority != Priority.NO_TRANSMIT:
+        if self.data_header.data_packet_priority != EosLib.Priority.NO_TRANSMIT:
             total_length = struct.calcsize(TransmitHeader.transmit_header_struct_format_string) + \
                            struct.calcsize(DataHeader.data_header_struct_format_string) + \
                            len(self.body)
 
-            if total_length > RADIO_MAX_BYTES:
+            if total_length > EosLib.RADIO_MAX_BYTES:
                 raise PacketFormatError("Packet is too large")
 
         return True
@@ -72,13 +72,13 @@ class Packet:
         :return: The decoded Packet object
         """
         decoded_packet = Packet()
-        if packet_bytes[0] == HeaderPreamble.TRANSMIT:
+        if packet_bytes[0] == EosLib.HeaderPreamble.TRANSMIT:
             decoded_transmit_header = TransmitHeader.decode(
                 packet_bytes[0:struct.calcsize(TransmitHeader.transmit_header_struct_format_string)])
             decoded_packet.transmit_header = decoded_transmit_header
             packet_bytes = packet_bytes[struct.calcsize(TransmitHeader.transmit_header_struct_format_string):]
 
-        if packet_bytes[0] == HeaderPreamble.DATA:
+        if packet_bytes[0] == EosLib.HeaderPreamble.DATA:
             decoded_data_header = DataHeader.decode(
                 packet_bytes[0:struct.calcsize(DataHeader.data_header_struct_format_string)])
             decoded_packet.data_header = decoded_data_header
@@ -87,9 +87,3 @@ class Packet:
         decoded_packet.body = packet_bytes
 
         return decoded_packet
-
-
-
-
-
-
