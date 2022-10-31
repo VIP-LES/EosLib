@@ -20,7 +20,7 @@ class PacketPriority(IntEnum):
 
 
 @unique
-class PacketDevice(IntEnum):
+class Device(IntEnum):
     TEMPERATURE_HUMIDITY = 0
     PRESSURE = 1
     PARTICULATES = 2

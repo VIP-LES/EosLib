@@ -18,7 +18,7 @@ class DataHeader:
 
     def __init__(self,
                  data_packet_type: definitions.PacketType = None,
-                 data_packet_sender: definitions.PacketDevice = None,
+                 data_packet_sender: definitions.Device = None,
                  data_packet_priority: definitions.PacketPriority = None,
                  data_packet_generate_time: datetime = datetime.now()
                  ):
