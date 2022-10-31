@@ -4,7 +4,7 @@ RADIO_MAX_BYTES = 255
 
 
 @unique
-class PacketType(IntEnum):
+class Type(IntEnum):
     TELEMETRY = 0
     WARNING = 1
     DATA = 2
@@ -12,7 +12,7 @@ class PacketType(IntEnum):
 
 
 @unique
-class PacketPriority(IntEnum):
+class Priority(IntEnum):
     NO_TRANSMIT = 255
     URGENT = 1
     TELEMETRY = 2
