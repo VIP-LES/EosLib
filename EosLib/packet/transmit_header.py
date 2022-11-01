@@ -25,12 +25,17 @@ class TransmitHeader:
         self.send_time = send_time
 
     def __eq__(self, other):
+        """ Compares two transmit headers for value equality
+
+        :param other: the other header to be compared
+        :return:
+        """
         return (self.send_seq_num == other.send_seq_num and
                 math.isclose(self.send_time.timestamp(), other.send_time.timestamp()))
 
     # TODO: Expand validation criteria
     def validate_transmit_header(self):
-        """Checks that all fields in the TransmitHeader object are valid and throws an exception if they aren't.
+        """Checks that all fields in the TransmitHeader object are valid and throws an exception if any aren't.
 
         :return: True if valid
         """
@@ -50,6 +55,14 @@ class TransmitHeader:
         self.validate_transmit_header()
         return struct.pack(TransmitHeader.transmit_header_struct_format_string, HeaderPreamble.TRANSMIT,
                            self.send_seq_num, self.send_time.timestamp())
+
+    def encode_to_string(self):
+        """ Checks that the header is valid and returns a string if it is.
+
+        :return: A bytes object containing the encoded header
+        """
+        return "{send_seq_num}, {send_time}".format(send_seq_num=self.send_seq_num,
+                                                    send_time=self.send_time.isoformat())
 
     @staticmethod
     def decode(header_bytes: bytes):
