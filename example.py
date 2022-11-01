@@ -18,23 +18,23 @@ def log_data(data):
     created_packet = EosLib.packet.packet.Packet()
     created_packet.data_header = EosLib.packet.packet.DataHeader()
 
-    created_packet.data_header.data_packet_type = EosLib.packet.definitions.PacketType.TELEMETRY
-    created_packet.data_header.data_packet_priority = EosLib.packet.definitions.PacketPriority.DATA
-    created_packet.data_header.data_packet_sender = EosLib.packet.definitions.PacketDevice.ALTIMETER
-    created_packet.data_header.data_packet_generate_time = datetime.datetime.now()
+    created_packet.data_header.data_type = EosLib.packet.definitions.PacketType.TELEMETRY
+    created_packet.data_header.priority = EosLib.packet.definitions.PacketPriority.DATA
+    created_packet.data_header.sender = EosLib.packet.definitions.PacketDevice.ALTIMETER
+    created_packet.data_header.generate_time = datetime.datetime.now()
 
     created_packet.body = str(data)
     created_packet.body = created_packet.body.encode()
 
     with open("TestData.dat", 'wb') as f:
-        f.write(created_packet.encode_packet())
+        f.write(created_packet.encode())
 
     return created_packet
 
 
 def transmit(sending_packet: EosLib.packet.packet.Packet):
     global sequence_number
-    priority = sending_packet.data_header.data_packet_priority
+    priority = sending_packet.data_header.priority
     # Manually handle the sequence number, but the date/time is automatically added
     new_transmit_header = EosLib.packet.transmit_header.TransmitHeader(sequence_number)
     sequence_number = (sequence_number + 1) % 256  # sequence number can't exceed 255, this makes sure that we don't
