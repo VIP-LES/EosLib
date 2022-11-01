@@ -1,5 +1,5 @@
 import pytest
-import EosLib
+import EosLib.packet.definitions as definitions
 
 from datetime import datetime
 from EosLib.packet.packet import TransmitHeader, DataHeader, Packet, PacketFormatError
@@ -8,9 +8,9 @@ from EosLib.packet.exceptions import DataHeaderFormatError, TransmitHeaderFormat
 
 def get_valid_packet():
     transmit_header = TransmitHeader(0, datetime.now())
-    data_header = DataHeader(EosLib.Type.TELEMETRY,
-                             EosLib.Device.TEMPERATURE_HUMIDITY,
-                             EosLib.Priority.TELEMETRY,
+    data_header = DataHeader(definitions.PacketType.TELEMETRY,
+                             definitions.PacketDevice.GPS,
+                             definitions.PacketPriority.TELEMETRY,
                              datetime.now())
 
     return Packet(bytes("Hello World", 'utf-8'), data_header, transmit_header)
@@ -42,28 +42,28 @@ def test_validate_good_data_header():
 
 def test_validate_bad_data_header_type():
     test_packet = get_valid_packet()
-    test_packet.data_header.data_packet_type = None
+    test_packet.data_header.data_type = None
     with pytest.raises(DataHeaderFormatError):
         test_packet.data_header.validate_data_header()
 
 
 def test_validate_bad_data_sender():
     test_packet = get_valid_packet()
-    test_packet.data_header.data_packet_sender = 256
+    test_packet.data_header.sender = 256
     with pytest.raises(DataHeaderFormatError):
         test_packet.data_header.validate_data_header()
 
 
 def test_validate_bad_data_priority():
     test_packet = get_valid_packet()
-    test_packet.data_header.data_packet_priority = 256
+    test_packet.data_header.priority = 256
     with pytest.raises(DataHeaderFormatError):
         test_packet.data_header.validate_data_header()
 
 
 def test_validate_bad_data_time():
     test_packet = get_valid_packet()
-    test_packet.data_header.data_packet_generate_time = None
+    test_packet.data_header.generate_time = None
     with pytest.raises(DataHeaderFormatError):
         test_packet.data_header.validate_data_header()
 
@@ -75,7 +75,7 @@ def test_validate_body_only_packet():
     model_packet.data_header = None
 
     with pytest.raises(PacketFormatError):
-        model_packet.encode_packet()
+        model_packet.encode()
 
 
 def test_validate_empty_body_packet():
@@ -83,16 +83,17 @@ def test_validate_empty_body_packet():
     model_packet.body = None
 
     with pytest.raises(PacketFormatError):
-        model_packet.encode_packet()
+        model_packet.encode()
 
 
 def test_encode_decode_packet():
     model_packet = get_valid_packet()
     test_packet = get_valid_packet()
 
-    encoded_packet = test_packet.encode_packet()
-    decoded_packet = Packet.decode_packet(encoded_packet)
+    encoded_packet = test_packet.encode()
+    decoded_packet = Packet.decode(encoded_packet)
 
+    decoded_packet.encode()
     assert model_packet == decoded_packet
 
 
@@ -103,25 +104,34 @@ def test_encode_decode_data_only_packet():
     model_packet.transmit_header = None
     test_packet.transmit_header = None
 
-    encoded_packet = test_packet.encode_packet()
-    decoded_packet = Packet.decode_packet(encoded_packet)
+    encoded_packet = test_packet.encode()
+    decoded_packet = Packet.decode(encoded_packet)
 
+    decoded_packet.encode()
     assert model_packet == decoded_packet
 
 
 def test_body_too_large():
     test_packet = get_valid_packet()
-    test_packet.body = bytearray(250)
+    test_packet.body = bytes(250)
     with pytest.raises(PacketFormatError):
-        test_packet.encode_packet()
+        test_packet.encode()
+
+
+def test_illegal_body_type():
+    test_packet = get_valid_packet()
+    test_packet.body = "Hello World"
+
+    with pytest.raises(PacketFormatError):
+        test_packet.encode()
 
 
 def test_allow_large_body_no_transmit():
     test_packet = get_valid_packet()
-    test_packet.body = bytearray(250)
-    test_packet.data_header.data_packet_priority = EosLib.Priority.NO_TRANSMIT
+    test_packet.body = bytes(250)
+    test_packet.data_header.priority = definitions.PacketPriority.NO_TRANSMIT
 
-    assert test_packet.encode_packet()
+    assert test_packet.encode()
 
 
 def test_standalone_data_header_validate():
@@ -136,3 +146,23 @@ def test_standalone_transmit_header_validate():
 
     with pytest.raises(PacketFormatError):
         TransmitHeader.decode(test_header)
+
+
+def test_encode_and_decode_string():
+    test_packet = get_valid_packet()
+    test_string = test_packet.encode_to_string()
+    decoded_packet = Packet.decode_from_string(test_string)
+
+    decoded_packet.encode()
+    assert decoded_packet == test_packet
+
+
+def test_encode_string_no_tx_header():
+    test_packet = get_valid_packet()
+    test_packet.transmit_header = None
+
+    test_string = test_packet.encode_to_string()
+    decoded_packet = Packet.decode_from_string(test_string)
+
+    decoded_packet.encode()
+    assert decoded_packet == test_packet
