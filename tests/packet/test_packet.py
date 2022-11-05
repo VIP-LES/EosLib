@@ -8,9 +8,9 @@ from EosLib.packet.exceptions import DataHeaderFormatError, TransmitHeaderFormat
 
 def get_valid_packet():
     transmit_header = TransmitHeader(0, datetime.now())
-    data_header = DataHeader(definitions.PacketType.TELEMETRY,
-                             definitions.PacketDevice.GPS,
-                             definitions.PacketPriority.TELEMETRY,
+    data_header = DataHeader(definitions.Type.TELEMETRY,
+                             definitions.Device.GPS,
+                             definitions.Priority.TELEMETRY,
                              datetime.now())
 
     return Packet(bytes("Hello World", 'utf-8'), data_header, transmit_header)
@@ -129,7 +129,7 @@ def test_illegal_body_type():
 def test_allow_large_body_no_transmit():
     test_packet = get_valid_packet()
     test_packet.body = bytes(250)
-    test_packet.data_header.priority = definitions.PacketPriority.NO_TRANSMIT
+    test_packet.data_header.priority = definitions.Priority.NO_TRANSMIT
 
     assert test_packet.encode()
 

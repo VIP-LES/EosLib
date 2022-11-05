@@ -4,7 +4,7 @@ import struct
 
 from EosLib.packet.transmit_header import TransmitHeader
 from EosLib.packet.data_header import DataHeader
-from EosLib.packet.definitions import HeaderPreamble, PacketPriority, RADIO_MAX_BYTES
+from EosLib.packet.definitions import HeaderPreamble, Priority, RADIO_MAX_BYTES
 from EosLib.packet.exceptions import PacketFormatError
 
 
@@ -51,7 +51,7 @@ class Packet:
         if not isinstance(self.body, bytes):
             raise PacketFormatError("Body should be of type bytes")
 
-        if self.data_header.priority != PacketPriority.NO_TRANSMIT:
+        if self.data_header.priority != Priority.NO_TRANSMIT:
             total_length = struct.calcsize(TransmitHeader.transmit_header_struct_format_string) + \
                            struct.calcsize(DataHeader.data_header_struct_format_string) + \
                            len(self.body)
