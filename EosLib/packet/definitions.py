@@ -1,6 +1,23 @@
+import struct
 from enum import IntEnum, unique
 
+
+transmit_header_struct_format_string = "!" \
+                                       "B" \
+                                       "B" \
+                                       "d"
+
+data_header_struct_format_string = "!" \
+                                   "B" \
+                                   "B" \
+                                   "B" \
+                                   "B" \
+                                   "d"
+
 RADIO_MAX_BYTES = 255
+BODY_MAX_BYTES = RADIO_MAX_BYTES - \
+                 struct.calcsize(data_header_struct_format_string) + \
+                 struct.calcsize(transmit_header_struct_format_string)
 
 
 @unique
@@ -53,5 +70,11 @@ class Device(IntEnum):
 
 @unique
 class HeaderPreamble(IntEnum):
-    DATA = 2,
-    TRANSMIT = 1
+    V010DATA = 2,
+    V010TRANSMIT = 1,
+    DATA = 3,
+    TRANSMIT = 4
+
+
+old_data_headers = [HeaderPreamble.V010DATA]
+old_transmit_headers = [HeaderPreamble.V010TRANSMIT]

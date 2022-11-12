@@ -4,7 +4,8 @@ import struct
 
 from EosLib.packet.transmit_header import TransmitHeader
 from EosLib.packet.data_header import DataHeader
-from EosLib.packet.definitions import HeaderPreamble, Priority, RADIO_MAX_BYTES
+from EosLib.packet.definitions import HeaderPreamble, Priority, RADIO_MAX_BYTES, transmit_header_struct_format_string, \
+    data_header_struct_format_string
 from EosLib.packet.exceptions import PacketFormatError
 
 
@@ -52,8 +53,8 @@ class Packet:
             raise PacketFormatError("Body should be of type bytes")
 
         if self.data_header.priority != Priority.NO_TRANSMIT:
-            total_length = struct.calcsize(TransmitHeader.transmit_header_struct_format_string) + \
-                           struct.calcsize(DataHeader.data_header_struct_format_string) + \
+            total_length = struct.calcsize(transmit_header_struct_format_string) + \
+                           struct.calcsize(data_header_struct_format_string) + \
                            len(self.body)
 
             if total_length > RADIO_MAX_BYTES:
@@ -106,15 +107,15 @@ class Packet:
         decoded_packet = Packet()
         if packet_bytes[0] == HeaderPreamble.TRANSMIT:
             decoded_transmit_header = TransmitHeader.decode(
-                packet_bytes[0:struct.calcsize(TransmitHeader.transmit_header_struct_format_string)])
+                packet_bytes[0:struct.calcsize(transmit_header_struct_format_string)])
             decoded_packet.transmit_header = decoded_transmit_header
-            packet_bytes = packet_bytes[struct.calcsize(TransmitHeader.transmit_header_struct_format_string):]
+            packet_bytes = packet_bytes[struct.calcsize(transmit_header_struct_format_string):]
 
         if packet_bytes[0] == HeaderPreamble.DATA:
             decoded_data_header = DataHeader.decode(
-                packet_bytes[0:struct.calcsize(DataHeader.data_header_struct_format_string)])
+                packet_bytes[0:struct.calcsize(data_header_struct_format_string)])
             decoded_packet.data_header = decoded_data_header
-            packet_bytes = packet_bytes[struct.calcsize(DataHeader.data_header_struct_format_string):]
+            packet_bytes = packet_bytes[struct.calcsize(data_header_struct_format_string):]
 
         decoded_packet.body = packet_bytes
 

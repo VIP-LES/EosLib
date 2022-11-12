@@ -3,18 +3,11 @@ import struct
 
 from datetime import datetime
 from EosLib.packet import definitions
-from EosLib.packet.definitions import HeaderPreamble
+from EosLib.packet.definitions import HeaderPreamble, old_data_headers, data_header_struct_format_string
 from EosLib.packet.exceptions import PacketFormatError, DataHeaderFormatError
 
 
 class DataHeader:
-
-    data_header_struct_format_string = "!" \
-                                       "B" \
-                                       "B" \
-                                       "B" \
-                                       "B" \
-                                       "d"
 
     def __init__(self,
                  data_type: definitions.Type = None,
@@ -64,7 +57,7 @@ class DataHeader:
         :return: A bytes object containing the encoded header
         """
         self.validate_data_header()
-        return struct.pack(DataHeader.data_header_struct_format_string,
+        return struct.pack(data_header_struct_format_string,
                            HeaderPreamble.DATA,
                            self.data_type,
                            self.sender,
@@ -91,7 +84,10 @@ class DataHeader:
         """
         if header_bytes[0] != HeaderPreamble.DATA:
             raise PacketFormatError("Not a valid data header")
+        elif header_bytes[0] in old_data_headers:
+            raise PacketFormatError("Created by an incompatible version of EosLib")
 
-        unpacked = struct.unpack(DataHeader.data_header_struct_format_string, header_bytes)
-        decoded_header = DataHeader(unpacked[1], unpacked[2], unpacked[3], datetime.fromtimestamp(unpacked[4]))
+        unpacked = struct.unpack(data_header_struct_format_string, header_bytes)
+        decoded_header = DataHeader(unpacked[1], unpacked[2], unpacked[3],
+                                    datetime.fromtimestamp(unpacked[4]))
         return decoded_header
