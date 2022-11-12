@@ -143,10 +143,11 @@ class Packet:
         decoded_data_header.data_type = int(packet_array[2])
         decoded_data_header.sender = int(packet_array[3])
         decoded_data_header.priority = int(packet_array[4])
-        decoded_data_header.generate_time = datetime.datetime.fromisoformat(packet_array[5])
+        decoded_data_header.destination = int(packet_array[5])
+        decoded_data_header.generate_time = datetime.datetime.fromisoformat(packet_array[6])
 
         decoded_packet.transmit_header = decoded_transmit_header
         decoded_packet.data_header = decoded_data_header
-        decoded_packet.body = bytes(packet_array[6], 'utf-8')
+        decoded_packet.body = bytes(packet_array[7], 'utf-8')
 
         return decoded_packet

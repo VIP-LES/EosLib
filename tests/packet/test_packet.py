@@ -11,6 +11,7 @@ def get_valid_packet():
     data_header = DataHeader(definitions.Type.TELEMETRY,
                              definitions.Device.GPS,
                              definitions.Priority.TELEMETRY,
+                             definitions.Device.GPS,
                              datetime.now())
 
     return Packet(bytes("Hello World", 'utf-8'), data_header, transmit_header)
@@ -57,6 +58,13 @@ def test_validate_bad_data_sender():
 def test_validate_bad_data_priority():
     test_packet = get_valid_packet()
     test_packet.data_header.priority = 256
+    with pytest.raises(DataHeaderFormatError):
+        test_packet.data_header.validate_data_header()
+
+
+def test_validate_bad_destination():
+    test_packet = get_valid_packet()
+    test_packet.data_header.destination = 256
     with pytest.raises(DataHeaderFormatError):
         test_packet.data_header.validate_data_header()
 
@@ -113,7 +121,7 @@ def test_encode_decode_data_only_packet():
 
 def test_body_too_large():
     test_packet = get_valid_packet()
-    test_packet.body = bytes(250)
+    test_packet.body = bytes(definitions.BODY_MAX_BYTES+1)
     with pytest.raises(PacketFormatError):
         test_packet.encode()
 
@@ -128,9 +136,15 @@ def test_illegal_body_type():
 
 def test_allow_large_body_no_transmit():
     test_packet = get_valid_packet()
-    test_packet.body = bytes(250)
+    test_packet.body = bytes(definitions.BODY_MAX_BYTES + 1)
     test_packet.data_header.priority = definitions.Priority.NO_TRANSMIT
 
+    assert test_packet.encode()
+
+
+def test_max_body_size():
+    test_packet = get_valid_packet()
+    test_packet.body = bytes(definitions.BODY_MAX_BYTES)
     assert test_packet.encode()
 
 
