@@ -18,9 +18,9 @@ def log_data(data):
     created_packet = EosLib.packet.packet.Packet()
     created_packet.data_header = EosLib.packet.packet.DataHeader()
 
-    created_packet.data_header.data_type = EosLib.packet.definitions.PacketType.TELEMETRY
-    created_packet.data_header.priority = EosLib.packet.definitions.PacketPriority.DATA
-    created_packet.data_header.sender = EosLib.packet.definitions.PacketDevice.ALTIMETER
+    created_packet.data_header.data_type = EosLib.packet.definitions.Type.TELEMETRY
+    created_packet.data_header.priority = EosLib.packet.definitions.Priority.DATA
+    created_packet.data_header.sender = EosLib.packet.definitions.Device.ALTIMETER
     created_packet.data_header.generate_time = datetime.datetime.now()
 
     created_packet.body = str(data)
