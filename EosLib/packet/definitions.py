@@ -2,25 +2,6 @@ import struct
 from enum import IntEnum, unique
 
 
-transmit_header_struct_format_string = "!" \
-                                       "B" \
-                                       "B" \
-                                       "d"
-
-data_header_struct_format_string = "!" \
-                                   "B" \
-                                   "B" \
-                                   "B" \
-                                   "B" \
-                                   "B" \
-                                   "d"
-
-RADIO_MAX_BYTES = 255
-BODY_MAX_BYTES = RADIO_MAX_BYTES - \
-                 struct.calcsize(data_header_struct_format_string) - \
-                 struct.calcsize(transmit_header_struct_format_string)
-
-
 @unique
 class Type(IntEnum):
     TELEMETRY = 0

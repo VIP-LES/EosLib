@@ -2,11 +2,16 @@ import math
 import struct
 
 from datetime import datetime
-from EosLib.packet.definitions import HeaderPreamble, old_transmit_headers, transmit_header_struct_format_string
+from EosLib.packet.definitions import HeaderPreamble, old_transmit_headers
 from EosLib.packet.exceptions import TransmitHeaderFormatError
 
 
 class TransmitHeader:
+
+    transmit_header_struct_format_string = "!" \
+                                           "B" \
+                                           "B" \
+                                           "d"
 
     def __init__(self,
                  send_seq_num: int = None,
@@ -48,7 +53,7 @@ class TransmitHeader:
         :return: A bytes object containing the encoded header
         """
         self.validate_transmit_header()
-        return struct.pack(transmit_header_struct_format_string, HeaderPreamble.TRANSMIT,
+        return struct.pack(TransmitHeader.transmit_header_struct_format_string, HeaderPreamble.TRANSMIT,
                            self.send_seq_num, self.send_time.timestamp())
 
     def encode_to_string(self):
@@ -71,6 +76,6 @@ class TransmitHeader:
         elif header_bytes[0] != HeaderPreamble.TRANSMIT:
             raise TransmitHeaderFormatError("Not a valid transmit header")
 
-        unpacked = struct.unpack(transmit_header_struct_format_string, header_bytes)
+        unpacked = struct.unpack(TransmitHeader.transmit_header_struct_format_string, header_bytes)
         decoded_header = TransmitHeader(unpacked[1], datetime.fromtimestamp(unpacked[2]))
         return decoded_header

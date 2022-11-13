@@ -121,7 +121,7 @@ def test_encode_decode_data_only_packet():
 
 def test_body_too_large():
     test_packet = get_valid_packet()
-    test_packet.body = bytes(definitions.BODY_MAX_BYTES+1)
+    test_packet.body = bytes(Packet.radio_body_max_bytes + 1)
     with pytest.raises(PacketFormatError):
         test_packet.encode()
 
@@ -136,7 +136,7 @@ def test_illegal_body_type():
 
 def test_allow_large_body_no_transmit():
     test_packet = get_valid_packet()
-    test_packet.body = bytes(definitions.BODY_MAX_BYTES + 1)
+    test_packet.body = bytes(Packet.radio_body_max_bytes + 1)
     test_packet.data_header.priority = definitions.Priority.NO_TRANSMIT
 
     assert test_packet.encode()
@@ -144,7 +144,7 @@ def test_allow_large_body_no_transmit():
 
 def test_max_body_size():
     test_packet = get_valid_packet()
-    test_packet.body = bytes(definitions.BODY_MAX_BYTES)
+    test_packet.body = bytes(Packet.radio_body_max_bytes)
     assert test_packet.encode()
 
 
