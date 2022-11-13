@@ -72,10 +72,9 @@ class Device(IntEnum):
 @unique
 class HeaderPreamble(IntEnum):
     V010DATA = 2,
-    V010TRANSMIT = 1,
-    DATA = 3,
-    TRANSMIT = 4
+    TRANSMIT = 1,
+    DATA = 3
 
 
 old_data_headers = [HeaderPreamble.V010DATA]
-old_transmit_headers = [HeaderPreamble.V010TRANSMIT]
+old_transmit_headers = []
