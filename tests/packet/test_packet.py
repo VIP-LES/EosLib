@@ -180,3 +180,14 @@ def test_encode_string_no_tx_header():
 
     decoded_packet.encode()
     assert decoded_packet == test_packet
+
+
+def test_old_data_header_version():
+    test_packet = get_valid_packet()
+    test_packet.transmit_header = None
+
+    encoded_bytes = test_packet.encode()
+    old_encoded_bytes = b'\x02' + encoded_bytes[1:]
+
+    with pytest.raises(PacketFormatError):
+        Packet.decode(old_encoded_bytes)

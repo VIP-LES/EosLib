@@ -116,6 +116,8 @@ class Packet:
                 packet_bytes[0:struct.calcsize(data_header_struct_format_string)])
             decoded_packet.data_header = decoded_data_header
             packet_bytes = packet_bytes[struct.calcsize(data_header_struct_format_string):]
+        else:
+            raise PacketFormatError("Packet does not contain a header")
 
         decoded_packet.body = packet_bytes
 

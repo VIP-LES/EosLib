@@ -91,10 +91,10 @@ class DataHeader:
         :param header_bytes: The bytes containing a data header at the front
         :return: Data header bytes format
         """
-        if header_bytes[0] != HeaderPreamble.DATA:
-            raise PacketFormatError("Not a valid data header")
-        elif header_bytes[0] in old_data_headers:
+        if header_bytes[0] in old_data_headers:
             raise PacketFormatError("Created by an incompatible version of EosLib")
+        elif header_bytes[0] != HeaderPreamble.DATA:
+            raise PacketFormatError("Not a valid data header")
 
         unpacked = struct.unpack(data_header_struct_format_string, header_bytes)
         decoded_header = DataHeader(unpacked[1], unpacked[2], unpacked[3], unpacked[4],
