@@ -2,7 +2,7 @@ import math
 import struct
 
 from datetime import datetime
-from EosLib.packet.definitions import HeaderPreamble
+from EosLib.packet.definitions import HeaderPreamble, old_transmit_headers
 from EosLib.packet.exceptions import TransmitHeaderFormatError
 
 
@@ -71,10 +71,11 @@ class TransmitHeader:
         :param header_bytes: The bytes containing a transmit header at the front
         :return: a decoded TransmitHeader
         """
-        if header_bytes[0] != HeaderPreamble.TRANSMIT:
+        if header_bytes[0] in old_transmit_headers:
+            raise TransmitHeaderFormatError("Created by an incompatible version of EosLib")
+        elif header_bytes[0] != HeaderPreamble.TRANSMIT:
             raise TransmitHeaderFormatError("Not a valid transmit header")
 
         unpacked = struct.unpack(TransmitHeader.transmit_header_struct_format_string, header_bytes)
         decoded_header = TransmitHeader(unpacked[1], datetime.fromtimestamp(unpacked[2]))
         return decoded_header
-

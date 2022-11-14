@@ -1,14 +1,17 @@
 import datetime
 import struct
 
-
 from EosLib.packet.transmit_header import TransmitHeader
 from EosLib.packet.data_header import DataHeader
-from EosLib.packet.definitions import HeaderPreamble, Priority, RADIO_MAX_BYTES
+from EosLib.packet.definitions import HeaderPreamble, Priority
 from EosLib.packet.exceptions import PacketFormatError
 
 
 class Packet:
+    radio_max_bytes = 255
+    radio_body_max_bytes = radio_max_bytes - (struct.calcsize(TransmitHeader.transmit_header_struct_format_string)
+                                              + struct.calcsize(DataHeader.data_header_struct_format_string))
+
     def __init__(self, body: bytes = None, data_header: DataHeader = None, transmit_header: TransmitHeader = None):
         """Initializes a Packet object
 
@@ -56,7 +59,7 @@ class Packet:
                            struct.calcsize(DataHeader.data_header_struct_format_string) + \
                            len(self.body)
 
-            if total_length > RADIO_MAX_BYTES:
+            if total_length > Packet.radio_max_bytes:
                 raise PacketFormatError("Packet is too large")
 
         return True
@@ -115,6 +118,8 @@ class Packet:
                 packet_bytes[0:struct.calcsize(DataHeader.data_header_struct_format_string)])
             decoded_packet.data_header = decoded_data_header
             packet_bytes = packet_bytes[struct.calcsize(DataHeader.data_header_struct_format_string):]
+        else:
+            raise PacketFormatError("Packet does not contain a header")
 
         decoded_packet.body = packet_bytes
 
@@ -142,10 +147,11 @@ class Packet:
         decoded_data_header.data_type = int(packet_array[2])
         decoded_data_header.sender = int(packet_array[3])
         decoded_data_header.priority = int(packet_array[4])
-        decoded_data_header.generate_time = datetime.datetime.fromisoformat(packet_array[5])
+        decoded_data_header.destination = int(packet_array[5])
+        decoded_data_header.generate_time = datetime.datetime.fromisoformat(packet_array[6])
 
         decoded_packet.transmit_header = decoded_transmit_header
         decoded_packet.data_header = decoded_data_header
-        decoded_packet.body = bytes(packet_array[6], 'utf-8')
+        decoded_packet.body = bytes(packet_array[7], 'utf-8')
 
         return decoded_packet

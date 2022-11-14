@@ -1,6 +1,5 @@
+import struct
 from enum import IntEnum, unique
-
-RADIO_MAX_BYTES = 255
 
 
 @unique
@@ -53,5 +52,10 @@ class Device(IntEnum):
 
 @unique
 class HeaderPreamble(IntEnum):
-    DATA = 2,
-    TRANSMIT = 1
+    V010DATA = 2,
+    TRANSMIT = 1,
+    DATA = 3
+
+
+old_data_headers = [HeaderPreamble.V010DATA]
+old_transmit_headers = []
