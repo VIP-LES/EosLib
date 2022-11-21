@@ -8,8 +8,8 @@ from EosLib.packet.exceptions import DataHeaderFormatError, TransmitHeaderFormat
 
 def get_valid_packet():
     transmit_header = TransmitHeader(0, datetime.now())
-    data_header = DataHeader(definitions.Type.TELEMETRY,
-                             definitions.Device.GPS,
+    data_header = DataHeader(definitions.Device.GPS,
+                             definitions.Type.TELEMETRY,
                              definitions.Priority.TELEMETRY,
                              definitions.Device.GPS,
                              datetime.now())

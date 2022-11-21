@@ -15,19 +15,19 @@ def collect_data() -> int:
 
 # This takes the data and generates a packet with a data header according to our needs
 def log_data(data):
-    created_packet = EosLib.packet.packet.Packet()
-    created_packet.data_header = EosLib.packet.packet.DataHeader()
+    data_header = EosLib.packet.packet.DataHeader(EosLib.Device.PRESSURE)
+    data_header.data_type = EosLib.packet.definitions.Type.TELEMETRY
+    data_header.priority = EosLib.packet.definitions.Priority.DATA
+    data_header.sender = EosLib.packet.definitions.Device.PRESSURE
+    data_header.generate_time = datetime.datetime.now()
 
-    created_packet.data_header.data_type = EosLib.packet.definitions.Type.TELEMETRY
-    created_packet.data_header.priority = EosLib.packet.definitions.Priority.DATA
-    created_packet.data_header.sender = EosLib.packet.definitions.Device.ALTIMETER
-    created_packet.data_header.generate_time = datetime.datetime.now()
+    body = str(data)
+    body = body.encode()
 
-    created_packet.body = str(data)
-    created_packet.body = created_packet.body.encode()
+    created_packet = EosLib.packet.packet.Packet(body, data_header)
 
-    with open("TestData.dat", 'wb') as f:
-        f.write(created_packet.encode())
+    with open("TestData.dat", 'w') as f:
+        f.write(created_packet.encode_to_string())
 
     return created_packet
 
