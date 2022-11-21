@@ -4,23 +4,25 @@ from enum import IntEnum, unique
 
 @unique
 class Type(IntEnum):
-    TELEMETRY = 0
-    WARNING = 1
-    DATA = 2
+    NO_TYPE = 0
+    TELEMETRY = 1
+    WARNING = 2
+    DATA = 3
     ERROR = 255
 
 
 @unique
 class Priority(IntEnum):
-    NO_TRANSMIT = 255
-    URGENT = 1
-    TELEMETRY = 2
-    DATA = 10
+    NO_TRANSMIT = 0
+    URGENT = 10
+    TELEMETRY = 9
+    DATA = 1
+    ERROR = 255
 
 
 @unique
 class Device(IntEnum):
-    TEMPERATURE_HUMIDITY = 0
+    NO_DEVICE = 0
     PRESSURE = 1
     PARTICULATES = 2
     IR_VISIBLE_LIGHT = 3
@@ -48,14 +50,16 @@ class Device(IntEnum):
     MISC_2 = 25
     MISC_3 = 26
     MISC_4 = 27
+    TEMPERATURE_HUMIDITY = 28
 
 
 @unique
 class HeaderPreamble(IntEnum):
-    V010DATA = 2,
-    TRANSMIT = 1,
-    DATA = 3
+    V010DATA = 2
+    V020DATA = 3
+    TRANSMIT = 1
+    DATA = 4
 
 
-old_data_headers = [HeaderPreamble.V010DATA]
+old_data_headers = [HeaderPreamble.V010DATA, HeaderPreamble.V020DATA]
 old_transmit_headers = []
