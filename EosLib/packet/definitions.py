@@ -1,5 +1,5 @@
 import struct
-from enum import IntEnum, unique
+from enum import IntEnum, unique, auto
 
 
 @unique
@@ -51,6 +51,12 @@ class Device(IntEnum):
     MISC_3 = 26
     MISC_4 = 27
     TEMPERATURE_HUMIDITY = 28
+    MISC_TEST_1 = 29
+    MISC_TEST_2 = 30
+    MISC_TEST_3 = 31
+    GROUND_STATION_1 = 32
+    GROUND_STATION_2 = 33
+    GROUND_STATION_3 = 34
 
 
 @unique
