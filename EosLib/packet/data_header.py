@@ -18,10 +18,10 @@ class DataHeader:
                                        "d"
 
     def __init__(self,
-                 data_type: definitions.Type = None,
-                 sender: definitions.Device = None,
-                 priority: definitions.Priority = None,
-                 destination: definitions.Device = None,
+                 data_type: definitions.Type = definitions.Type.NO_TYPE,
+                 sender: definitions.Device = definitions.Device.NO_DEVICE,
+                 priority: definitions.Priority = definitions.Priority.NO_TRANSMIT,
+                 destination: definitions.Device = definitions.Device.NO_DEVICE,
                  generate_time: datetime = datetime.now()
                  ):
         self.sender = sender
@@ -48,7 +48,8 @@ class DataHeader:
 
         :return: True if valid
         """
-        if not isinstance(self.sender, int) or not 0 <= self.sender <= 255:
+        if not isinstance(self.sender, int) or not 0 <= self.sender <= 255 or self.sender == \
+                definitions.Device.NO_DEVICE:
             raise DataHeaderFormatError("Invalid Sender")
 
         if not isinstance(self.data_type, int) or not 0 <= self.data_type <= 255:
