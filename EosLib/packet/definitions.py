@@ -13,9 +13,11 @@ class Type(IntEnum):
 @unique
 class Priority(IntEnum):
     NO_TRANSMIT = 0
-    URGENT = 10
+    URGENT = 11
     TELEMETRY = 9
-    DATA = 1
+    DATA_HIGH = 7
+    DATA = 5
+    DATA_LOW = 3
     ERROR = 255
 
 
