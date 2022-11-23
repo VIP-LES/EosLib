@@ -144,7 +144,7 @@ class Packet:
 
         sender = Device(int(packet_array[2]))
         data_type = Type(int(packet_array[3]))
-        priority = Priority(int((packet_array[4])))
+        priority = Priority(int(packet_array[4]))
         destination = Device(int(packet_array[5]))
         generate_time = datetime.datetime.fromisoformat(packet_array[6])
 

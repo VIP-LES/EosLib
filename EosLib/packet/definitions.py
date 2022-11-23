@@ -1,5 +1,4 @@
-import struct
-from enum import IntEnum, unique, auto
+from enum import IntEnum, unique
 
 
 @unique
