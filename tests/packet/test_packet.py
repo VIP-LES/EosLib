@@ -1,4 +1,6 @@
 import pytest
+
+import EosLib
 import EosLib.packet.definitions as definitions
 
 from datetime import datetime
@@ -15,6 +17,12 @@ def get_valid_packet():
                              datetime.now())
 
     return Packet(bytes("Hello World", 'utf-8'), data_header, transmit_header)
+
+
+def test_minimal_constructor():
+    data_header = DataHeader(EosLib.Device.GPS)
+    packet = Packet(b'Hello, World', data_header)
+    packet.encode()
 
 
 def test_validate_good_transmit_header():
