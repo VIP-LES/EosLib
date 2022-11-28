@@ -18,10 +18,10 @@ class DataHeader:
                                        "d"
 
     def __init__(self,
-                 data_type: definitions.Type = None,
-                 sender: definitions.Device = None,
-                 priority: definitions.Priority = None,
-                 destination: definitions.Device = None,
+                 sender: definitions.Device,
+                 data_type: definitions.Type = definitions.Type.NO_TYPE,
+                 priority: definitions.Priority = definitions.Priority.NO_TRANSMIT,
+                 destination: definitions.Device = definitions.Device.NO_DEVICE,
                  generate_time: datetime = datetime.now()
                  ):
         self.sender = sender
@@ -48,7 +48,8 @@ class DataHeader:
 
         :return: True if valid
         """
-        if not isinstance(self.sender, int) or not 0 <= self.sender <= 255:
+        if not isinstance(self.sender, int) or not 0 <= self.sender <= 255 or self.sender == \
+                definitions.Device.NO_DEVICE:
             raise DataHeaderFormatError("Invalid Sender")
 
         if not isinstance(self.data_type, int) or not 0 <= self.data_type <= 255:
@@ -73,8 +74,8 @@ class DataHeader:
         self.validate_data_header()
         return struct.pack(DataHeader.data_header_struct_format_string,
                            HeaderPreamble.DATA,
-                           self.data_type,
                            self.sender,
+                           self.data_type,
                            self.priority,
                            self.destination,
                            self.generate_time.timestamp())
@@ -85,9 +86,9 @@ class DataHeader:
         :return: String encoded data header
         """
         self.validate_data_header()
-        return "{data_type}, {sender}, {priority}, {destination}, " \
-               "{generate_time}".format(data_type=self.data_type,
-                                        sender=self.sender,
+        return "{sender}, {data_type}, {priority}, {destination}, " \
+               "{generate_time}".format(sender=self.sender,
+                                        data_type=self.data_type,
                                         priority=self.priority,
                                         destination=self.destination,
                                         generate_time=self.generate_time.isoformat())

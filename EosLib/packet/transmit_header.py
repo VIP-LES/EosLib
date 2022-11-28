@@ -14,7 +14,7 @@ class TransmitHeader:
                                            "d"
 
     def __init__(self,
-                 send_seq_num: int = None,
+                 send_seq_num: int,
                  send_time: datetime = datetime.now()):
         """Initializes a TransmitHeader object
 
