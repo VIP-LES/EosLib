@@ -3,10 +3,11 @@ from enum import IntEnum, unique
 
 @unique
 class Type(IntEnum):
-    TELEMETRY = 0
-    WARNING = 1
-    DATA = 2
-    POSITION = 3
+    NO_TYPE = 0
+    TELEMETRY = 1
+    WARNING = 2
+    DATA = 3
+    POSITION = 4
     ERROR = 255
 
 
@@ -69,5 +70,5 @@ class HeaderPreamble(IntEnum):
     DATA = 5
 
 
-old_data_headers = [HeaderPreamble.V010DATA, HeaderPreamble.V020DATA]
+old_data_headers = [HeaderPreamble.V010DATA, HeaderPreamble.V020DATA, HeaderPreamble.V030DATA]
 old_transmit_headers = []
