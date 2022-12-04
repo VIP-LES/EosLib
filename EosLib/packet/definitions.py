@@ -1,7 +1,5 @@
 from enum import IntEnum, unique
 
-RADIO_MAX_BYTES = 255
-
 
 @unique
 class Type(IntEnum):
@@ -14,15 +12,18 @@ class Type(IntEnum):
 
 @unique
 class Priority(IntEnum):
-    NO_TRANSMIT = 255
-    URGENT = 1
-    TELEMETRY = 2
-    DATA = 10
+    NO_TRANSMIT = 0
+    URGENT = 11
+    TELEMETRY = 9
+    DATA_HIGH = 7
+    DATA = 5
+    DATA_LOW = 3
+    ERROR = 255
 
 
 @unique
 class Device(IntEnum):
-    TEMPERATURE_HUMIDITY = 0
+    NO_DEVICE = 0
     PRESSURE = 1
     PARTICULATES = 2
     IR_VISIBLE_LIGHT = 3
@@ -50,9 +51,23 @@ class Device(IntEnum):
     MISC_2 = 25
     MISC_3 = 26
     MISC_4 = 27
+    TEMPERATURE_HUMIDITY = 28
+    MISC_TEST_1 = 29
+    MISC_TEST_2 = 30
+    MISC_TEST_3 = 31
+    GROUND_STATION_1 = 32
+    GROUND_STATION_2 = 33
+    GROUND_STATION_3 = 34
 
 
 @unique
 class HeaderPreamble(IntEnum):
-    DATA = 2,
+    V010DATA = 2
+    V020DATA = 3
+    V030DATA = 4
     TRANSMIT = 1
+    DATA = 5
+
+
+old_data_headers = [HeaderPreamble.V010DATA, HeaderPreamble.V020DATA]
+old_transmit_headers = []

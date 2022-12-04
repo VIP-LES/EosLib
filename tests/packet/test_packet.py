@@ -1,4 +1,6 @@
 import pytest
+
+import EosLib
 import EosLib.packet.definitions as definitions
 
 from datetime import datetime
@@ -8,12 +10,19 @@ from EosLib.packet.exceptions import DataHeaderFormatError, TransmitHeaderFormat
 
 def get_valid_packet():
     transmit_header = TransmitHeader(0, datetime.now())
-    data_header = DataHeader(definitions.Type.TELEMETRY,
-                             definitions.Device.GPS,
+    data_header = DataHeader(definitions.Device.GPS,
+                             definitions.Type.TELEMETRY,
                              definitions.Priority.TELEMETRY,
+                             definitions.Device.GPS,
                              datetime.now())
 
     return Packet(bytes("Hello World", 'utf-8'), data_header, transmit_header)
+
+
+def test_minimal_constructor():
+    data_header = DataHeader(EosLib.Device.GPS)
+    packet = Packet(b'Hello, World', data_header)
+    packet.encode()
 
 
 def test_validate_good_transmit_header():
@@ -57,6 +66,13 @@ def test_validate_bad_data_sender():
 def test_validate_bad_data_priority():
     test_packet = get_valid_packet()
     test_packet.data_header.priority = 256
+    with pytest.raises(DataHeaderFormatError):
+        test_packet.data_header.validate_data_header()
+
+
+def test_validate_bad_destination():
+    test_packet = get_valid_packet()
+    test_packet.data_header.destination = 256
     with pytest.raises(DataHeaderFormatError):
         test_packet.data_header.validate_data_header()
 
@@ -113,7 +129,7 @@ def test_encode_decode_data_only_packet():
 
 def test_body_too_large():
     test_packet = get_valid_packet()
-    test_packet.body = bytes(250)
+    test_packet.body = bytes(Packet.radio_body_max_bytes + 1)
     with pytest.raises(PacketFormatError):
         test_packet.encode()
 
@@ -128,9 +144,15 @@ def test_illegal_body_type():
 
 def test_allow_large_body_no_transmit():
     test_packet = get_valid_packet()
-    test_packet.body = bytes(250)
+    test_packet.body = bytes(Packet.radio_body_max_bytes + 1)
     test_packet.data_header.priority = definitions.Priority.NO_TRANSMIT
 
+    assert test_packet.encode()
+
+
+def test_max_body_size():
+    test_packet = get_valid_packet()
+    test_packet.body = bytes(Packet.radio_body_max_bytes)
     assert test_packet.encode()
 
 
@@ -166,3 +188,14 @@ def test_encode_string_no_tx_header():
 
     decoded_packet.encode()
     assert decoded_packet == test_packet
+
+
+def test_old_data_header_version():
+    test_packet = get_valid_packet()
+    test_packet.transmit_header = None
+
+    encoded_bytes = test_packet.encode()
+    old_encoded_bytes = b'\x02' + encoded_bytes[1:]
+
+    with pytest.raises(PacketFormatError):
+        Packet.decode(old_encoded_bytes)

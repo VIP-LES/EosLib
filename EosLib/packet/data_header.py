@@ -3,7 +3,7 @@ import struct
 
 from datetime import datetime
 from EosLib.packet import definitions
-from EosLib.packet.definitions import HeaderPreamble
+from EosLib.packet.definitions import HeaderPreamble, old_data_headers
 from EosLib.packet.exceptions import PacketFormatError, DataHeaderFormatError
 
 
@@ -14,17 +14,20 @@ class DataHeader:
                                        "B" \
                                        "B" \
                                        "B" \
+                                       "B" \
                                        "d"
 
     def __init__(self,
-                 data_type: definitions.Type = None,
-                 sender: definitions.Device = None,
-                 priority: definitions.Priority = None,
+                 sender: definitions.Device,
+                 data_type: definitions.Type = definitions.Type.NO_TYPE,
+                 priority: definitions.Priority = definitions.Priority.NO_TRANSMIT,
+                 destination: definitions.Device = definitions.Device.NO_DEVICE,
                  generate_time: datetime = datetime.now()
                  ):
         self.sender = sender
         self.data_type = data_type
         self.priority = priority
+        self.destination = destination
         self.generate_time = generate_time
 
     def __eq__(self, other):
@@ -36,6 +39,7 @@ class DataHeader:
         return (self.priority == other.priority and
                 self.data_type == other.data_type and
                 self.sender == other.sender and
+                self.destination == other.destination and
                 math.isclose(self.generate_time.timestamp(), other.generate_time.timestamp()))
 
     # TODO: Expand validation criteria
@@ -44,7 +48,8 @@ class DataHeader:
 
         :return: True if valid
         """
-        if not isinstance(self.sender, int) or not 0 <= self.sender <= 255:
+        if not isinstance(self.sender, int) or not 0 <= self.sender <= 255 or self.sender == \
+                definitions.Device.NO_DEVICE:
             raise DataHeaderFormatError("Invalid Sender")
 
         if not isinstance(self.data_type, int) or not 0 <= self.data_type <= 255:
@@ -52,6 +57,9 @@ class DataHeader:
 
         if not isinstance(self.priority, int) or not 0 <= self.priority <= 255:
             raise DataHeaderFormatError("Invalid Priority")
+
+        if not isinstance(self.destination, int) or not 0 <= self.destination <= 255:
+            raise DataHeaderFormatError("Invalid Destination")
 
         if not isinstance(self.generate_time, datetime):
             raise DataHeaderFormatError("Invalid Generate Time")
@@ -66,9 +74,10 @@ class DataHeader:
         self.validate_data_header()
         return struct.pack(DataHeader.data_header_struct_format_string,
                            HeaderPreamble.DATA,
-                           self.data_type,
                            self.sender,
+                           self.data_type,
                            self.priority,
+                           self.destination,
                            self.generate_time.timestamp())
 
     def encode_to_string(self):
@@ -77,10 +86,12 @@ class DataHeader:
         :return: String encoded data header
         """
         self.validate_data_header()
-        return "{data_type}, {sender}, {priority}, {generate_time}".format(data_type=self.data_type,
-                                                                           sender=self.sender,
-                                                                           priority=self.priority,
-                                                                           generate_time=self.generate_time.isoformat())
+        return "{sender}, {data_type}, {priority}, {destination}, " \
+               "{generate_time}".format(sender=self.sender,
+                                        data_type=self.data_type,
+                                        priority=self.priority,
+                                        destination=self.destination,
+                                        generate_time=self.generate_time.isoformat())
 
     @staticmethod
     def decode(header_bytes: bytes):
@@ -89,9 +100,12 @@ class DataHeader:
         :param header_bytes: The bytes containing a data header at the front
         :return: Data header bytes format
         """
-        if header_bytes[0] != HeaderPreamble.DATA:
+        if header_bytes[0] in old_data_headers:
+            raise PacketFormatError("Created by an incompatible version of EosLib")
+        elif header_bytes[0] != HeaderPreamble.DATA:
             raise PacketFormatError("Not a valid data header")
 
         unpacked = struct.unpack(DataHeader.data_header_struct_format_string, header_bytes)
-        decoded_header = DataHeader(unpacked[1], unpacked[2], unpacked[3], datetime.fromtimestamp(unpacked[4]))
+        decoded_header = DataHeader(unpacked[1], unpacked[2], unpacked[3], unpacked[4],
+                                    datetime.fromtimestamp(unpacked[5]))
         return decoded_header
