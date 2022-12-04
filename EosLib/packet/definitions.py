@@ -8,6 +8,7 @@ class Type(IntEnum):
     TELEMETRY = 0
     WARNING = 1
     DATA = 2
+    POSITION = 3
     ERROR = 255
 
 
