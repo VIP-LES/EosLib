@@ -7,6 +7,7 @@ class Type(IntEnum):
     TELEMETRY = 1
     WARNING = 2
     DATA = 3
+    POSITION = 4
     ERROR = 255
 
 
@@ -58,15 +59,17 @@ class Device(IntEnum):
     GROUND_STATION_1 = 32
     GROUND_STATION_2 = 33
     GROUND_STATION_3 = 34
+    ORCHEOSTRATOR = 35
 
 
 @unique
 class HeaderPreamble(IntEnum):
     V010DATA = 2
     V020DATA = 3
+    V030DATA = 4
     TRANSMIT = 1
-    DATA = 4
+    DATA = 5
 
 
-old_data_headers = [HeaderPreamble.V010DATA, HeaderPreamble.V020DATA]
+old_data_headers = [HeaderPreamble.V010DATA, HeaderPreamble.V020DATA, HeaderPreamble.V030DATA]
 old_transmit_headers = []
