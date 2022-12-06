@@ -59,6 +59,7 @@ class Device(IntEnum):
     GROUND_STATION_1 = 32
     GROUND_STATION_2 = 33
     GROUND_STATION_3 = 34
+    ORCHEOSTRATOR = 35
 
 
 @unique
