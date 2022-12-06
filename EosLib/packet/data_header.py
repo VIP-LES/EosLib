@@ -22,8 +22,10 @@ class DataHeader:
                  data_type: definitions.Type = definitions.Type.NO_TYPE,
                  priority: definitions.Priority = definitions.Priority.NO_TRANSMIT,
                  destination: definitions.Device = definitions.Device.NO_DEVICE,
-                 generate_time: datetime = datetime.now()
+                 generate_time: datetime = None
                  ):
+        if generate_time is None:
+            generate_time = datetime.now()
         self.sender = sender
         self.data_type = data_type
         self.priority = priority
