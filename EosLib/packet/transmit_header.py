@@ -15,12 +15,15 @@ class TransmitHeader:
 
     def __init__(self,
                  send_seq_num: int,
-                 send_time: datetime = datetime.now()):
+                 send_time: datetime = None):
         """Initializes a TransmitHeader object
 
         :param send_seq_num: The sequence number assigned at the transmitter
         :param send_time: The time the packet is sent to the transmitter
         """
+        if send_time is None:
+            send_time = datetime.now()
+
         self.send_seq_num = send_seq_num
         self.send_time = send_time
 
