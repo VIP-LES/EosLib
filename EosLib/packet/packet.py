@@ -34,6 +34,10 @@ class Packet:
                 self.body == other.body)
 
     def __str__(self):
+        """ Creates a readable representation of the current packet
+
+        :return: A readable representation of the packet
+        """
         output_string = ""
         if self.transmit_header is None:
             output_string += "No transmit header\n"
