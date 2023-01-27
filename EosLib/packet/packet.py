@@ -34,21 +34,30 @@ class Packet:
                 self.body == other.body)
 
     def __str__(self):
-        a = ""
-        a += f"Transmit Header:\n" \
-             f"\tSend time:{self.transmit_header.send_time}\n" \
-             f"\tSequence number: {self.transmit_header.send_seq_num}\n"
+        output_string = ""
+        if self.transmit_header is None:
+            output_string += "No transmit header\n"
+        else:
+            output_string += f"Transmit Header:\n" \
+                             f"\tSend time:{self.transmit_header.send_time}\n" \
+                             f"\tSequence number: {self.transmit_header.send_seq_num}\n"
 
-        a += f"Data Header:\n" \
-             f"\tSender: {self.data_header.sender}\n" \
-             f"\tData type: {self.data_header.data_type}\n" \
-             f"\tPriority: {self.data_header.priority}\n" \
-             f"\tDestination: {self.data_header.destination}\n" \
-             f"\tGenerate Time: {self.data_header.generate_time}\n"
+        if self.data_header is None:
+            output_string += "No data header\n"
+        else:
+            output_string += f"Data Header:\n" \
+                             f"\tSender: {self.data_header.sender.name}\n" \
+                             f"\tData type: {self.data_header.data_type.name}\n" \
+                             f"\tPriority: {self.data_header.priority.name}\n" \
+                             f"\tDestination: {self.data_header.destination.name}\n" \
+                             f"\tGenerate Time: {self.data_header.generate_time}\n"
 
-        a += f"Body: {self.body}"
-        return a
+        if self.body is None:
+            output_string += "No body"
+        else:
+            output_string += f"Body: {self.body}"
 
+        return output_string
 
     def validate_packet(self):
         """ Validates that all fields in the packet are valid and throws an exception if they aren't
