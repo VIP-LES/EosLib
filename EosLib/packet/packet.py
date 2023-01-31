@@ -33,6 +33,36 @@ class Packet:
                 self.transmit_header == other.transmit_header and
                 self.body == other.body)
 
+    def __str__(self):
+        """ Creates a readable representation of the current packet
+
+        :return: A readable representation of the packet
+        """
+        output_string = ""
+        if self.transmit_header is None:
+            output_string += "No transmit header\n"
+        else:
+            output_string += f"Transmit Header:\n" \
+                             f"\tSend time:{self.transmit_header.send_time}\n" \
+                             f"\tSequence number: {self.transmit_header.send_seq_num}\n"
+
+        if self.data_header is None:
+            output_string += "No data header\n"
+        else:
+            output_string += f"Data Header:\n" \
+                             f"\tSender: {self.data_header.sender.name}\n" \
+                             f"\tData type: {self.data_header.data_type.name}\n" \
+                             f"\tPriority: {self.data_header.priority.name}\n" \
+                             f"\tDestination: {self.data_header.destination.name}\n" \
+                             f"\tGenerate Time: {self.data_header.generate_time}\n"
+
+        if self.body is None:
+            output_string += "No body"
+        else:
+            output_string += f"Body: {self.body}"
+
+        return output_string
+
     def validate_packet(self):
         """ Validates that all fields in the packet are valid and throws an exception if they aren't
 

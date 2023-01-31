@@ -199,3 +199,81 @@ def test_old_data_header_version():
 
     with pytest.raises(PacketFormatError):
         Packet.decode(old_encoded_bytes)
+
+
+def test_packet_print_two_headers():
+    test_packet = get_valid_packet()
+
+    # Set the times to non-now times to be sure they aren't being overridden by datetime.now()
+    test_packet.data_header.generate_time = datetime.fromisoformat("2001-01-07 01:23:45.000")
+    test_packet.transmit_header.send_time = datetime.fromisoformat("2002-01-07 01:23:45.000")
+
+    expected_string = "Transmit Header:\n" \
+                      "\tSend time:2002-01-07 01:23:45\n" \
+                      "\tSequence number: 0\n" \
+                      "Data Header:\n" \
+                      "\tSender: GPS\n" \
+                      "\tData type: TELEMETRY\n" \
+                      "\tPriority: TELEMETRY\n" \
+                      "\tDestination: GPS\n" \
+                      "\tGenerate Time: 2001-01-07 01:23:45\n" \
+                      "Body: b'Hello World'"
+
+    assert expected_string == test_packet.__str__()
+
+
+def test_packet_data_header_only():
+    test_packet = get_valid_packet()
+
+    # Set the times to non-now times to be sure they aren't being overridden by datetime.now()
+    test_packet.data_header.generate_time = datetime.fromisoformat("2001-01-07 01:23:45.000")
+
+    test_packet.transmit_header = None
+
+    expected_string = "No transmit header\n" \
+                      "Data Header:\n" \
+                      "\tSender: GPS\n" \
+                      "\tData type: TELEMETRY\n" \
+                      "\tPriority: TELEMETRY\n" \
+                      "\tDestination: GPS\n" \
+                      "\tGenerate Time: 2001-01-07 01:23:45\n" \
+                      "Body: b'Hello World'"
+
+    assert expected_string == test_packet.__str__()
+
+
+def test_packet_no_headers():
+    # This shouldn't ever happen, but is a possible state so we should test for it.
+    test_packet = get_valid_packet()
+
+    test_packet.data_header = None
+    test_packet.transmit_header = None
+
+    expected_string = "No transmit header\n" \
+                      "No data header\n" \
+                      "Body: b'Hello World'"
+
+    assert expected_string == test_packet.__str__()
+
+
+def test_packet_print_no_body():
+    test_packet = get_valid_packet()
+
+    # Set the times to non-now times to be sure they aren't being overridden by datetime.now()
+    test_packet.data_header.generate_time = datetime.fromisoformat("2001-01-07 01:23:45.000")
+    test_packet.transmit_header.send_time = datetime.fromisoformat("2002-01-07 01:23:45.000")
+
+    test_packet.body = None
+
+    expected_string = "Transmit Header:\n" \
+                      "\tSend time:2002-01-07 01:23:45\n" \
+                      "\tSequence number: 0\n" \
+                      "Data Header:\n" \
+                      "\tSender: GPS\n" \
+                      "\tData type: TELEMETRY\n" \
+                      "\tPriority: TELEMETRY\n" \
+                      "\tDestination: GPS\n" \
+                      "\tGenerate Time: 2001-01-07 01:23:45\n" \
+                      "No body"
+
+    assert expected_string == test_packet.__str__()
