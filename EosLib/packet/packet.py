@@ -22,6 +22,7 @@ class Packet:
         self.body = body  # type: bytes
         self.data_header = data_header  # type: DataHeader
         self.transmit_header = transmit_header  # type: TransmitHeader
+        self.validate_packet() # checks if packet is valid
 
     def __eq__(self, other):
         """ Compares two packets for value equality
@@ -128,6 +129,71 @@ class Packet:
             transmit_header=self.transmit_header.encode_to_string(),
             data_header=self.data_header.encode_to_string(),
             body=self.body.decode())
+
+    def set_data_header(self, new_data_header: DataHeader):
+        """ Setter that sets new data header
+
+        :return: boolean True set is successful
+        """
+        if new_data_header is not None:
+            if new_data_header.validate_data_header():
+                self.data_header = new_data_header
+
+        return True
+
+    def set_transmit_header(self, new_transmit_header: TransmitHeader):
+        """ Setter that sets new transmit header
+
+        :return: boolean True set is successful
+        """
+        if new_transmit_header is not None:
+            if new_transmit_header.validate_transmit_header():
+                self.transmit_header = new_transmit_header
+
+        return True
+
+    def set_body(self, new_body: bytes):
+        """ Setter that sets new body
+
+        :return: boolean True set is successful
+        """
+        if new_body is not None and len(new_body) == 0:
+            self.body = new_body
+
+    @staticmethod
+    def check_data_header(data_header: DataHeader):
+        """ Takes a packet data header and checks to see if it is valid
+
+        :return: boolean True if valid
+        """
+        if data_header is None:
+            raise PacketFormatError("All packets must have a data header")
+        else:
+            data_header.validate_data_header()
+
+        return True
+
+    @staticmethod
+    def check_transmit_header(transmit_header: TransmitHeader):
+        """ Takes a packet transmit header and checks to see if it is valid
+
+        :return: boolean True if valid
+        """
+        if transmit_header is not None:
+            transmit_header.validate_transmit_header()
+
+        return True
+
+    @staticmethod
+    def check_body(body: bytes):
+        """ Takes a packet body and checks to see if it is valid
+
+        :return: boolean True if valid
+        """
+        if body is None or len(body) == 0:
+            raise PacketFormatError("All packets must have a body")
+
+        return True
 
     @staticmethod
     def decode(packet_bytes: bytes):
