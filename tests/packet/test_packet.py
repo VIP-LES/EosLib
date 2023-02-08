@@ -4,23 +4,23 @@ import EosLib
 import EosLib.packet.definitions as definitions
 
 from datetime import datetime
-from EosLib.packet import TransmitHeader, DataHeader, Packet, PacketFormatError
+from EosLib.packet.packet import TransmitHeader, DataHeader, Packet, PacketFormatError
 from EosLib.packet.exceptions import DataHeaderFormatError, TransmitHeaderFormatError
-
+from EosLib.device import Device
 
 def get_valid_packet():
     transmit_header = TransmitHeader(0, datetime.now())
-    data_header = DataHeader(definitions.Device.GPS,
+    data_header = DataHeader(Device.GPS,
                              definitions.Type.TELEMETRY,
                              definitions.Priority.TELEMETRY,
-                             definitions.Device.GPS,
+                             Device.GPS,
                              datetime.now())
 
     return Packet(bytes("Hello World", 'utf-8'), data_header, transmit_header)
 
 
 def test_minimal_constructor():
-    data_header = DataHeader(EosLib.Device.GPS)
+    data_header = DataHeader(Device.GPS)
     packet = Packet(b'Hello, World', data_header)
     packet.encode()
 
