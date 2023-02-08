@@ -8,7 +8,6 @@ from EosLib.packet.exceptions import PacketFormatError, DataHeaderFormatError
 
 
 class DataHeader:
-
     data_header_struct_format_string = "!" \
                                        "B" \
                                        "B" \
@@ -50,17 +49,19 @@ class DataHeader:
 
         :return: True if valid
         """
-        if not isinstance(self.sender, int) or not 0 <= self.sender <= 255 or self.sender == \
-                definitions.Device.NO_DEVICE:
-            raise DataHeaderFormatError("Invalid Sender")
+        # if not isinstance(self.sender, int) or not 0 <= self.sender <= 255 or self.sender == \
+        # definitions.Device.NO_DEVICE:
+        if not isinstance(self.sender, int) or self.sender == definitions.Device.NO_DEVICE:
+            if not self.sender in definitions.Device:
+                raise DataHeaderFormatError("Invalid Sender")
 
-        if not isinstance(self.data_type, int) or not 0 <= self.data_type <= 255:
+        if not isinstance(self.data_type, int) or not self.data_type in definitions.Type:
             raise DataHeaderFormatError("Invalid Type")
 
-        if not isinstance(self.priority, int) or not 0 <= self.priority <= 255:
+        if not isinstance(self.priority, int) or not self.priority in definitions.Priority:
             raise DataHeaderFormatError("Invalid Priority")
 
-        if not isinstance(self.destination, int) or not 0 <= self.destination <= 255:
+        if not isinstance(self.destination, int) or not self.destination in definitions.Type:
             raise DataHeaderFormatError("Invalid Destination")
 
         if not isinstance(self.generate_time, datetime):
