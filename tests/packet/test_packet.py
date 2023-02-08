@@ -4,7 +4,7 @@ import EosLib
 import EosLib.packet.definitions as definitions
 
 from datetime import datetime
-from EosLib.packet.packet import TransmitHeader, DataHeader, Packet, PacketFormatError
+from EosLib.packet import TransmitHeader, DataHeader, Packet, PacketFormatError
 from EosLib.packet.exceptions import DataHeaderFormatError, TransmitHeaderFormatError
 
 
