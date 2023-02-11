@@ -49,6 +49,7 @@ class DataHeader:
 
         :return: True if valid
         """
+
         if not isinstance(self.sender, int) or self.sender == definitions.Device.NO_DEVICE or\
         not self.sender in definitions.Device:
             raise DataHeaderFormatError("Invalid Sender")
@@ -58,6 +59,7 @@ class DataHeader:
 
         if not isinstance(self.priority, int) or not self.priority in definitions.Priority:
             raise DataHeaderFormatError("Invalid Priority")
+
 
         if not isinstance(self.destination, int) or not self.destination in definitions.Device:
             raise DataHeaderFormatError("Invalid Destination")
