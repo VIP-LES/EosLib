@@ -146,9 +146,8 @@ class Packet:
 
         :return: boolean True set is successful
         """
-        if new_transmit_header is not None:
-            if new_transmit_header.validate_transmit_header():
-                self.transmit_header = new_transmit_header
+        if new_transmit_header.validate_transmit_header():
+            self.transmit_header = new_transmit_header
 
         return True
 
@@ -190,7 +189,7 @@ class Packet:
 
         :return: boolean True if valid
         """
-        if body is None or len(body) == 0:
+        if body is None or len(body) == 0 or not isinstance(body, bytes):
             raise PacketFormatError("All packets must have a body")
 
         return True

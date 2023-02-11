@@ -1,8 +1,18 @@
-from enum import IntEnum, unique
+from enum import IntEnum, unique, EnumMeta
+
+
+class EnumMetaClass(EnumMeta):
+    def __contains__(cls, item):
+        try:
+            cls(item)
+        except ValueError:
+            return False
+        else:
+            return True
 
 
 @unique
-class Type(IntEnum):
+class Type(IntEnum, metaclass=EnumMetaClass):
     NO_TYPE = 0
     TELEMETRY = 1
     WARNING = 2
@@ -12,7 +22,7 @@ class Type(IntEnum):
 
 
 @unique
-class Priority(IntEnum):
+class Priority(IntEnum, metaclass=EnumMetaClass):
     NO_TRANSMIT = 0
     URGENT = 11
     TELEMETRY = 9
@@ -23,7 +33,7 @@ class Priority(IntEnum):
 
 
 @unique
-class Device(IntEnum):
+class Device(IntEnum, metaclass=EnumMetaClass):
     NO_DEVICE = 0
     PRESSURE = 1
     PARTICULATES = 2
