@@ -130,7 +130,7 @@ class Packet:
             data_header=self.data_header.encode_to_string(),
             body=self.body.decode())
 
-    def set_data_header(self, new_data_header: DataHeader):
+    def set_data_header(self, new_data_header: DataHeader) -> bool:
         """ Setter that sets new data header
 
         :return: boolean True set is successful
@@ -141,7 +141,7 @@ class Packet:
 
         return True
 
-    def set_transmit_header(self, new_transmit_header: TransmitHeader):
+    def set_transmit_header(self, new_transmit_header: TransmitHeader) -> bool:
         """ Setter that sets new transmit header
 
         :return: boolean True set is successful
@@ -151,16 +151,19 @@ class Packet:
 
         return True
 
-    def set_body(self, new_body: bytes):
+    def set_body(self, new_body: bytes) -> bool:
         """ Setter that sets new body
 
         :return: boolean True set is successful
         """
         if new_body is not None and len(new_body) == 0:
             self.body = new_body
+            return True
+
+        return False
 
     @staticmethod
-    def check_data_header(data_header: DataHeader):
+    def check_data_header(data_header: DataHeader) -> bool:
         """ Takes a packet data header and checks to see if it is valid
 
         :return: boolean True if valid
@@ -173,7 +176,7 @@ class Packet:
         return True
 
     @staticmethod
-    def check_transmit_header(transmit_header: TransmitHeader):
+    def check_transmit_header(transmit_header: TransmitHeader) -> bool:
         """ Takes a packet transmit header and checks to see if it is valid
 
         :return: boolean True if valid
@@ -184,7 +187,7 @@ class Packet:
         return True
 
     @staticmethod
-    def check_body(body: bytes):
+    def check_body(body: bytes) -> bool:
         """ Takes a packet body and checks to see if it is valid
 
         :return: boolean True if valid

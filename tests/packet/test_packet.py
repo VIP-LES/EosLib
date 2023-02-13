@@ -277,3 +277,28 @@ def test_packet_print_no_body():
                       "No body"
 
     assert expected_string == test_packet.__str__()
+
+
+def test_set_data_header():
+    test_packet = get_valid_packet()
+    data_header = DataHeader(definitions.Device.GPS,
+                             definitions.Type.TELEMETRY,
+                             definitions.Priority.TELEMETRY,
+                             definitions.Device.GPS,
+                             datetime.now())
+
+    test_packet.set_data_header(data_header)
+
+
+def test_set_transmit_header():
+    test_packet = get_valid_packet()
+    transmit_header = TransmitHeader(0, datetime.now())
+
+    test_packet.set_transmit_header(transmit_header)
+
+def test_set_body():
+    test_packet = get_valid_packet()
+    body = bytes("temp", 'utf-8')
+
+    test_packet.set_body(body)
+
