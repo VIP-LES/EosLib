@@ -34,7 +34,13 @@ def test_validate_good_transmit_header(packet):
     assert packet.transmit_header.validate_transmit_header()
 
 
-def test_validate_good_data_header(packet):
+@pytest.mark.parametrize("sender", list(definitions.Device)[1:])
+@pytest.mark.parametrize("data_type", definitions.Type)
+@pytest.mark.parametrize("priority", definitions.Priority)
+def test_validate_good_data_header(packet, sender, data_type, priority):
+    packet.data_header.sender = sender
+    packet.data_header.data_type = data_type
+    packet.data_header.priority = priority
     assert packet.data_header.validate_data_header()
 
 
@@ -47,36 +53,30 @@ class TestBadHeaders:
         with pytest.raises(TransmitHeaderFormatError):
             packet.transmit_header.validate_transmit_header()
 
-
     def test_validate_bad_transmit_header_time(self, packet, bad_data_value):
         packet.transmit_header.send_time = bad_data_value
         with pytest.raises(TransmitHeaderFormatError):
             packet.transmit_header.validate_transmit_header()
-
 
     def test_validate_bad_data_header_type(self, packet, bad_data_value):
         packet.data_header.data_type = bad_data_value
         with pytest.raises(DataHeaderFormatError):
             packet.data_header.validate_data_header()
 
-
     def test_validate_bad_data_sender(self, packet, bad_data_value):
         packet.data_header.sender = bad_data_value
         with pytest.raises(DataHeaderFormatError):
             packet.data_header.validate_data_header()
-
 
     def test_validate_bad_data_priority(self, packet, bad_data_value):
         packet.data_header.priority = bad_data_value
         with pytest.raises(DataHeaderFormatError):
             packet.data_header.validate_data_header()
 
-
     def test_validate_bad_destination(self, packet, bad_data_value):
         packet.data_header.destination = bad_data_value
         with pytest.raises(DataHeaderFormatError):
             packet.data_header.validate_data_header()
-
 
     def test_validate_bad_data_time(self, packet, bad_data_value):
         packet.data_header.generate_time = bad_data_value
