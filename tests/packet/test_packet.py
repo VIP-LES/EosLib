@@ -34,13 +34,37 @@ def test_validate_good_transmit_header(packet):
     assert packet.transmit_header.validate_transmit_header()
 
 
-@pytest.mark.parametrize("sender", list(definitions.Device)[1:])
-@pytest.mark.parametrize("data_type", definitions.Type)
-@pytest.mark.parametrize("priority", definitions.Priority)
-def test_validate_good_data_header(packet, sender, data_type, priority):
+@pytest.mark.parametrize("send_seq_num", [0, 255, 3])
+def test_validate_good_transmit_header_send_seq_num(packet, send_seq_num):
+    packet.transmit_header.send_seq_num = send_seq_num
+    assert packet.transmit_header.validate_transmit_header()
+
+
+def test_validate_good_data_header(packet):
+    assert packet.data_header.validate_data_header()
+
+
+@pytest.mark.parametrize("sender", [1, len(definitions.Device) - 1, 14])
+def test_validate_good_data_header_sender(packet, sender):
     packet.data_header.sender = sender
+    assert packet.data_header.validate_data_header()
+
+
+@pytest.mark.parametrize("data_type", [0, 255, 3])
+def test_validate_good_data_header_data_type(packet, data_type):
     packet.data_header.data_type = data_type
+    assert packet.data_header.validate_data_header()
+
+
+@pytest.mark.parametrize("priority", [0, 255, 7])
+def test_validate_good_data_header_priority(packet, priority):
     packet.data_header.priority = priority
+    assert packet.data_header.validate_data_header()
+
+
+@pytest.mark.parametrize("destination", [0, len(definitions.Device) - 1, 3])
+def test_validate_good_data_header_destination(packet, destination):
+    packet.data_header.data_type = destination
     assert packet.data_header.validate_data_header()
 
 
