@@ -82,3 +82,15 @@ class TransmitHeader:
         unpacked = struct.unpack(TransmitHeader.transmit_header_struct_format_string, header_bytes)
         decoded_header = TransmitHeader(unpacked[1], datetime.fromtimestamp(unpacked[2]))
         return decoded_header
+
+
+def check_transmit_header(transmit_header: TransmitHeader) -> bool:
+    """ Takes a packet transmit header and checks to see if it is valid
+
+    :return: boolean True if valid
+    """
+    if transmit_header is not None:
+        transmit_header.validate_transmit_header()
+
+    return True
+

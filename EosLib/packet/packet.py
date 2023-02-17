@@ -163,30 +163,6 @@ class Packet:
         return False
 
     @staticmethod
-    def check_data_header(data_header: DataHeader) -> bool:
-        """ Takes a packet data header and checks to see if it is valid
-
-        :return: boolean True if valid
-        """
-        if data_header is None:
-            raise PacketFormatError("All packets must have a data header")
-        else:
-            data_header.validate_data_header()
-
-        return True
-
-    @staticmethod
-    def check_transmit_header(transmit_header: TransmitHeader) -> bool:
-        """ Takes a packet transmit header and checks to see if it is valid
-
-        :return: boolean True if valid
-        """
-        if transmit_header is not None:
-            transmit_header.validate_transmit_header()
-
-        return True
-
-    @staticmethod
     def check_body(body: bytes) -> bool:
         """ Takes a packet body and checks to see if it is valid
 

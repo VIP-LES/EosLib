@@ -112,3 +112,17 @@ class DataHeader:
         decoded_header = DataHeader(unpacked[1], unpacked[2], unpacked[3], unpacked[4],
                                     datetime.fromtimestamp(unpacked[5]))
         return decoded_header
+
+
+def check_data_header(data_header: DataHeader) -> bool:
+    """ Takes a packet data header and checks to see if it is valid
+
+    :return: boolean True if valid
+    """
+    if data_header is None:
+        raise PacketFormatError("All packets must have a data header")
+    else:
+        data_header.validate_data_header()
+
+    return True
+
