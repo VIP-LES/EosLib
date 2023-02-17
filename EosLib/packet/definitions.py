@@ -8,7 +8,10 @@ class Type(IntEnum):
     WARNING = 2
     DATA = 3
     POSITION = 4
+    COMMAND = 5
+    RESPONSE = 6
     ERROR = 255
+
 
 
 @unique

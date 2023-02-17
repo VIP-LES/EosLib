@@ -9,7 +9,7 @@ from EosLib.packet.exceptions import DataHeaderFormatError, TransmitHeaderFormat
 
 
 def get_valid_packet():
-    transmit_header = TransmitHeader(0, datetime.now())
+    transmit_header = TransmitHeader(0, datetime.now(), 0)
     data_header = DataHeader(definitions.Device.GPS,
                              definitions.Type.TELEMETRY,
                              definitions.Priority.TELEMETRY,
@@ -42,6 +42,16 @@ def test_validate_bad_transmit_header_time():
     test_packet.transmit_header.send_time = None
     with pytest.raises(TransmitHeaderFormatError):
         test_packet.transmit_header.validate_transmit_header()
+
+
+# added new test to test RSSI
+def test_validate_bad_transmit_header_RSSI():
+    test_packet = get_valid_packet()
+    test_packet.transmit_header.send_rssi = None
+    with pytest.raises(TransmitHeaderFormatError):
+        test_packet.transmit_header.validate_transmit_header()
+
+
 
 
 def test_validate_good_data_header():
@@ -163,8 +173,9 @@ def test_standalone_data_header_validate():
         DataHeader.decode(test_header)
 
 
+#check this stuff out
 def test_standalone_transmit_header_validate():
-    test_header = bytearray(10)
+    test_header = bytearray(20)
 
     with pytest.raises(PacketFormatError):
         TransmitHeader.decode(test_header)
@@ -211,6 +222,7 @@ def test_packet_print_two_headers():
     expected_string = "Transmit Header:\n" \
                       "\tSend time:2002-01-07 01:23:45\n" \
                       "\tSequence number: 0\n" \
+                      "\tRSSI: 0\n" \
                       "Data Header:\n" \
                       "\tSender: GPS\n" \
                       "\tData type: TELEMETRY\n" \
@@ -268,6 +280,7 @@ def test_packet_print_no_body():
     expected_string = "Transmit Header:\n" \
                       "\tSend time:2002-01-07 01:23:45\n" \
                       "\tSequence number: 0\n" \
+                      "\tRSSI: 0\n" \
                       "Data Header:\n" \
                       "\tSender: GPS\n" \
                       "\tData type: TELEMETRY\n" \

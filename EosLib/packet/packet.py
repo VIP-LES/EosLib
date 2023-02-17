@@ -44,7 +44,8 @@ class Packet:
         else:
             output_string += f"Transmit Header:\n" \
                              f"\tSend time:{self.transmit_header.send_time}\n" \
-                             f"\tSequence number: {self.transmit_header.send_seq_num}\n"
+                             f"\tSequence number: {self.transmit_header.send_seq_num}\n" \
+                             f"\tRSSI:{self.transmit_header.send_rssi}\n" 
 
         if self.data_header is None:
             output_string += "No data header\n"
@@ -161,7 +162,7 @@ class Packet:
     def decode_from_string(packet_string: str):
         """Takes a string and decodes it into a Packet object.
 
-        The format is this: sequence num, send time, data type, sender, priority, generate time, body
+        The format is this: sequence num, send time, rssi, data type, sender, priority, generate time, body
 
         :param packet_string: The string to be decoded
         :return: The decoded Packet object
@@ -171,14 +172,15 @@ class Packet:
 
         send_seq_num = int(packet_array[0])
         send_time = datetime.datetime.fromisoformat(packet_array[1])
+        send_rssi = int(packet_array[2])
 
-        sender = Device(int(packet_array[2]))
-        data_type = Type(int(packet_array[3]))
-        priority = Priority(int(packet_array[4]))
-        destination = Device(int(packet_array[5]))
-        generate_time = datetime.datetime.fromisoformat(packet_array[6])
+        sender = Device(int(packet_array[3]))
+        data_type = Type(int(packet_array[4]))
+        priority = Priority(int(packet_array[5]))
+        destination = Device(int(packet_array[6]))
+        generate_time = datetime.datetime.fromisoformat(packet_array[7])
 
-        decoded_transmit_header = TransmitHeader(send_seq_num, send_time)
+        decoded_transmit_header = TransmitHeader(send_seq_num, send_time, send_rssi)
         decoded_data_header = DataHeader(sender, data_type, priority, destination, generate_time)
         decoded_packet = Packet(bytes(packet_array[7], 'utf-8'), decoded_data_header, decoded_transmit_header)
 
