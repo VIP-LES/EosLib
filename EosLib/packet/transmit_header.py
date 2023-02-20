@@ -11,12 +11,11 @@ class TransmitHeader:
     transmit_header_struct_format_string = "!" \
                                            "B" \
                                            "B" \
+                                           "B" \
                                            "d" \
-                                           "B" 
-
 
     def __init__(self,
-                 send_seq_num: int, 
+                 send_seq_num: int,
                  send_rssi: int,
                  send_time: datetime = None):
         """Initializes a TransmitHeader object
@@ -66,16 +65,16 @@ class TransmitHeader:
         """
         self.validate_transmit_header()
         return struct.pack(TransmitHeader.transmit_header_struct_format_string, HeaderPreamble.TRANSMIT,
-                           self.send_seq_num, self.send_time.timestamp(), self.send_rssi)
+                           self.send_seq_num,  self.send_rssi, self.send_time.timestamp())
 
     def encode_to_string(self):
         """ Checks that the header is valid and returns a string if it is.
 
         :return: A bytes object containing the encoded header
         """
-        return "{send_seq_num}, {send_time}, {send_rssi}".format(send_seq_num=self.send_seq_num,
-                                                    send_time=self.send_time.isoformat(), 
-                                                    send_rssi = self.send_rssi)
+        return "{send_seq_num},  {send_rssi}, {send_time}".format(send_seq_num=self.send_seq_num,
+                                                                send_rssi=self.send_rssi,
+                                                                send_time=self.send_time.isoformat())
 
     @staticmethod
     def decode(header_bytes: bytes):
@@ -90,5 +89,6 @@ class TransmitHeader:
             raise TransmitHeaderFormatError("Not a valid transmit header")
 
         unpacked = struct.unpack(TransmitHeader.transmit_header_struct_format_string, header_bytes)
-        decoded_header = TransmitHeader(unpacked[1], datetime.fromtimestamp(unpacked[2]), unpacked[2])
+
+        decoded_header = TransmitHeader(unpacked[1], unpacked[2], datetime.fromtimestamp(unpacked[2]))
         return decoded_header

@@ -45,7 +45,7 @@ class Packet:
             output_string += f"Transmit Header:\n" \
                              f"\tSend time:{self.transmit_header.send_time}\n" \
                              f"\tSequence number: {self.transmit_header.send_seq_num}\n" \
-                             f"\tRSSI:{self.transmit_header.send_rssi}\n" 
+                             f"\tRSSI: {self.transmit_header.send_rssi}\n"
 
         if self.data_header is None:
             output_string += "No data header\n"
@@ -105,6 +105,7 @@ class Packet:
 
         packet_bytes = b''
 
+
         if self.transmit_header is not None:
             packet_bytes += self.transmit_header.encode()
 
@@ -123,7 +124,7 @@ class Packet:
 
         # It's easier if we make all the encoded packet string arrays the same length, so we add a fake transmit header
         if self.transmit_header is None:
-            self.transmit_header = TransmitHeader(0)
+            self.transmit_header = TransmitHeader(0, 0)
 
         return "{transmit_header}, {data_header}, {body}".format(
             transmit_header=self.transmit_header.encode_to_string(),
@@ -139,8 +140,13 @@ class Packet:
         """
 
         if packet_bytes[0] == HeaderPreamble.TRANSMIT:
+
+            print("transmit_header_bytes in decode")
+            print(packet_bytes[0:struct.calcsize(TransmitHeader.transmit_header_struct_format_string)])
+
             decoded_transmit_header = TransmitHeader.decode(
                 packet_bytes[0:struct.calcsize(TransmitHeader.transmit_header_struct_format_string)])
+
             decoded_transmit_header = decoded_transmit_header
             packet_bytes = packet_bytes[struct.calcsize(TransmitHeader.transmit_header_struct_format_string):]
         else:
@@ -168,11 +174,12 @@ class Packet:
         :return: The decoded Packet object
         """
 
+
         packet_array = packet_string.split(', ')
 
         send_seq_num = int(packet_array[0])
-        send_time = datetime.datetime.fromisoformat(packet_array[1])
-        send_rssi = int(packet_array[2])
+        send_rssi = int(packet_array[1])
+        send_time = datetime.datetime.fromisoformat(packet_array[2])
 
         sender = Device(int(packet_array[3]))
         data_type = Type(int(packet_array[4]))
@@ -180,7 +187,7 @@ class Packet:
         destination = Device(int(packet_array[6]))
         generate_time = datetime.datetime.fromisoformat(packet_array[7])
 
-        decoded_transmit_header = TransmitHeader(send_seq_num, send_time, send_rssi)
+        decoded_transmit_header = TransmitHeader(send_seq_num, send_rssi, send_time)
         decoded_data_header = DataHeader(sender, data_type, priority, destination, generate_time)
         decoded_packet = Packet(bytes(packet_array[7], 'utf-8'), decoded_data_header, decoded_transmit_header)
 

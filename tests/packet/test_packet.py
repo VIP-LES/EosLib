@@ -9,7 +9,7 @@ from EosLib.packet.exceptions import DataHeaderFormatError, TransmitHeaderFormat
 
 
 def get_valid_packet():
-    transmit_header = TransmitHeader(0, datetime.now(), 0)
+    transmit_header = TransmitHeader(0, 0, datetime.now())
     data_header = DataHeader(definitions.Device.GPS,
                              definitions.Type.TELEMETRY,
                              definitions.Priority.TELEMETRY,
@@ -23,7 +23,6 @@ def test_minimal_constructor():
     data_header = DataHeader(EosLib.Device.GPS)
     packet = Packet(b'Hello, World', data_header)
     packet.encode()
-
 
 def test_validate_good_transmit_header():
     test_packet = get_valid_packet()
@@ -111,15 +110,17 @@ def test_validate_empty_body_packet():
     with pytest.raises(PacketFormatError):
         model_packet.encode()
 
-
 def test_encode_decode_packet():
     model_packet = get_valid_packet()
     test_packet = get_valid_packet()
 
     encoded_packet = test_packet.encode()
+
     decoded_packet = Packet.decode(encoded_packet)
+    print(decoded_packet)
 
     decoded_packet.encode()
+
     assert model_packet == decoded_packet
 
 
@@ -184,11 +185,14 @@ def test_standalone_transmit_header_validate():
 def test_encode_and_decode_string():
     test_packet = get_valid_packet()
     test_string = test_packet.encode_to_string()
+
     decoded_packet = Packet.decode_from_string(test_string)
 
-    decoded_packet.encode()
-    assert decoded_packet == test_packet
+    print(decoded_packet)
 
+    decoded_packet.encode()
+
+    assert decoded_packet == test_packet
 
 def test_encode_string_no_tx_header():
     test_packet = get_valid_packet()
