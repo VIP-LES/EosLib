@@ -134,18 +134,24 @@ class Packet:
         """ Setter that sets new data header
 
         :return: boolean True set is successful
+        :raises: PacketFormatError if data header is none
         """
         if new_data_header is not None:
             if new_data_header.validate_data_header():
                 self.data_header = new_data_header
+                return True
 
-        return True
+        raise PacketFormatError("data header can not be none")
 
     def set_transmit_header(self, new_transmit_header: TransmitHeader) -> bool:
         """ Setter that sets new transmit header
 
         :return: boolean True set is successful
         """
+        if new_transmit_header is None:
+            self.transmit_header = new_transmit_header
+            return True
+
         if new_transmit_header.validate_transmit_header():
             self.transmit_header = new_transmit_header
 
