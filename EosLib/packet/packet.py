@@ -174,7 +174,6 @@ class Packet:
         :return: The decoded Packet object
         """
 
-
         packet_array = packet_string.split(', ')
 
         send_seq_num = int(packet_array[0])
@@ -189,6 +188,6 @@ class Packet:
 
         decoded_transmit_header = TransmitHeader(send_seq_num, send_rssi, send_time)
         decoded_data_header = DataHeader(sender, data_type, priority, destination, generate_time)
-        decoded_packet = Packet(bytes(packet_array[7], 'utf-8'), decoded_data_header, decoded_transmit_header)
+        decoded_packet = Packet(bytes(packet_array[8], 'utf-8'), decoded_data_header, decoded_transmit_header)
 
         return decoded_packet

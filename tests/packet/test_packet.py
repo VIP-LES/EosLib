@@ -117,7 +117,6 @@ def test_encode_decode_packet():
     encoded_packet = test_packet.encode()
 
     decoded_packet = Packet.decode(encoded_packet)
-    print(decoded_packet)
 
     decoded_packet.encode()
 

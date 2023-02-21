@@ -90,5 +90,5 @@ class TransmitHeader:
 
         unpacked = struct.unpack(TransmitHeader.transmit_header_struct_format_string, header_bytes)
 
-        decoded_header = TransmitHeader(unpacked[1], unpacked[2], datetime.fromtimestamp(unpacked[2]))
+        decoded_header = TransmitHeader(unpacked[1], unpacked[2], datetime.fromtimestamp(unpacked[3]))
         return decoded_header
