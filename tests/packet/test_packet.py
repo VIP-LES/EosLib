@@ -68,7 +68,7 @@ def test_validate_good_data_header_destination(packet, destination):
     assert packet.data_header.validate_data_header()
 
 
-@pytest.mark.parametrize("bad_data_value", [None, -1, 256, "String"])
+@pytest.mark.parametrize("bad_data_value", [None, -200, 256, "String"])
 class TestBadHeaders:
     """Tests for the packet's transmit header and data header, sharing bad data values."""
 
@@ -81,10 +81,10 @@ class TestBadHeaders:
         packet.transmit_header.send_time = bad_data_value
         with pytest.raises(TransmitHeaderFormatError):
             packet.transmit_header.validate_transmit_header()
-            
+
     # added new test to test RSSI
-    def test_validate_bad_transmit_header_RSSI():
-        packet.transmit_header.send_rssi = None
+    def test_validate_bad_transmit_header_rssi(self, packet, bad_data_value):
+        packet.transmit_header.send_rssi = bad_data_value
         with pytest.raises(TransmitHeaderFormatError):
             packet.transmit_header.validate_transmit_header()
 
