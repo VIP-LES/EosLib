@@ -29,6 +29,7 @@ def test_minimal_constructor():
 def packet():
     return get_valid_packet()
 
+
 def test_validate_good_transmit_header(packet):
     assert packet.transmit_header.validate_transmit_header()
 
@@ -41,7 +42,6 @@ def test_validate_good_transmit_header_send_seq_num(packet, send_seq_num):
 
 def test_validate_good_data_header(packet):
     assert packet.data_header.validate_data_header()
-
 
 
 @pytest.mark.parametrize("sender", [definitions.Device.PRESSURE, max(definitions.Device), definitions.Device.GPS])
@@ -103,7 +103,6 @@ class TestBadHeaders:
         with pytest.raises(DataHeaderFormatError):
             packet.data_header.validate_data_header()
 
-
     def test_validate_bad_destination(self, packet, bad_data_value):
         packet.data_header.destination = bad_data_value
         with pytest.raises(DataHeaderFormatError):
@@ -163,13 +162,11 @@ def test_standalone_data_header_validate():
         DataHeader.decode(test_header)
 
 
-#check this stuff out
 def test_standalone_transmit_header_validate():
     test_header = bytearray(20)
 
     with pytest.raises(PacketFormatError):
         TransmitHeader.decode(test_header)
-
 
 
 def test_encode_decode_packet(packet):

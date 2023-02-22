@@ -10,9 +10,9 @@ class TransmitHeader:
 
     transmit_header_struct_format_string = "!" \
                                            "B" \
+                                           "b" \
                                            "B" \
-                                           "B" \
-                                           "d" \
+                                           "d"
 
     def __init__(self,
                  send_seq_num: int,
@@ -73,8 +73,8 @@ class TransmitHeader:
         :return: A bytes object containing the encoded header
         """
         return "{send_seq_num},  {send_rssi}, {send_time}".format(send_seq_num=self.send_seq_num,
-                                                                send_rssi=self.send_rssi,
-                                                                send_time=self.send_time.isoformat())
+                                                                  send_rssi=self.send_rssi,
+                                                                  send_time=self.send_time.isoformat())
 
     @staticmethod
     def decode(header_bytes: bytes):

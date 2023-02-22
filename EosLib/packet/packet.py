@@ -100,11 +100,9 @@ class Packet:
 
         :return: Validated packet byte string
         """
-
         self.validate_packet()
 
         packet_bytes = b''
-
 
         if self.transmit_header is not None:
             packet_bytes += self.transmit_header.encode()
@@ -140,10 +138,6 @@ class Packet:
         """
 
         if packet_bytes[0] == HeaderPreamble.TRANSMIT:
-
-            print("transmit_header_bytes in decode")
-            print(packet_bytes[0:struct.calcsize(TransmitHeader.transmit_header_struct_format_string)])
-
             decoded_transmit_header = TransmitHeader.decode(
                 packet_bytes[0:struct.calcsize(TransmitHeader.transmit_header_struct_format_string)])
 
