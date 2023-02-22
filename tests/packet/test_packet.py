@@ -44,7 +44,7 @@ def test_validate_good_data_header(packet):
     assert packet.data_header.validate_data_header()
 
 
-@pytest.mark.parametrize("sender", [definitions.Device.PRESSURE, max(definitions.Device), definitions.Device.GPS])
+@pytest.mark.parametrize("sender", [Device.PRESSURE, max(Device), Device.GPS])
 def test_validate_good_data_header_sender(packet, sender):
     packet.data_header.sender = sender
     assert packet.data_header.validate_data_header()
@@ -62,7 +62,7 @@ def test_validate_good_data_header_priority(packet, priority):
     assert packet.data_header.validate_data_header()
 
 
-@pytest.mark.parametrize("destination", [min(definitions.Device), max(definitions.Device), definitions.Device.O3])
+@pytest.mark.parametrize("destination", [min(Device), max(Device), Device.O3])
 def test_validate_good_data_header_destination(packet, destination):
     packet.data_header.data_type = destination
     assert packet.data_header.validate_data_header()
