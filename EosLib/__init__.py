@@ -1,1 +1,1 @@
-from EosLib.packet.definitions import Type, Priority, Device, HeaderPreamble
+from EosLib.packet.definitions import Type, Priority
