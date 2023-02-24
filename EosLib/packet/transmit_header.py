@@ -14,10 +14,7 @@ class TransmitHeader:
                                            "B" \
                                            "d"
 
-    def __init__(self,
-                 send_seq_num: int,
-                 send_rssi: int,
-                 send_time: datetime = None):
+    def __init__(self, send_seq_num: int, send_rssi: int = -120, send_time: datetime = None):
         """Initializes a TransmitHeader object
 
         :param send_seq_num: The sequence number assigned at the transmitter

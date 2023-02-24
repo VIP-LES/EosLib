@@ -35,10 +35,9 @@ def test_validate_good_transmit_header(packet):
 
 
 @pytest.mark.parametrize("rssi", [0, -120])
-def test_min_max_transmit_header(packet, rssi):
+def test_rssi_min_max_transmit_header(packet, rssi):
     packet.transmit_header.send_rssi = rssi
     assert packet.transmit_header.validate_transmit_header()
-
 
 
 @pytest.mark.parametrize("send_seq_num", [0, 255, 3])
@@ -89,7 +88,6 @@ class TestBadHeaders:
         with pytest.raises(TransmitHeaderFormatError):
             packet.transmit_header.validate_transmit_header()
 
-    # added new test to test RSSI
     def test_validate_bad_transmit_header_rssi(self, packet, bad_data_value):
         packet.transmit_header.send_rssi = bad_data_value
         with pytest.raises(TransmitHeaderFormatError):
