@@ -34,6 +34,13 @@ def test_validate_good_transmit_header(packet):
     assert packet.transmit_header.validate_transmit_header()
 
 
+@pytest.mark.parametrize("rssi", [0, -120])
+def test_min_max_transmit_header(packet, rssi):
+    packet.transmit_header.send_rssi = rssi
+    assert packet.transmit_header.validate_transmit_header()
+
+
+
 @pytest.mark.parametrize("send_seq_num", [0, 255, 3])
 def test_validate_good_transmit_header_send_seq_num(packet, send_seq_num):
     packet.transmit_header.send_seq_num = send_seq_num
@@ -167,7 +174,6 @@ def test_standalone_transmit_header_validate():
 
     with pytest.raises(PacketFormatError):
         TransmitHeader.decode(test_header)
-
 
 def test_encode_decode_packet(packet):
     model_packet = get_valid_packet()
