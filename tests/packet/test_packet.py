@@ -6,7 +6,8 @@ import EosLib.packet.definitions as definitions
 from datetime import datetime
 from EosLib.packet.packet import TransmitHeader, DataHeader, Packet, PacketFormatError
 from EosLib.packet.exceptions import DataHeaderFormatError, TransmitHeaderFormatError
-
+from EosLib.packet.data_header import check_data_header
+from EosLib.packet.transmit_header import check_transmit_header
 
 def get_valid_packet():
     transmit_header = TransmitHeader(0, datetime.now())
@@ -296,9 +297,25 @@ def test_set_transmit_header():
 
     test_packet.set_transmit_header(transmit_header)
 
+
 def test_set_body():
     test_packet = get_valid_packet()
     body = bytes("temp", 'utf-8')
 
     test_packet.set_body(body)
+
+
+def test_check_data_header():
+    test_packet = get_valid_packet()
+    check_data_header(test_packet.data_header)
+
+
+def test_check_transmit_header():
+    test_packet = get_valid_packet()
+    check_transmit_header(test_packet.transmit_header)
+
+
+def test_check_body():
+    test_packet = get_valid_packet()
+    Packet.check_body(test_packet.body)
 

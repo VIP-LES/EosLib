@@ -22,7 +22,7 @@ class Packet:
         self.body = body  # type: bytes
         self.data_header = data_header  # type: DataHeader
         self.transmit_header = transmit_header  # type: TransmitHeader
-        self.validate_packet() # checks if packet is valid
+        self.validate_packet()  # checks if packet is valid
 
     def __eq__(self, other):
         """ Compares two packets for value equality

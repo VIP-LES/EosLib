@@ -93,4 +93,3 @@ def check_transmit_header(transmit_header: TransmitHeader) -> bool:
         transmit_header.validate_transmit_header()
 
     return True
-

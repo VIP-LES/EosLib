@@ -50,18 +50,17 @@ class DataHeader:
         :return: True if valid
         """
 
-        if not isinstance(self.sender, int) or self.sender == definitions.Device.NO_DEVICE or\
-        not self.sender in definitions.Device:
+        if not isinstance(self.sender, int) or self.sender == definitions.Device.NO_DEVICE or \
+                not self.sender in definitions.Device:
             raise DataHeaderFormatError("Invalid Sender")
 
-        if not isinstance(self.data_type, int) or not self.data_type in definitions.Type:
+        if not isinstance(self.data_type, int) or self.data_type not in definitions.Type:
             raise DataHeaderFormatError("Invalid Type")
 
-        if not isinstance(self.priority, int) or not self.priority in definitions.Priority:
+        if not isinstance(self.priority, int) or self.priority not in definitions.Priority:
             raise DataHeaderFormatError("Invalid Priority")
 
-
-        if not isinstance(self.destination, int) or not self.destination in definitions.Device:
+        if not isinstance(self.destination, int) or self.destination not in definitions.Device:
             raise DataHeaderFormatError("Invalid Destination")
 
         if not isinstance(self.generate_time, datetime):
@@ -125,4 +124,3 @@ def check_data_header(data_header: DataHeader) -> bool:
         data_header.validate_data_header()
 
     return True
-
