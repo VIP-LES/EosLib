@@ -14,7 +14,7 @@ class TransmitHeader:
                                            "B" \
                                            "d"
 
-    def __init__(self, send_seq_num: int, send_rssi: int = -120, send_time: datetime = None):
+    def __init__(self, send_seq_num: int, send_time: datetime = None, send_rssi: int = 0):
         """Initializes a TransmitHeader object
 
         :param send_seq_num: The sequence number assigned at the transmitter
@@ -87,5 +87,5 @@ class TransmitHeader:
 
         unpacked = struct.unpack(TransmitHeader.transmit_header_struct_format_string, header_bytes)
 
-        decoded_header = TransmitHeader(unpacked[1], unpacked[2], datetime.fromtimestamp(unpacked[3]))
+        decoded_header = TransmitHeader(unpacked[1], datetime.fromtimestamp(unpacked[3]), unpacked[2])
         return decoded_header

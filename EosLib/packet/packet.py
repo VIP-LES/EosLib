@@ -122,7 +122,7 @@ class Packet:
 
         # It's easier if we make all the encoded packet string arrays the same length, so we add a fake transmit header
         if self.transmit_header is None:
-            self.transmit_header = TransmitHeader(0, 0)
+            self.transmit_header = TransmitHeader(0, send_rssi=0)
 
         return "{transmit_header}, {data_header}, {body}".format(
             transmit_header=self.transmit_header.encode_to_string(),
@@ -180,7 +180,7 @@ class Packet:
         destination = Device(int(packet_array[6]))
         generate_time = datetime.datetime.fromisoformat(packet_array[7])
 
-        decoded_transmit_header = TransmitHeader(send_seq_num, send_rssi, send_time)
+        decoded_transmit_header = TransmitHeader(send_seq_num, send_time, send_rssi)
         decoded_data_header = DataHeader(sender, data_type, priority, destination, generate_time)
         decoded_packet = Packet(bytes(packet_array[8], 'utf-8'), decoded_data_header, decoded_transmit_header)
 
