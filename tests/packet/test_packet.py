@@ -7,6 +7,8 @@ from datetime import datetime
 from EosLib.packet.packet import TransmitHeader, DataHeader, Packet, PacketFormatError
 from EosLib.packet.exceptions import DataHeaderFormatError, TransmitHeaderFormatError
 from EosLib.device import Device
+from EosLib.format.TelemetryData import TelemetryData
+
 
 def get_valid_packet():
     transmit_header = TransmitHeader(0, datetime.now())
@@ -283,3 +285,10 @@ def test_packet_print_no_body(packet):
                       "No body"
 
     assert expected_string == packet.__str__()
+
+
+def test_telemetry_data():
+    current_time = datetime.now().timestamp()
+    new_data = TelemetryData(current_time, 0, 0, 0, 0, 0, 0)
+    valid = new_data.set_validity()
+    encoded_new_data = new_data.encode_data()
