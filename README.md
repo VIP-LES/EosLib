@@ -2,8 +2,8 @@
 This is the Library for all code shared between the ground station and the payload in the Eos ecosystem.
 
 Right now it contains the packet module, which allows for easy encoding and decoding of the packets used to communicate 
-between devices onboard the Eos payload, and between the Eos payload and the ground. An overview of the packet format is
-given below.
+between devices onboard the Eos payload, and between the Eos payload and the ground. It also contains the start of a 
+collection of data formats for efficient encoding/decoding. An overview of the packet format is given below.
 
 ## Installation
 
@@ -24,6 +24,7 @@ about the transmission of the packet, typically via radio.
 | Packet Type          | PacketType enum         | Values in PacketType         | Yes       |
 | Packet Sender        | PacketDevice enum       | Values in Device             | Yes       |
 | Packet Priority      | PacketPriority enum\*\* | Values in PacketPriority\*\* | Yes       |
+| Packet Destination   | PacketDevice enum       | Values in Device             | No        |
 | Packet Generate Time | datetime                | Any valid date               | Yes\*     |
 
 
@@ -39,11 +40,35 @@ about the transmission of the packet, typically via radio.
 \*\* Packet Priority can be any integer value between 0-255, but sensible defaults are provided via the PacketPriority 
 enum. Unless you have good reason to provide your own value, use on of the options given in the enum.
 
+## EosLib Data Formats
+
+To avoid using strings in packet bodies, EosLib contains some pre-made data formats. Their contents are listed below.
+
+### `Position` Format
+
+| Field                | Variable Type    | Unit            |
+|----------------------|------------------|-----------------|
+| Timestamp            | datetime         | datetime        |
+| Latitude             | float            | decimal degrees |
+| Longitude            | float            | decimal degrees |
+| Altitude             | float            | feet            |
+| Speed                | float            | miles/hour      |
+| Number of Satellites | int              | number          |
+| Flight State         | FlightState enum | N/A             |
+
+The `FlightState` enum contains 5 possible states, `NOT_SET`, `UNKNOWN`, `ON_GROUND`, `ASCENT`, and `DESCENT`. Their 
+use should be self-explanatory. `Position` also sets a `local_time` variable when decoded, which is currently used to 
+verify that positions are current in `PositionAwareDriverBase` in EosPayload. 
+
+`Position` objects also automatically set a `valid` field when decoded. The logic is still pretty primitive, but it's a
+good sanity check/first pass validity check.
+
+
 ## Using EosLib
 
 Both `DataHeader` and `TransmitHeader` can be either created with their constructors, or be initialized as empty headers
 and have data filled in at a later point. Once the requisite headers exist, a `Packet` can be initialized with those 
 headers as values in the constructor, or the `Packet` can be initialized as empty and have data provided at a later 
-point.
+point. Generally, it is better to use the constructor unless you have a compelling reason to do otherwise.
 
 For an example, consult `test_packet.py`.
