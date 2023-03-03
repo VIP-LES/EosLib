@@ -292,3 +292,4 @@ def test_telemetry_data():
     new_data = TelemetryData(current_time, 0, 0, 0, 0, 0, 0)
     valid = new_data.set_validity()
     encoded_new_data = new_data.encode_data()
+    decoded_new_data = TelemetryData.decode_data(encoded_new_data)

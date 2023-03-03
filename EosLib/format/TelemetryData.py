@@ -14,7 +14,7 @@ class TelemetryData:
                               "d" \
                               "d" \
                               "d"
-
+    # Initialize data to params (default values otherwise)
     def __init__(self, timestamp: float = 0, temperature: float = 0.0, pressure: float = 0.0, humidity: float = 0.0,
                  rollX: float = 0.0, pitchY: float = 0.0, yawZ: float = 0.0):
         self.timestamp = timestamp
@@ -26,12 +26,14 @@ class TelemetryData:
         self.yawZ = yawZ
         self.valid = False
 
+    # Checks if data is valid (NEED A MORE CONCRETE WAY OF VALIDATING)
     def set_validity(self):
         if self.pressure < 0 or self.humidity < 0 or self.humidity > 100:
             self.valid = False
         else:
             self.valid = True
 
+    # Stores data from packet into respective variables
     @staticmethod
     def decode_data(data_packet: Packet):
         new_data = TelemetryData()
@@ -51,6 +53,7 @@ class TelemetryData:
 
         return new_data
 
+    # Takes data and sends it as a byte
     def encode_data(self) -> bytes:
         return struct.pack(TelemetryData.telemetry_struct_string, self.timestamp, self.temperature, self.pressure,
                            self.humidity,
