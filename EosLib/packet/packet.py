@@ -3,9 +3,9 @@ import struct
 
 from EosLib.packet.transmit_header import TransmitHeader
 from EosLib.packet.data_header import DataHeader
-from EosLib.packet.definitions import HeaderPreamble, Priority, Device, Type
+from EosLib.packet.definitions import HeaderPreamble, Priority, Type
 from EosLib.packet.exceptions import PacketFormatError
-
+from EosLib.device import Device
 
 class Packet:
     radio_max_bytes = 255
