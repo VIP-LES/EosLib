@@ -8,9 +8,10 @@ from EosLib.packet.packet import TransmitHeader, DataHeader, Packet, PacketForma
 from EosLib.packet.exceptions import DataHeaderFormatError, TransmitHeaderFormatError
 from EosLib.device import Device
 
+
 def get_valid_packet():
     transmit_header = TransmitHeader(0, datetime.now(), 0)
-    data_header = DataHeader(definitions.Device.GPS,
+    data_header = DataHeader(Device.GPS,
                              definitions.Type.TELEMETRY,
                              definitions.Priority.TELEMETRY,
                              Device.GPS,
