@@ -7,7 +7,6 @@ from datetime import datetime
 from EosLib.packet.packet import TransmitHeader, DataHeader, Packet, PacketFormatError
 from EosLib.packet.exceptions import DataHeaderFormatError, TransmitHeaderFormatError
 from EosLib.device import Device
-from EosLib.format.TelemetryData import TelemetryData
 
 
 def get_valid_packet():
