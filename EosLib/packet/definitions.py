@@ -8,7 +8,7 @@ class Type(IntEnum):
     WARNING = 2
     DATA = 3
     POSITION = 4
-    T_DATA = 5
+    TELEMETRY_DATA = 5
     ERROR = 255
 
 

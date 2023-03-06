@@ -69,13 +69,13 @@ good sanity check/first pass validity check.
 | ----------- | ------------- | -------- |
 | Timestamp   | datetime      | datetime |
 | Temperature | float         | celsius  |
-| Pressure    | float         | UNKNOWN  |
-| Humidity    | float         | UNKNOWN  |
+| Pressure    | float         | mbar     |
+| Humidity    | float         | %RH      |
 | X-Rotation  | float         | degrees  |
 | Y-Rotation  | float         | degrees  |
 | Z-Rotation  | float         | degrees  |
 
-Likewise to `Position` objects, `TelemetryData` objects automatically set a `valid` field when decoded. The current state it's in is surface level and will need a better system in the future.
+Likewise to `Position` objects, `TelemetryData` objects automatically set a `valid` field when decoded. The current state it's in is quite surface level and will need a better system in the future.
 
 ## Using EosLib
 
