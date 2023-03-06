@@ -21,17 +21,20 @@ class TelemetryData:
         """Initializes data to parameters (default values otherwise)
 
         :param timestamp: The time and date of data collected
-        :type timestamp: datetime
         :param temperature: The temperature data
-        :type temperature: float
         :param pressure: The pressure data
-        :type pressure: float
         :param humidity: The humidity data
-        :type humidity: float
         :param x_rotation: The x rotation data
         :param y_rotation: The y rotation data
         :param z_rotation: The z rotation data
         """
+        self.timestamp = timestamp
+        self.temperature = temperature
+        self.pressure = pressure
+        self.humidity = humidity
+        self.x_rotation = x_rotation
+        self.y_rotation = y_rotation
+        self.z_rotation = z_rotation
         self.timestamp = datetime.now() if self.timestamp is None else timestamp
         self.temperature = float("NaN") if self.temperature is None else temperature
         self.pressure = float("NaN") if self.pressure is None else pressure
@@ -40,6 +43,7 @@ class TelemetryData:
         self.y_rotation = float("NaN") if self.y_rotation is None else y_rotation
         self.z_rotation = float("NaN") if self.z_rotation is None else z_rotation
         self.valid = False
+
     def set_validity(self):
         """Checks if data is valid (NEED A MORE CONCRETE WAY OF VALIDATING)
 
@@ -54,12 +58,10 @@ class TelemetryData:
         """Stores data from packet into respective variables
 
         :param data_packet: The data packet received from sensor to decode
-        :type data_packet: Packet | bytes
         :returns: Object with decoded data
-        :rtype: TelemetryData
         """
         new_data = TelemetryData()
-        if (isinstance(data_packet, Packet)):
+        if isinstance(data_packet, Packet):
             if data_packet.data_header.data_type != Type.TELEMETRY_DATA:
                 raise ValueError("Packet is not telemetry data")
             packet_body = data_packet.body
@@ -81,7 +83,7 @@ class TelemetryData:
         """Takes data and sends it as a byte
 
         :returns: Struct with encoded data
-        :rtype: bytes
         """
-        return struct.pack(TelemetryData.telemetry_struct_string, self.timestamp.timestamp(), self.temperature, self.pressure,
+        return struct.pack(TelemetryData.telemetry_struct_string, self.timestamp.timestamp(), self.temperature,
+                           self.pressure,
                            self.humidity, self.x_rotation, self.y_rotation, self.z_rotation)
