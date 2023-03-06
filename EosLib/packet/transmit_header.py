@@ -10,12 +10,11 @@ class TransmitHeader:
 
     transmit_header_struct_format_string = "!" \
                                            "B" \
+                                           "b" \
                                            "B" \
                                            "d"
 
-    def __init__(self,
-                 send_seq_num: int,
-                 send_time: datetime = None):
+    def __init__(self, send_seq_num: int, send_time: datetime = None, send_rssi: int = 0):
         """Initializes a TransmitHeader object
 
         :param send_seq_num: The sequence number assigned at the transmitter
@@ -26,6 +25,7 @@ class TransmitHeader:
 
         self.send_seq_num = send_seq_num
         self.send_time = send_time
+        self.send_rssi = send_rssi
 
     def __eq__(self, other):
         """ Compares two transmit headers for value equality
@@ -34,7 +34,9 @@ class TransmitHeader:
         :return:
         """
         return (self.send_seq_num == other.send_seq_num and
-                math.isclose(self.send_time.timestamp(), other.send_time.timestamp()))
+                math.isclose(self.send_time.timestamp(), other.send_time.timestamp()) 
+                and self.send_rssi == other.send_rssi
+                )
 
     # TODO: Expand validation criteria
     def validate_transmit_header(self):
@@ -48,6 +50,9 @@ class TransmitHeader:
         if not isinstance(self.send_time, datetime):
             raise TransmitHeaderFormatError("Invalid Send Time")
 
+        if not isinstance(self.send_rssi, int) or not -120 <= self.send_rssi <= 0:
+            raise TransmitHeaderFormatError("Invalid RSSI")
+
         return True
 
     def encode(self):
@@ -57,15 +62,16 @@ class TransmitHeader:
         """
         self.validate_transmit_header()
         return struct.pack(TransmitHeader.transmit_header_struct_format_string, HeaderPreamble.TRANSMIT,
-                           self.send_seq_num, self.send_time.timestamp())
+                           self.send_seq_num,  self.send_rssi, self.send_time.timestamp())
 
     def encode_to_string(self):
         """ Checks that the header is valid and returns a string if it is.
 
         :return: A bytes object containing the encoded header
         """
-        return "{send_seq_num}, {send_time}".format(send_seq_num=self.send_seq_num,
-                                                    send_time=self.send_time.isoformat())
+        return "{send_seq_num},  {send_rssi}, {send_time}".format(send_seq_num=self.send_seq_num,
+                                                                  send_rssi=self.send_rssi,
+                                                                  send_time=self.send_time.isoformat())
 
     @staticmethod
     def decode(header_bytes: bytes):
@@ -80,5 +86,6 @@ class TransmitHeader:
             raise TransmitHeaderFormatError("Not a valid transmit header")
 
         unpacked = struct.unpack(TransmitHeader.transmit_header_struct_format_string, header_bytes)
-        decoded_header = TransmitHeader(unpacked[1], datetime.fromtimestamp(unpacked[2]))
+
+        decoded_header = TransmitHeader(unpacked[1], datetime.fromtimestamp(unpacked[3]), unpacked[2])
         return decoded_header

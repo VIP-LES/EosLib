@@ -10,7 +10,7 @@ from EosLib.device import Device
 
 
 def get_valid_packet():
-    transmit_header = TransmitHeader(0, datetime.now())
+    transmit_header = TransmitHeader(0, datetime.now(), 0)
     data_header = DataHeader(Device.GPS,
                              definitions.Type.TELEMETRY,
                              definitions.Priority.TELEMETRY,
@@ -32,6 +32,12 @@ def packet():
 
 
 def test_validate_good_transmit_header(packet):
+    assert packet.transmit_header.validate_transmit_header()
+
+
+@pytest.mark.parametrize("rssi", [0, -120])
+def test_rssi_min_max_transmit_header(packet, rssi):
+    packet.transmit_header.send_rssi = rssi
     assert packet.transmit_header.validate_transmit_header()
 
 
@@ -69,7 +75,7 @@ def test_validate_good_data_header_destination(packet, destination):
     assert packet.data_header.validate_data_header()
 
 
-@pytest.mark.parametrize("bad_data_value", [None, -1, 256, "String"])
+@pytest.mark.parametrize("bad_data_value", [None, -200, 256, "String"])
 class TestBadHeaders:
     """Tests for the packet's transmit header and data header, sharing bad data values."""
 
@@ -80,6 +86,11 @@ class TestBadHeaders:
 
     def test_validate_bad_transmit_header_time(self, packet, bad_data_value):
         packet.transmit_header.send_time = bad_data_value
+        with pytest.raises(TransmitHeaderFormatError):
+            packet.transmit_header.validate_transmit_header()
+
+    def test_validate_bad_transmit_header_rssi(self, packet, bad_data_value):
+        packet.transmit_header.send_rssi = bad_data_value
         with pytest.raises(TransmitHeaderFormatError):
             packet.transmit_header.validate_transmit_header()
 
@@ -158,11 +169,10 @@ def test_standalone_data_header_validate():
 
 
 def test_standalone_transmit_header_validate():
-    test_header = bytearray(10)
+    test_header = bytearray(20)
 
     with pytest.raises(PacketFormatError):
         TransmitHeader.decode(test_header)
-
 
 def test_encode_decode_packet(packet):
     model_packet = get_valid_packet()
@@ -190,7 +200,6 @@ def test_encode_decode_data_only_packet(packet):
 def test_encode_and_decode_string(packet):
     test_string = packet.encode_to_string()
     decoded_packet = Packet.decode_from_string(test_string)
-
     decoded_packet.encode()
     assert decoded_packet == packet
 
@@ -223,6 +232,7 @@ def test_packet_print_two_headers(packet):
     expected_string = "Transmit Header:\n" \
                       "\tSend time:2002-01-07 01:23:45\n" \
                       "\tSequence number: 0\n" \
+                      "\tRSSI: 0\n" \
                       "Data Header:\n" \
                       "\tSender: GPS\n" \
                       "\tData type: TELEMETRY\n" \
@@ -275,6 +285,7 @@ def test_packet_print_no_body(packet):
     expected_string = "Transmit Header:\n" \
                       "\tSend time:2002-01-07 01:23:45\n" \
                       "\tSequence number: 0\n" \
+                      "\tRSSI: 0\n" \
                       "Data Header:\n" \
                       "\tSender: GPS\n" \
                       "\tData type: TELEMETRY\n" \
