@@ -28,20 +28,13 @@ class TelemetryData:
         :param y_rotation: The y rotation data
         :param z_rotation: The z rotation data
         """
-        self.timestamp = timestamp
+        self.timestamp = datetime.now() if timestamp is None else timestamp
         self.temperature = temperature
         self.pressure = pressure
         self.humidity = humidity
         self.x_rotation = x_rotation
         self.y_rotation = y_rotation
         self.z_rotation = z_rotation
-        self.timestamp = datetime.now() if self.timestamp is None else timestamp
-        self.temperature = float("NaN") if self.temperature is None else temperature
-        self.pressure = float("NaN") if self.pressure is None else pressure
-        self.humidity = float("NaN") if self.humidity is None else humidity
-        self.x_rotation = float("NaN") if self.x_rotation is None else x_rotation
-        self.y_rotation = float("NaN") if self.y_rotation is None else y_rotation
-        self.z_rotation = float("NaN") if self.z_rotation is None else z_rotation
         self.valid = False
 
     def set_validity(self):
@@ -60,7 +53,6 @@ class TelemetryData:
         :param data_packet: The data packet received from sensor to decode
         :returns: Object with decoded data
         """
-        new_data = TelemetryData()
         if isinstance(data_packet, Packet):
             if data_packet.data_header.data_type != Type.TELEMETRY_DATA:
                 raise ValueError("Packet is not telemetry data")
@@ -68,15 +60,9 @@ class TelemetryData:
         else:
             packet_body = data_packet
         unpacked_tuple = struct.unpack(TelemetryData.telemetry_struct_string, packet_body)
-        new_data.timestamp = unpacked_tuple[0]
-        new_data.temperature = unpacked_tuple[1]
-        new_data.pressure = unpacked_tuple[2]
-        new_data.humidity = unpacked_tuple[3]
-        new_data.x_rotation = unpacked_tuple[4]
-        new_data.y_rotation = unpacked_tuple[5]
-        new_data.z_rotation = unpacked_tuple[6]
+        new_data = TelemetryData(datetime.fromtimestamp(unpacked_tuple[0]), unpacked_tuple[1], unpacked_tuple[2],
+                                 unpacked_tuple[3], unpacked_tuple[4], unpacked_tuple[5], unpacked_tuple[6])
         new_data.set_validity()
-
         return new_data
 
     def encode(self) -> bytes:

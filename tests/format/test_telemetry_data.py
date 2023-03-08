@@ -16,11 +16,11 @@ def test_telemetry_data():
     encoded_new_data = new_data.encode()
     decoded_new_data = TelemetryData.decode_data(encoded_new_data)
 
-    assert new_data.timestamp.timestamp() == decoded_new_data.timestamp
-    assert new_data.temperature == decoded_new_data.temperature
-    assert new_data.pressure == decoded_new_data.pressure
-    assert new_data.humidity == decoded_new_data.humidity
-    assert new_data.x_rotation == decoded_new_data.x_rotation
-    assert new_data.y_rotation == decoded_new_data.y_rotation
-    assert new_data.z_rotation == decoded_new_data.z_rotation
-    assert new_data.valid == decoded_new_data.valid
+    assert new_data.timestamp == decoded_new_data.timestamp \
+        and new_data.temperature == decoded_new_data.temperature \
+        and new_data.pressure == decoded_new_data.pressure \
+        and new_data.humidity == decoded_new_data.humidity \
+        and new_data.x_rotation == decoded_new_data.x_rotation \
+        and new_data.y_rotation == decoded_new_data.y_rotation \
+        and new_data.z_rotation == decoded_new_data.z_rotation \
+        and new_data.valid == decoded_new_data.valid
