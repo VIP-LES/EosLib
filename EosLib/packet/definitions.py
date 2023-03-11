@@ -10,6 +10,7 @@ class Type(IntEnum):
     POSITION = 4
     COMMAND = 5
     RESPONSE = 6
+    TELEMETRY_DATA = 7
     ERROR = 255
 
 
