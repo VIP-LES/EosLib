@@ -5,7 +5,7 @@ from datetime import datetime
 from EosLib.packet import definitions
 from EosLib.packet.definitions import HeaderPreamble, old_data_headers
 from EosLib.packet.exceptions import PacketFormatError, DataHeaderFormatError
-
+from EosLib.device import Device
 
 class DataHeader:
     data_header_struct_format_string = "!" \
@@ -17,10 +17,10 @@ class DataHeader:
                                        "d"
 
     def __init__(self,
-                 sender: definitions.Device,
+                 sender: Device,
                  data_type: definitions.Type = definitions.Type.NO_TYPE,
                  priority: definitions.Priority = definitions.Priority.NO_TRANSMIT,
-                 destination: definitions.Device = definitions.Device.NO_DEVICE,
+                 destination: Device = Device.NO_DEVICE,
                  generate_time: datetime = None
                  ):
         if generate_time is None:
