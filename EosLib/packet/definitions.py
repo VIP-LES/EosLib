@@ -81,6 +81,14 @@ class Device(IntEnum):
     MISC_TEST_4 = 54 
     MISC_TEST_5 = 55
     MISC_TEST_6 = 56
+    APRS_API = 57;
+    APRS_DEVICE = 58;
+    MISC_9 = 59;
+    MISC_10 = 60;
+    MISC_11 = 61;
+    MISC_12 = 62;
+    MISC_13 = 63;
+    MISC_14 = 64;
     
 
 
