@@ -8,6 +8,9 @@ class Type(IntEnum):
     WARNING = 2
     DATA = 3
     POSITION = 4
+    COMMAND = 5
+    RESPONSE = 6
+    TELEMETRY_DATA = 7
     ERROR = 255
 
 
@@ -78,7 +81,7 @@ class Device(IntEnum):
     MISC_6 = 51
     MISC_7 = 52
     MISC_8 = 53
-    MISC_TEST_4 = 54 
+    MISC_TEST_4 = 54
     MISC_TEST_5 = 55
     MISC_TEST_6 = 56
     APRS_API = 57;
@@ -89,7 +92,7 @@ class Device(IntEnum):
     MISC_12 = 62;
     MISC_13 = 63;
     MISC_14 = 64;
-    
+
 
 
 @unique
@@ -97,9 +100,10 @@ class HeaderPreamble(IntEnum):
     V010DATA = 2
     V020DATA = 3
     V030DATA = 4
-    TRANSMIT = 1
+    TRANSMIT = 6
+    V020TRANSMIT = 1
     DATA = 5
 
 
 old_data_headers = [HeaderPreamble.V010DATA, HeaderPreamble.V020DATA, HeaderPreamble.V030DATA]
-old_transmit_headers = []
+old_transmit_headers = [HeaderPreamble.V020TRANSMIT]
