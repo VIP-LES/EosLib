@@ -335,5 +335,3 @@ def test_check_transmit_header():
 def test_check_body():
     test_packet = get_valid_packet()
     Packet.check_body(test_packet.body)
-
-
