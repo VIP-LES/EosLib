@@ -1,5 +1,3 @@
-# import EosLib
-
 from datetime import datetime
 from EosLib.format.telemetry_data import TelemetryData
 

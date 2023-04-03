@@ -1,6 +1,5 @@
 import pytest
 
-import EosLib
 import EosLib.packet.definitions as definitions
 
 from datetime import datetime

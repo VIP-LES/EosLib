@@ -11,6 +11,7 @@ class Type(IntEnum):
     COMMAND = 5
     RESPONSE = 6
     TELEMETRY_DATA = 7
+    DRIVER_HEALTH = 8
     ERROR = 255
 
 
