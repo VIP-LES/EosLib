@@ -1,5 +1,6 @@
 from enum import IntEnum, unique
 
+
 @unique
 class Device(IntEnum):
     NO_DEVICE = 0

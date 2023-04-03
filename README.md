@@ -21,7 +21,7 @@ about the transmission of the packet, typically via radio.
 ### `DataHeader` Contents
 
 | Field                | Variable Type           | Valid Range                  | Required? |
-| -------------------- | ----------------------- | ---------------------------- | --------- |
+|----------------------|-------------------------|------------------------------|-----------|
 | Packet Type          | PacketType enum         | Values in PacketType         | Yes       |
 | Packet Sender        | PacketDevice enum       | Values in Device             | Yes       |
 | Packet Priority      | PacketPriority enum\*\* | Values in PacketPriority\*\* | Yes       |
@@ -31,7 +31,7 @@ about the transmission of the packet, typically via radio.
 ### `TransmitHeader` Contents
 
 | Field                  | Variable Type | Valid Range    | Required? |
-| ---------------------- | ------------- | -------------- | --------- |
+|------------------------|---------------|----------------|-----------|
 | Packet Sequence Number | Int           | 0-255          | Yes       |
 | Packet Timestamp       | datetime      | Any valid date | Yes\*     |
 
@@ -47,7 +47,7 @@ To avoid using strings in packet bodies, EosLib contains some pre-made data form
 ### `Position` Format
 
 | Field                | Variable Type    | Unit            |
-| -------------------- | ---------------- | --------------- |
+|----------------------|------------------|-----------------|
 | Timestamp            | datetime         | datetime        |
 | Latitude             | float            | decimal degrees |
 | Longitude            | float            | decimal degrees |
@@ -66,7 +66,7 @@ good sanity check/first pass validity check.
 ### `Telemetry` Format
 
 | Field       | Variable Type | Unit     |
-| ----------- | ------------- | -------- |
+|-------------|---------------|----------|
 | Timestamp   | datetime      | datetime |
 | Temperature | float         | celsius  |
 | Pressure    | float         | mbar     |

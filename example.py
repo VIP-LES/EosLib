@@ -1,5 +1,6 @@
 import random
 
+import EosLib.device
 import EosLib.packet.definitions
 import EosLib.packet.packet
 import EosLib.packet.transmit_header
@@ -15,7 +16,7 @@ def collect_data() -> int:
 # This takes the data and generates a packet with a data header according to our needs
 def log_data(data):
     data_header = DataHeader(
-        EosLib.Device.PRESSURE,
+        EosLib.device.Device.PRESSURE,
         EosLib.Type.DATA,
         EosLib.Priority.DATA
     )

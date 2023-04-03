@@ -7,6 +7,7 @@ from EosLib.packet.definitions import HeaderPreamble, old_data_headers
 from EosLib.packet.exceptions import PacketFormatError, DataHeaderFormatError
 from EosLib.device import Device
 
+
 class DataHeader:
 
     data_header_struct_format_string = "!" \
