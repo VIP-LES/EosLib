@@ -1,6 +1,5 @@
 import pytest
 
-import EosLib
 import EosLib.packet.definitions as definitions
 
 from datetime import datetime
@@ -174,6 +173,7 @@ def test_standalone_transmit_header_validate():
     with pytest.raises(PacketFormatError):
         TransmitHeader.decode(test_header)
 
+
 def test_encode_decode_packet(packet):
     model_packet = get_valid_packet()
 
@@ -263,7 +263,7 @@ def test_packet_data_header_only(packet):
 
 
 def test_packet_no_headers(packet):
-    # This shouldn't ever happen, but is a possible state so we should test for it.
+    # This shouldn't ever happen, but is a possible state, so we should test for it.
 
     packet.data_header = None
     packet.transmit_header = None

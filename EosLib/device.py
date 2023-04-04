@@ -1,5 +1,6 @@
 from enum import IntEnum, unique
 
+
 @unique
 class Device(IntEnum):
     NO_DEVICE = 0
@@ -38,3 +39,31 @@ class Device(IntEnum):
     GROUND_STATION_2 = 33
     GROUND_STATION_3 = 34
     ORCHEOSTRATOR = 35
+    SPOT_API = 36
+    ARPS_API = 37
+    CUTDOWN = 38
+    GEIGER_COUNTER = 39
+    GAMMA_XRAY_RADIATION = 40
+    EPAC_SENSOR = 41
+    MISC_SENSOR_5 = 42
+    MISC_SENSOR_6 = 43
+    MISC_SENSOR_7 = 44
+    MISC_SENSOR_8 = 45
+    MISC_ENGINEERING_3 = 46
+    MISC_ENGINEERING_4 = 47
+    MISC_CAMERA_3 = 48
+    MISC_CAMERA_4 = 49
+    MISC_5 = 50
+    MISC_6 = 51
+    MISC_7 = 52
+    MISC_8 = 53
+    MISC_TEST_4 = 54
+    MISC_TEST_5 = 55
+    MISC_TEST_6 = 56
+    APRS_DEVICE = 57
+    MISC_9 = 58
+    MISC_10 = 59
+    MISC_11 = 60
+    MISC_12 = 61
+    MISC_13 = 62
+    MISC_14 = 63

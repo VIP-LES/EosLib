@@ -7,6 +7,7 @@ from EosLib.packet.definitions import HeaderPreamble, Priority, Type
 from EosLib.packet.exceptions import PacketFormatError
 from EosLib.device import Device
 
+
 class Packet:
     radio_max_bytes = 255
     radio_body_max_bytes = radio_max_bytes - (struct.calcsize(TransmitHeader.transmit_header_struct_format_string)
