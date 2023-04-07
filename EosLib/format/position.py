@@ -46,7 +46,7 @@ class Position:
             self.valid = True
 
     @staticmethod
-    def decode_position(gps_packet: Packet):
+    def decode_position(gps_packet: Packet | bytes):
         new_position = Position()
 
         if isinstance(gps_packet, Packet):
