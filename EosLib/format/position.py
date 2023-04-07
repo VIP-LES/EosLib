@@ -48,16 +48,13 @@ class Position:
     @staticmethod
     def decode_position(gps_packet: Packet):
         new_position = Position()
+        new_position.local_time = datetime.now()
+        new_position.gps_packet = gps_packet
+        if new_position.gps_packet.data_header.data_type != Type.POSITION:
+            raise ValueError("Packet is not a position")
 
-        if isinstance(gps_packet, Packet):
-            if new_position.gps_packet.data_header.data_type != Type.POSITION:
-                raise ValueError("Packet is not a position")
-            packet_body = gps_packet.body
-        else:
-            # this is the case where the bytes of the packet body are inputted and not the packet itself
-            packet_body = gps_packet
-        unpacked_tuple = struct.unpack(Position.gps_struct_string, packet_body)
-        new_position.timestamp = datetime.fromtimestamp(unpacked_tuple[0])
+        unpacked_tuple = struct.unpack(Position.gps_struct_string, new_position.gps_packet.body)
+        new_position.timestamp = unpacked_tuple[0]
         new_position.latitude = unpacked_tuple[1]
         new_position.longitude = unpacked_tuple[2]
         new_position.altitude = unpacked_tuple[3]
