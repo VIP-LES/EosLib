@@ -3,9 +3,12 @@ from EosLib.packet.packet import Packet
 import EosLib.packet.transmit_header
 import EosLib.packet.data_header
 from EosLib.format.position import Position, FlightState
-from EosLib.device import Device
-from EosLib.packet.definitions import Type
 
+import EosLib
+from EosLib.packet import data_header, transmit_header
+from EosLib.device import Device
+from EosLib.packet import Packet
+from EosLib.packet.definitions import Type
 
 def test_position_bytes():
     """Tests encode and decode functions
@@ -18,16 +21,16 @@ def test_position_bytes():
 
     # new_data.set_validity()
     time = current_time
-    encoded_new_data = new_data.encode_position(time.timestamp(), 23.4, 23.4, 23.4, 23.4, 5,
+    encoded_new_data = new_data.encode_position(time.timestamp(), 23.0, 24.0, 25.0, 26.0, 5,
                                                 FlightState.NOT_SET)
 
     decoded_new_data = Position.decode_position(encoded_new_data)
 
     assert time == decoded_new_data.timestamp
-    assert 23.4 == decoded_new_data.latitude
-    assert 23.4 == decoded_new_data.longitude
-    assert 23.4 == decoded_new_data.altitude
-    assert 23.4 == decoded_new_data.speed
+    assert 23.0 == decoded_new_data.latitude
+    assert 24.0 == decoded_new_data.longitude
+    assert 25.0 == decoded_new_data.altitude
+    assert 26.0 == decoded_new_data.speed
     assert 5 == decoded_new_data.number_of_satellites
     assert FlightState.NOT_SET == decoded_new_data.flight_state
     assert decoded_new_data.valid
@@ -60,3 +63,4 @@ def test_position_packet():
     assert 5 == decoded_new_data.number_of_satellites
     assert FlightState.NOT_SET == decoded_new_data.flight_state
     assert decoded_new_data.valid
+
