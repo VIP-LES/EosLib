@@ -46,11 +46,11 @@ class Position:
             self.valid = True
 
     @staticmethod
-    def decode_position(gps_packet: Packet):
+    def decode_position(gps_packet: Packet | bytes):
         new_position = Position()
 
         if isinstance(gps_packet, Packet):
-            if new_position.gps_packet.data_header.data_type != Type.POSITION:
+            if gps_packet.data_header.data_type != Type.POSITION:
                 raise ValueError("Packet is not a position")
             packet_body = gps_packet.body
         else:
