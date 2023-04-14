@@ -10,7 +10,7 @@ class TransmitHeader:
 
     transmit_header_struct_format_string = "!" \
                                            "B" \
-                                           "b" \
+                                           "B" \
                                            "B" \
                                            "d"
 
