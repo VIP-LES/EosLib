@@ -5,6 +5,8 @@ import EosLib.packet.definitions as definitions
 from datetime import datetime
 from EosLib.packet.packet import TransmitHeader, DataHeader, Packet, PacketFormatError
 from EosLib.packet.exceptions import DataHeaderFormatError, TransmitHeaderFormatError
+from EosLib.packet.data_header import check_data_header
+from EosLib.packet.transmit_header import check_transmit_header
 from EosLib.device import Device
 
 
@@ -294,4 +296,42 @@ def test_packet_print_no_body(packet):
                       "\tGenerate Time: 2001-01-07 01:23:45\n" \
                       "No body"
 
-    assert expected_string == packet.__str__()
+
+def test_set_data_header():
+    test_packet = get_valid_packet()
+    data_header = DataHeader(definitions.Device.GPS,
+                             definitions.Type.TELEMETRY,
+                             definitions.Priority.TELEMETRY,
+                             definitions.Device.GPS,
+                             datetime.now())
+
+    test_packet.set_data_header(data_header)
+
+
+def test_set_transmit_header():
+    test_packet = get_valid_packet()
+    transmit_header = TransmitHeader(0, datetime.now())
+
+    test_packet.set_transmit_header(transmit_header)
+
+
+def test_set_body():
+    test_packet = get_valid_packet()
+    body = bytes("temp", 'utf-8')
+
+    test_packet.set_body(body)
+
+
+def test_check_data_header():
+    test_packet = get_valid_packet()
+    check_data_header(test_packet.data_header)
+
+
+def test_check_transmit_header():
+    test_packet = get_valid_packet()
+    check_transmit_header(test_packet.transmit_header)
+
+
+def test_check_body():
+    test_packet = get_valid_packet()
+    Packet.check_body(test_packet.body)

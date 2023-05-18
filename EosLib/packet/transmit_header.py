@@ -89,3 +89,14 @@ class TransmitHeader:
 
         decoded_header = TransmitHeader(unpacked[1], datetime.fromtimestamp(unpacked[3]), unpacked[2])
         return decoded_header
+
+
+def check_transmit_header(transmit_header: TransmitHeader) -> bool:
+    """ Takes a packet transmit header and checks to see if it is valid
+
+    :return: boolean True if valid
+    """
+    if transmit_header is not None:
+        transmit_header.validate_transmit_header()
+
+    return True
