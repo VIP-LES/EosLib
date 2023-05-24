@@ -1,66 +1,44 @@
-from datetime import datetime
-from EosLib.packet.packet import Packet
-import EosLib.packet.transmit_header
-import EosLib.packet.data_header
-from EosLib.format.position import Position, FlightState
+import datetime
 
-import EosLib
-from EosLib.packet import data_header, transmit_header
-from EosLib.device import Device
-from EosLib.packet import Packet
-from EosLib.packet.definitions import Type
-
-def test_position_bytes():
-    """Tests encode and decode functions
-
-    :returns: If encode and decode work
-    :rtype: boolean
-    """
-    current_time = datetime.now()
-    new_data = Position()
-
-    # new_data.set_validity()
-    time = current_time
-    encoded_new_data = new_data.encode_position(time.timestamp(), 23.0, 24.0, 25.0, 26.0, 5,
-                                                FlightState.NOT_SET)
-
-    decoded_new_data = Position.decode_position(encoded_new_data)
-
-    assert time == decoded_new_data.timestamp
-    assert 23.0 == decoded_new_data.latitude
-    assert 24.0 == decoded_new_data.longitude
-    assert 25.0 == decoded_new_data.altitude
-    assert 26.0 == decoded_new_data.speed
-    assert 5 == decoded_new_data.number_of_satellites
-    assert FlightState.NOT_SET == decoded_new_data.flight_state
-    assert decoded_new_data.valid
+from EosLib.format.position import Position
+from EosLib.format.position import FlightState
 
 
-def test_position_packet():
-    """Tests encode and decode functions for packet input
+def get_good_position():
+    return Position(datetime.datetime.now(),
+                    33.7756,
+                    84.3963,
+                    974.5,
+                    70.2,
+                    5,
+                    FlightState.DESCENT)
 
-    :returns: If encode and decode work
-    :rtype: boolean
-    """
 
-    position_data_header = EosLib.packet.data_header.DataHeader(Device.O3, Type.POSITION)
-    position_transmit_header = EosLib.packet.transmit_header.TransmitHeader(2)
+def test_encode_decode_bytes():
+    base_position = get_good_position()
+    base_position_bytes = base_position.encode()
+    new_position = Position.decode(base_position_bytes)
+    valid_decode = base_position.gps_time == new_position.gps_time and \
+        base_position.latitude == new_position.latitude and \
+        base_position.longitude == new_position.longitude and \
+        base_position.altitude == new_position.altitude and \
+        base_position.speed == new_position.speed and \
+        base_position.number_of_satellites == new_position.number_of_satellites and\
+        base_position.flight_state == new_position.flight_state
+    print("loading")
+    assert valid_decode
 
-    current_time = datetime.now()
-    new_data = Position()
 
-    encoded_new_data = new_data.encode_position(current_time.timestamp(), 24.0, 25.0, 26.0, 27.0, 5,
-                                                FlightState.NOT_SET)
-    packet = Packet(encoded_new_data, position_data_header, position_transmit_header)
-
-    decoded_new_data = Position.decode_position(packet)
-
-    assert current_time == decoded_new_data.timestamp
-    assert 24.0 == decoded_new_data.latitude
-    assert 25.0 == decoded_new_data.longitude
-    assert 26.0 == decoded_new_data.altitude
-    assert 27.0 == decoded_new_data.speed
-    assert 5 == decoded_new_data.number_of_satellites
-    assert FlightState.NOT_SET == decoded_new_data.flight_state
-    assert decoded_new_data.valid
-
+def test_encode_decode_csv():
+    base_position = get_good_position()
+    base_position_csv = base_position.encode_to_csv()
+    new_position = Position.decode_from_csv(base_position_csv)
+    valid_decode = base_position.gps_time == new_position.gps_time and \
+        base_position.latitude == new_position.latitude and \
+        base_position.longitude == new_position.longitude and \
+        base_position.altitude == new_position.altitude and \
+        base_position.speed == new_position.speed and \
+        base_position.number_of_satellites == new_position.number_of_satellites and\
+        base_position.flight_state == new_position.flight_state
+    print("loading")
+    assert valid_decode
