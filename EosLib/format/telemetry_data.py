@@ -1,13 +1,19 @@
 import struct
-from datetime import datetime
-from EosLib import Type
+from typing_extensions import Self
+
+import EosLib
 from EosLib.packet.packet import Packet
+from EosLib.format.csv_format import CsvFormat
 
 
-class TelemetryData:
-    # Struct format is: timestamp, temperature, pressure, humidity, x_rotation, y_rotation, z_rotation
+class TelemetryData(CsvFormat):
+
+    @staticmethod
+    def get_format_type() -> EosLib.Type:
+        return EosLib.Type.TELEMETRY_DATA
+
+    # Struct format is: temperature, pressure, humidity, x_rotation, y_rotation, z_rotation
     telemetry_struct_string = "!" \
-                              "d" \
                               "d" \
                               "d" \
                               "d" \
@@ -15,12 +21,15 @@ class TelemetryData:
                               "d" \
                               "d"
 
-    def __init__(self, timestamp: datetime = None, temperature: float = None,
-                 pressure: float = None, humidity: float = None,
-                 x_rotation: float = None, y_rotation: float = None, z_rotation: float = None):
+    def __init__(self,
+                 temperature: float = None,
+                 pressure: float = None,
+                 humidity: float = None,
+                 x_rotation: float = None,
+                 y_rotation: float = None,
+                 z_rotation: float = None):
         """Initializes data to parameters (default values otherwise)
 
-        :param timestamp: The time and date of data collected
         :param temperature: The temperature data
         :param pressure: The pressure data
         :param humidity: The humidity data
@@ -28,48 +37,69 @@ class TelemetryData:
         :param y_rotation: The y rotation data
         :param z_rotation: The z rotation data
         """
-        self.timestamp = datetime.now() if timestamp is None else timestamp
         self.temperature = temperature
         self.pressure = pressure
         self.humidity = humidity
         self.x_rotation = x_rotation
         self.y_rotation = y_rotation
         self.z_rotation = z_rotation
-        self.valid = False
+        self.valid = self.get_validity()
 
-    def set_validity(self):
+
+
+    def get_validity(self):
         """Checks if data is valid (NEED A MORE CONCRETE WAY OF VALIDATING)
 
         """
         if self.pressure < 0 or self.humidity < 0 or self.humidity > 100:
-            self.valid = False
+            return False
         else:
-            self.valid = True
-
-    @staticmethod
-    def decode_data(data_packet: Packet | bytes) -> "TelemetryData":
-        """Stores data from packet into respective variables
-
-        :param data_packet: The data packet received from sensor to decode
-        :returns: Object with decoded data
-        """
-        if isinstance(data_packet, Packet):
-            if data_packet.data_header.data_type != Type.TELEMETRY_DATA:
-                raise ValueError("Packet is not telemetry data")
-            packet_body = data_packet.body
-        else:
-            packet_body = data_packet
-        unpacked_tuple = struct.unpack(TelemetryData.telemetry_struct_string, packet_body)
-        new_data = TelemetryData(datetime.fromtimestamp(unpacked_tuple[0]), unpacked_tuple[1], unpacked_tuple[2],
-                                 unpacked_tuple[3], unpacked_tuple[4], unpacked_tuple[5], unpacked_tuple[6])
-        new_data.set_validity()
-        return new_data
+            return True
 
     def encode(self) -> bytes:
-        """Takes data and sends it as a byte
-
-        :returns: Struct with encoded data
-        """
-        return struct.pack(TelemetryData.telemetry_struct_string, self.timestamp.timestamp(), self.temperature,
+        return struct.pack(self.telemetry_struct_string,
+                           self.temperature,
                            self.pressure,
-                           self.humidity, self.x_rotation, self.y_rotation, self.z_rotation)
+                           self.humidity,
+                           self.x_rotation,
+                           self.y_rotation,
+                           self.z_rotation)
+
+    @classmethod
+    def decode(cls, data: bytes | EosLib.packet.Packet) -> Self:
+        if isinstance(data, Packet):
+            if data.data_header.data_type != EosLib.Type.TELEMETRY_DATA:
+                raise ValueError("Attempted to decode a non-telemetry_data packet using Position")
+            else:
+                data = data.body
+
+        unpacked_data = struct.unpack(cls.telemetry_struct_string, data)
+
+        return TelemetryData(unpacked_data[0],
+                             unpacked_data[1],
+                             unpacked_data[2],
+                             unpacked_data[3],
+                             unpacked_data[4],
+                             unpacked_data[5])
+
+    def get_csv_headers(self):
+        return ["temperature", "pressure", "humidity", "x_rotation", "y_rotation", "z_rotation"]
+
+    def encode_to_csv(self) -> str:
+        return ",".join([str(self.temperature),
+                         str(self.pressure),
+                         str(self.humidity),
+                         str(self.x_rotation),
+                         str(self.y_rotation),
+                         str(self.z_rotation)])
+
+    @classmethod
+    def decode_from_csv(cls, csv: str) -> Self:
+        csv_list = csv.split(",")
+
+        return TelemetryData(float(csv_list[0]),
+                             float(csv_list[1]),
+                             float(csv_list[2]),
+                             float(csv_list[3]),
+                             float(csv_list[4]),
+                             float(csv_list[5]))

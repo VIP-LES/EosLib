@@ -10,6 +10,11 @@ class BaseFormat(ABC):
     def __init__(self):
         raise NotImplementedError
 
+    @staticmethod
+    @abstractmethod
+    def get_format_type() -> EosLib.Type:
+        raise NotImplementedError
+
     @abstractmethod
     def encode(self) -> bytes:
         raise NotImplementedError

@@ -1,26 +1,38 @@
-# import EosLib
-
-from datetime import datetime
 from EosLib.format.telemetry_data import TelemetryData
 
 
-def test_telemetry_data():
-    """Tests encode and decode functions
+def get_good_telemetry_data():
+    return TelemetryData(32.0,
+                         1013.25,
+                         50.5,
+                         30.0,
+                         45.0,
+                         60.0)
 
-    :returns: If encode and decode work
-    :rtype: boolean
-    """
-    current_time = datetime.now()
-    new_data = TelemetryData(current_time, -40.3, 300, 50.5, 176.1, 196.5, 184.3)
-    new_data.set_validity()
-    encoded_new_data = new_data.encode()
-    decoded_new_data = TelemetryData.decode_data(encoded_new_data)
 
-    assert new_data.timestamp == decoded_new_data.timestamp \
-        and new_data.temperature == decoded_new_data.temperature \
-        and new_data.pressure == decoded_new_data.pressure \
-        and new_data.humidity == decoded_new_data.humidity \
-        and new_data.x_rotation == decoded_new_data.x_rotation \
-        and new_data.y_rotation == decoded_new_data.y_rotation \
-        and new_data.z_rotation == decoded_new_data.z_rotation \
-        and new_data.valid == decoded_new_data.valid
+def test_encode_decode_bytes():
+    base_data = get_good_telemetry_data()
+    encoded_new_data = base_data.encode()
+    new_data = TelemetryData.decode(encoded_new_data)
+
+    assert base_data.temperature == new_data.temperature \
+           and base_data.pressure == new_data.pressure \
+           and base_data.humidity == new_data.humidity \
+           and base_data.x_rotation == new_data.x_rotation \
+           and base_data.y_rotation == new_data.y_rotation \
+           and base_data.z_rotation == new_data.z_rotation \
+           and base_data.valid == new_data.valid
+
+
+def test_encode_decode_csv():
+    base_data = get_good_telemetry_data()
+    encoded_new_data = base_data.encode()
+    new_data = TelemetryData.decode(encoded_new_data)
+
+    assert base_data.temperature == new_data.temperature \
+           and base_data.pressure == new_data.pressure \
+           and base_data.humidity == new_data.humidity \
+           and base_data.x_rotation == new_data.x_rotation \
+           and base_data.y_rotation == new_data.y_rotation \
+           and base_data.z_rotation == new_data.z_rotation \
+           and base_data.valid == new_data.valid

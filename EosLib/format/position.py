@@ -45,6 +45,10 @@ class Position(CsvFormat):
 
         self.valid = self.get_validity()
 
+    @staticmethod
+    def get_format_type() -> EosLib.Type:
+        return EosLib.Type.POSITION
+
     def encode(self) -> bytes:
         return struct.pack(self.gps_struct_string,
                            self.gps_time.timestamp(),
