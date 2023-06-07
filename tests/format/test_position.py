@@ -1,7 +1,7 @@
 import datetime
 
-from EosLib.format.position import Position
-from EosLib.format.position import FlightState
+from EosLib.format.formats.position import Position
+from EosLib.format.formats.position import FlightState
 
 
 def get_good_position():

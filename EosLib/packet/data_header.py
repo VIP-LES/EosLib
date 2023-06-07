@@ -2,6 +2,8 @@ import math
 import struct
 
 from datetime import datetime
+
+import EosLib.format.definitions
 from EosLib.packet import definitions
 from EosLib.packet.definitions import HeaderPreamble, old_data_headers
 from EosLib.packet.exceptions import PacketFormatError, DataHeaderFormatError
@@ -20,7 +22,7 @@ class DataHeader:
 
     def __init__(self,
                  sender: Device,
-                 data_type: definitions.Type = definitions.Type.NO_TYPE,
+                 data_type: EosLib.format.definitions.Type = EosLib.format.definitions.Type.NO_TYPE,
                  priority: definitions.Priority = definitions.Priority.NO_TRANSMIT,
                  destination: Device = Device.NO_DEVICE,
                  generate_time: datetime = None

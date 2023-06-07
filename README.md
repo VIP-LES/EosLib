@@ -48,7 +48,7 @@ To avoid using strings in packet bodies, EosLib contains some pre-made data form
 
 | Field                | Variable Type    | Unit            |
 |----------------------|------------------|-----------------|
-| Timestamp            | datetime         | datetime        |
+| GPS Time             | datetime         | datetime        |
 | Latitude             | float            | decimal degrees |
 | Longitude            | float            | decimal degrees |
 | Altitude             | float            | feet            |
@@ -57,17 +57,15 @@ To avoid using strings in packet bodies, EosLib contains some pre-made data form
 | Flight State         | FlightState enum | N/A             |
 
 The `FlightState` enum contains 5 possible states, `NOT_SET`, `UNKNOWN`, `ON_GROUND`, `ASCENT`, and `DESCENT`. Their
-use should be self-explanatory. `Position` also sets a `local_time` variable when decoded, which is currently used to
-verify that positions are current in `PositionAwareDriverBase` in EosPayload.
+use should be self-explanatory.
 
-`Position` objects also automatically set a `valid` field when decoded. The logic is still pretty primitive, but it's a
+`Position` objects also automatically set a `valid` field when initialized or decoded. The logic is still pretty primitive, but it's a
 good sanity check/first pass validity check.
 
 ### `Telemetry` Format
 
 | Field       | Variable Type | Unit     |
 |-------------|---------------|----------|
-| Timestamp   | datetime      | datetime |
 | Temperature | float         | celsius  |
 | Pressure    | float         | mbar     |
 | Humidity    | float         | %RH      |

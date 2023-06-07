@@ -1,27 +1,62 @@
+import struct
+
+from typing_extensions import Self
+
 import pytest
 
+import EosLib.format.base_format
+import EosLib.format.definitions
 import EosLib.packet.definitions as definitions
 
 from datetime import datetime
+
+from EosLib.format import Type
 from EosLib.packet.packet import TransmitHeader, DataHeader, Packet, PacketFormatError
 from EosLib.packet.exceptions import DataHeaderFormatError, TransmitHeaderFormatError
 from EosLib.device import Device
+from EosLib.format.decode_factory import decode_factory as decode_factory
+
+
+class MockFormat(EosLib.format.base_format.BaseFormat):
+
+    def __init__(self, num_bytes):
+        self.num_bytes = num_bytes
+
+    def __eq__(self, other):
+        return self.num_bytes == other.num_bytes
+
+    @staticmethod
+    def get_format_type() -> Type:
+        return EosLib.format.Type.ERROR
+
+    def encode(self) -> bytes:
+        return struct.pack(self.get_format_string())
+
+    @classmethod
+    def decode(cls, data: bytes) -> Self:
+        return MockFormat(len(data))
+
+    def get_format_string(self) -> str:
+        return self.num_bytes * "x"
+
+
+decode_factory.register_decoder(MockFormat)
 
 
 def get_valid_packet():
     transmit_header = TransmitHeader(0, datetime.now(), 0)
     data_header = DataHeader(Device.GPS,
-                             definitions.Type.TELEMETRY,
+                             EosLib.format.definitions.Type.ERROR,
                              definitions.Priority.TELEMETRY,
                              Device.GPS,
                              datetime.now())
 
-    return Packet(bytes("Hello World", 'utf-8'), data_header, transmit_header)
+    return Packet(MockFormat(0), data_header, transmit_header)
 
 
 def test_minimal_constructor():
     data_header = DataHeader(Device.GPS)
-    packet = Packet(b'Hello, World', data_header)
+    packet = Packet(MockFormat(0), data_header)
     packet.encode()
 
 
@@ -56,7 +91,8 @@ def test_validate_good_data_header_sender(packet, sender):
     assert packet.data_header.validate_data_header()
 
 
-@pytest.mark.parametrize("data_type", [min(definitions.Type), max(definitions.Type), definitions.Type.WARNING])
+@pytest.mark.parametrize("data_type", [min(EosLib.format.definitions.Type), max(EosLib.format.definitions.Type),
+                                       EosLib.format.definitions.Type.WARNING])
 def test_validate_good_data_header_data_type(packet, data_type):
     packet.data_header.data_type = data_type
     assert packet.data_header.validate_data_header()
@@ -149,14 +185,14 @@ def test_illegal_body_type(packet, illegal_body):
 
 
 def test_allow_large_body_no_transmit(packet):
-    packet.body = bytes(Packet.radio_body_max_bytes + 1)
+    packet.body = MockFormat(Packet.radio_body_max_bytes + 1)
     packet.data_header.priority = definitions.Priority.NO_TRANSMIT
 
     assert packet.encode()
 
 
 def test_max_body_size(packet):
-    packet.body = bytes(Packet.radio_body_max_bytes)
+    packet.body = MockFormat(Packet.radio_body_max_bytes)
     assert packet.encode()
 
 
@@ -180,7 +216,6 @@ def test_encode_decode_packet(packet):
     encoded_packet = packet.encode()
     decoded_packet = Packet.decode(encoded_packet)
 
-    decoded_packet.encode()
     assert model_packet == decoded_packet
 
 
@@ -193,14 +228,13 @@ def test_encode_decode_data_only_packet(packet):
     encoded_packet = packet.encode()
     decoded_packet = Packet.decode(encoded_packet)
 
-    decoded_packet.encode()
     assert model_packet == decoded_packet
 
 
 def test_encode_and_decode_string(packet):
     test_string = packet.encode_to_string()
     decoded_packet = Packet.decode_from_string(test_string)
-    decoded_packet.encode()
+
     assert decoded_packet == packet
 
 
@@ -210,7 +244,6 @@ def test_encode_string_no_tx_header(packet):
     test_string = packet.encode_to_string()
     decoded_packet = Packet.decode_from_string(test_string)
 
-    decoded_packet.encode()
     assert decoded_packet == packet
 
 
@@ -235,13 +268,13 @@ def test_packet_print_two_headers(packet):
                       "\tRSSI: 0\n" \
                       "Data Header:\n" \
                       "\tSender: GPS\n" \
-                      "\tData type: TELEMETRY\n" \
+                      "\tData type: ERROR\n" \
                       "\tPriority: TELEMETRY\n" \
                       "\tDestination: GPS\n" \
                       "\tGenerate Time: 2001-01-07 01:23:45\n" \
-                      "Body: b'Hello World'"
+                      "Body:"
 
-    assert expected_string == packet.__str__()
+    assert packet.__str__().startswith(expected_string)
 
 
 def test_packet_data_header_only(packet):
@@ -253,13 +286,13 @@ def test_packet_data_header_only(packet):
     expected_string = "No transmit header\n" \
                       "Data Header:\n" \
                       "\tSender: GPS\n" \
-                      "\tData type: TELEMETRY\n" \
+                      "\tData type: ERROR\n" \
                       "\tPriority: TELEMETRY\n" \
                       "\tDestination: GPS\n" \
                       "\tGenerate Time: 2001-01-07 01:23:45\n" \
-                      "Body: b'Hello World'"
+                      "Body:"
 
-    assert expected_string == packet.__str__()
+    assert packet.__str__().startswith(expected_string)
 
 
 def test_packet_no_headers(packet):
@@ -270,9 +303,9 @@ def test_packet_no_headers(packet):
 
     expected_string = "No transmit header\n" \
                       "No data header\n" \
-                      "Body: b'Hello World'"
+                      "Body:"
 
-    assert expected_string == packet.__str__()
+    assert packet.__str__().startswith(expected_string)
 
 
 def test_packet_print_no_body(packet):
@@ -288,7 +321,7 @@ def test_packet_print_no_body(packet):
                       "\tRSSI: 0\n" \
                       "Data Header:\n" \
                       "\tSender: GPS\n" \
-                      "\tData type: TELEMETRY\n" \
+                      "\tData type: ERROR\n" \
                       "\tPriority: TELEMETRY\n" \
                       "\tDestination: GPS\n" \
                       "\tGenerate Time: 2001-01-07 01:23:45\n" \

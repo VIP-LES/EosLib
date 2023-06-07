@@ -1,28 +1,44 @@
+import inspect
+import struct
 from abc import ABC
 from abc import abstractmethod
 from typing_extensions import Self
 
-import EosLib
+from EosLib.format.decode_factory import decode_factory
+from EosLib.format.definitions import Type
 
 
 class BaseFormat(ABC):
+    def __init_subclass__(cls, **kwargs):
+        if not inspect.isabstract(cls):
+            decode_factory.register_decoder(cls)
+
     @abstractmethod
     def __init__(self):
         raise NotImplementedError
 
+    @abstractmethod
+    def __eq__(self, other):
+        raise NotImplementedError
+
     @staticmethod
     @abstractmethod
-    def get_format_type() -> EosLib.Type:
+    def get_format_string() -> str:
+        raise NotImplementedError
+
+    def get_format_size(self) -> int:
+        return struct.calcsize(self.get_format_string())
+
+    @staticmethod
+    @abstractmethod
+    def get_format_type() -> Type:
         raise NotImplementedError
 
     @abstractmethod
     def encode(self) -> bytes:
         raise NotImplementedError
 
-    def encode_for_transmit(self) -> bytes:
-        return self.encode()[0:EosLib.packet.Packet.radio_body_max_bytes]
-
     @classmethod
     @abstractmethod
-    def decode(cls, data: bytes | EosLib.packet.Packet) -> Self:
+    def decode(cls, data: bytes) -> Self:
         raise NotImplementedError

@@ -1,1 +1,1 @@
-from EosLib.packet.definitions import Type, Priority
+from EosLib.packet.definitions import Priority

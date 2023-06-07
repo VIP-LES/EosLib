@@ -1,4 +1,4 @@
-from EosLib.format.telemetry_data import TelemetryData
+from EosLib.format.formats.telemetry_data import TelemetryData
 
 
 def get_good_telemetry_data():

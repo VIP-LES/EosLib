@@ -3,9 +3,8 @@ import struct
 from enum import IntEnum
 from typing_extensions import Self
 
-import EosLib
+from EosLib.format.definitions import Type
 from EosLib.format.csv_format import CsvFormat
-from EosLib.packet import Packet
 
 
 class FlightState(IntEnum):
@@ -17,15 +16,6 @@ class FlightState(IntEnum):
 
 
 class Position(CsvFormat):
-    # Struct format is: GPS timestamp, lat, long, speed, altitude, number of satellites, flight state
-    gps_struct_string = "!" \
-                        "d" \
-                        "d" \
-                        "d" \
-                        "d" \
-                        "d" \
-                        "H" \
-                        "B"
 
     def __init__(self,
                  gps_time: datetime.datetime.now(),
@@ -45,12 +35,33 @@ class Position(CsvFormat):
 
         self.valid = self.get_validity()
 
+    def __eq__(self, other):
+        return self.gps_time == other.gps_time and \
+               self.latitude == other.latitude and \
+               self.longitude == other.longitude and \
+               self.speed == other.speed and \
+               self.altitude == other.altitude and \
+               self.number_of_satellites == other.number_of_satellites and \
+               self.flight_state == other.flight_state
+
     @staticmethod
-    def get_format_type() -> EosLib.Type:
-        return EosLib.Type.POSITION
+    def get_format_type() -> Type:
+        return Type.POSITION
+
+    @staticmethod
+    def get_format_string() -> str:
+        # Struct format is: GPS timestamp, lat, long, speed, altitude, number of satellites, flight state
+        return "!" \
+               "d" \
+               "d" \
+               "d" \
+               "d" \
+               "d" \
+               "H" \
+               "B"
 
     def encode(self) -> bytes:
-        return struct.pack(self.gps_struct_string,
+        return struct.pack(self.get_format_string(),
                            self.gps_time.timestamp(),
                            self.latitude,
                            self.longitude,
@@ -60,14 +71,8 @@ class Position(CsvFormat):
                            self.flight_state)
 
     @classmethod
-    def decode(cls, data: bytes | Packet) -> Self:
-        if isinstance(data, Packet):
-            if data.data_header.data_type != EosLib.Type.POSITION:
-                raise ValueError("Attempted to decode a non-position packet using Position")
-            else:
-                data = data.body
-
-        unpacked_data = struct.unpack(cls.gps_struct_string, data)
+    def decode(cls, data: bytes) -> Self:
+        unpacked_data = struct.unpack(cls.get_format_string(), data)
 
         return Position(datetime.datetime.fromtimestamp(unpacked_data[0]),
                         unpacked_data[1],
