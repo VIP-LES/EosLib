@@ -1,5 +1,4 @@
 import inspect
-import struct
 from abc import ABC
 from abc import abstractmethod
 from typing_extensions import Self
@@ -20,14 +19,6 @@ class BaseFormat(ABC):
     @abstractmethod
     def __eq__(self, other):
         raise NotImplementedError
-
-    @staticmethod
-    @abstractmethod
-    def get_format_string() -> str:
-        raise NotImplementedError
-
-    def get_format_size(self) -> int:
-        return struct.calcsize(self.get_format_string())
 
     @staticmethod
     @abstractmethod

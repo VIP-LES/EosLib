@@ -90,7 +90,7 @@ class Packet:
         if self.data_header.priority != Priority.NO_TRANSMIT:
             total_length = struct.calcsize(TransmitHeader.transmit_header_struct_format_string) + \
                            struct.calcsize(DataHeader.data_header_struct_format_string) + \
-                           self.body.get_format_size()
+                           len(self.body.encode())
 
             if total_length > Packet.radio_max_bytes:
                 raise PacketFormatError("Packet is too large")
