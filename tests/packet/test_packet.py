@@ -171,7 +171,7 @@ def test_validate_empty_body_packet(packet):
 
 
 def test_body_too_large(packet):
-    packet.body = bytes(Packet.radio_body_max_bytes + 1)
+    packet.body = MockFormat(Packet.radio_body_max_bytes + 1)
     with pytest.raises(PacketFormatError):
         packet.encode()
 
