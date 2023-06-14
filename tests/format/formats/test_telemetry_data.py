@@ -1,6 +1,6 @@
 from EosLib.format.formats.telemetry_data import TelemetryData
 
-from format.formats.csv_format_test import CheckCsvFormat
+from tests.format.formats.csv_format_test import CheckCsvFormat
 
 good_data_list = [32.0, 1013.25, 50.5, 30.0, 45.0, 60.0]
 

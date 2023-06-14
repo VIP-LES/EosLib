@@ -1,6 +1,6 @@
 from abc import ABC
 
-from format.formats.format_test import CheckFormat
+from tests.format.formats.format_test import CheckFormat
 
 from EosLib.format.decode_factory import decode_factory
 

@@ -2,7 +2,6 @@ import abc
 import copy
 import datetime
 
-import EosLib.format.csv_format
 from EosLib.format.decode_factory import decode_factory
 
 

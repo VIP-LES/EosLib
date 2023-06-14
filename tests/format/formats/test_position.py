@@ -3,7 +3,7 @@ import datetime
 from EosLib.format.formats.position import Position
 from EosLib.format.formats.position import FlightState
 
-from format.formats.csv_format_test import CheckCsvFormat
+from tests.format.formats.csv_format_test import CheckCsvFormat
 
 good_data_list = [datetime.datetime.now(),
                   33.7756,
