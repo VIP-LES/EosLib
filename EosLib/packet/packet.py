@@ -1,15 +1,12 @@
-import datetime
 import struct
 
 import EosLib.format.decode_factory
 from EosLib.format.base_format import BaseFormat
-from EosLib.format.definitions import Type
 
 from EosLib.packet.transmit_header import TransmitHeader
 from EosLib.packet.data_header import DataHeader
 from EosLib.packet.definitions import HeaderPreamble, Priority
 from EosLib.packet.exceptions import PacketFormatError
-from EosLib.device import Device
 
 
 class Packet:
@@ -115,22 +112,6 @@ class Packet:
 
         return packet_bytes
 
-    def encode_to_string(self):
-        """ Takes a packet and encodes it into a comma separated string
-
-        :return: The comma separated string representation of the packet
-        """
-        self.validate_packet()
-
-        # It's easier if we make all the encoded packet string arrays the same length, so we add a fake transmit header
-        if self.transmit_header is None:
-            self.transmit_header = TransmitHeader(0, send_rssi=0)
-
-        return "{transmit_header}, {data_header}, {body}".format(
-            transmit_header=self.transmit_header.encode_to_string(),
-            data_header=self.data_header.encode_to_string(),
-            body=self.body.encode().hex())
-
     @staticmethod
     def decode(packet_bytes: bytes):
         """Takes a bytes object and decodes it into a Packet object.
@@ -158,37 +139,6 @@ class Packet:
 
         decoded_packet = Packet(EosLib.format.decode_factory.decode_factory.decode(decoded_data_header.data_type,
                                                                                    packet_bytes),
-                                decoded_data_header,
-                                decoded_transmit_header)
-
-        return decoded_packet
-
-    @staticmethod
-    def decode_from_string(packet_string: str):
-        """Takes a string and decodes it into a Packet object.
-
-        The format is this: sequence num, send time, rssi, data type, sender, priority, generate time, body
-
-        :param packet_string: The string to be decoded
-        :return: The decoded Packet object
-        """
-
-        packet_array = packet_string.split(', ')
-
-        send_seq_num = int(packet_array[0])
-        send_rssi = int(packet_array[1])
-        send_time = datetime.datetime.fromisoformat(packet_array[2])
-
-        sender = Device(int(packet_array[3]))
-        data_type = Type(int(packet_array[4]))
-        priority = Priority(int(packet_array[5]))
-        destination = Device(int(packet_array[6]))
-        generate_time = datetime.datetime.fromisoformat(packet_array[7])
-
-        decoded_transmit_header = TransmitHeader(send_seq_num, send_time, send_rssi)
-        decoded_data_header = DataHeader(sender, data_type, priority, destination, generate_time)
-        decoded_packet = Packet(EosLib.format.decode_factory.decode_factory.decode(data_type,
-                                                                                   bytes.fromhex(packet_array[8])),
                                 decoded_data_header,
                                 decoded_transmit_header)
 

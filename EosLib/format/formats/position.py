@@ -1,4 +1,6 @@
+import csv
 import datetime
+import io
 import struct
 from enum import IntEnum
 from typing_extensions import Self
@@ -86,7 +88,9 @@ class Position(CsvFormat):
         return ["GPS Timestamp", "Latitude", "Longitude", "Speed", "Altitude", "Number of Satellites", "Flight State"]
 
     def encode_to_csv(self) -> str:
-        return ",".join([self.gps_time.isoformat(),
+        output = io.StringIO()
+        writer = csv.writer(output)
+        writer.writerow([self.gps_time.isoformat(),
                          str(self.latitude),
                          str(self.longitude),
                          str(self.speed),
@@ -94,9 +98,12 @@ class Position(CsvFormat):
                          str(self.number_of_satellites),
                          str(self.flight_state.value)])
 
+        return output.getvalue()
+
     @classmethod
-    def decode_from_csv(cls, csv: str) -> Self:
-        csv_list = csv.split(",")
+    def decode_from_csv(cls, csv_string: str) -> Self:
+        reader = csv.reader([csv_string])
+        csv_list = list(reader)[0]
 
         return Position(datetime.datetime.fromisoformat(csv_list[0]),
                         float(csv_list[1]),

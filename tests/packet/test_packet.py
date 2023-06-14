@@ -1,62 +1,32 @@
-import struct
-
-from typing_extensions import Self
-
 import pytest
 
 import EosLib.format.base_format
 import EosLib.format.definitions
 import EosLib.packet.definitions as definitions
 
+from EosLib.format.formats.empty_format import EmptyFormat
+
 from datetime import datetime
 
-from EosLib.format import Type
 from EosLib.packet.packet import TransmitHeader, DataHeader, Packet, PacketFormatError
 from EosLib.packet.exceptions import DataHeaderFormatError, TransmitHeaderFormatError
 from EosLib.device import Device
-from EosLib.format.decode_factory import decode_factory as decode_factory
-
-
-class MockFormat(EosLib.format.base_format.BaseFormat):
-
-    def __init__(self, num_bytes):
-        self.num_bytes = num_bytes
-
-    def __eq__(self, other):
-        return self.num_bytes == other.num_bytes
-
-    @staticmethod
-    def get_format_type() -> Type:
-        return EosLib.format.Type.ERROR
-
-    def encode(self) -> bytes:
-        return struct.pack(self.get_format_string())
-
-    @classmethod
-    def decode(cls, data: bytes) -> Self:
-        return MockFormat(len(data))
-
-    def get_format_string(self) -> str:
-        return self.num_bytes * "x"
-
-
-decode_factory.register_decoder(MockFormat)
 
 
 def get_valid_packet():
     transmit_header = TransmitHeader(0, datetime.now(), 0)
     data_header = DataHeader(Device.GPS,
-                             EosLib.format.definitions.Type.ERROR,
+                             EosLib.format.definitions.Type.EMPTY,
                              definitions.Priority.TELEMETRY,
                              Device.GPS,
                              datetime.now())
 
-    return Packet(MockFormat(0), data_header, transmit_header)
+    return Packet(EmptyFormat(0), data_header, transmit_header)
 
 
 def test_minimal_constructor():
     data_header = DataHeader(Device.GPS)
-    packet = Packet(MockFormat(0), data_header)
+    packet = Packet(EmptyFormat(0), data_header)
     packet.encode()
 
 
@@ -171,7 +141,7 @@ def test_validate_empty_body_packet(packet):
 
 
 def test_body_too_large(packet):
-    packet.body = MockFormat(Packet.radio_body_max_bytes + 1)
+    packet.body = EmptyFormat(Packet.radio_body_max_bytes + 1)
     with pytest.raises(PacketFormatError):
         packet.encode()
 
@@ -185,14 +155,14 @@ def test_illegal_body_type(packet, illegal_body):
 
 
 def test_allow_large_body_no_transmit(packet):
-    packet.body = MockFormat(Packet.radio_body_max_bytes + 1)
+    packet.body = EmptyFormat(Packet.radio_body_max_bytes + 1)
     packet.data_header.priority = definitions.Priority.NO_TRANSMIT
 
     assert packet.encode()
 
 
 def test_max_body_size(packet):
-    packet.body = MockFormat(Packet.radio_body_max_bytes)
+    packet.body = EmptyFormat(Packet.radio_body_max_bytes)
     assert packet.encode()
 
 
@@ -231,22 +201,6 @@ def test_encode_decode_data_only_packet(packet):
     assert model_packet == decoded_packet
 
 
-def test_encode_and_decode_string(packet):
-    test_string = packet.encode_to_string()
-    decoded_packet = Packet.decode_from_string(test_string)
-
-    assert decoded_packet == packet
-
-
-def test_encode_string_no_tx_header(packet):
-    packet.transmit_header = None
-
-    test_string = packet.encode_to_string()
-    decoded_packet = Packet.decode_from_string(test_string)
-
-    assert decoded_packet == packet
-
-
 def test_old_data_header_version(packet):
     packet.transmit_header = None
 
@@ -268,7 +222,7 @@ def test_packet_print_two_headers(packet):
                       "\tRSSI: 0\n" \
                       "Data Header:\n" \
                       "\tSender: GPS\n" \
-                      "\tData type: ERROR\n" \
+                      "\tData type: EMPTY\n" \
                       "\tPriority: TELEMETRY\n" \
                       "\tDestination: GPS\n" \
                       "\tGenerate Time: 2001-01-07 01:23:45\n" \
@@ -286,7 +240,7 @@ def test_packet_data_header_only(packet):
     expected_string = "No transmit header\n" \
                       "Data Header:\n" \
                       "\tSender: GPS\n" \
-                      "\tData type: ERROR\n" \
+                      "\tData type: EMPTY\n" \
                       "\tPriority: TELEMETRY\n" \
                       "\tDestination: GPS\n" \
                       "\tGenerate Time: 2001-01-07 01:23:45\n" \
@@ -321,7 +275,7 @@ def test_packet_print_no_body(packet):
                       "\tRSSI: 0\n" \
                       "Data Header:\n" \
                       "\tSender: GPS\n" \
-                      "\tData type: ERROR\n" \
+                      "\tData type: EMPTY\n" \
                       "\tPriority: TELEMETRY\n" \
                       "\tDestination: GPS\n" \
                       "\tGenerate Time: 2001-01-07 01:23:45\n" \

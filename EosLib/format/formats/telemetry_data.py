@@ -1,3 +1,5 @@
+import csv
+import io
 import struct
 from typing_extensions import Self
 
@@ -88,16 +90,21 @@ class TelemetryData(CsvFormat):
         return ["temperature", "pressure", "humidity", "x_rotation", "y_rotation", "z_rotation"]
 
     def encode_to_csv(self) -> str:
-        return ",".join([str(self.temperature),
+        output = io.StringIO()
+        writer = csv.writer(output)
+        writer.writerow([str(self.temperature),
                          str(self.pressure),
                          str(self.humidity),
                          str(self.x_rotation),
                          str(self.y_rotation),
                          str(self.z_rotation)])
 
+        return output.getvalue()
+
     @classmethod
-    def decode_from_csv(cls, csv: str) -> Self:
-        csv_list = csv.split(",")
+    def decode_from_csv(cls, csv_string: str) -> Self:
+        reader = csv.reader([csv_string])
+        csv_list = list(reader)[0]
 
         return TelemetryData(float(csv_list[0]),
                              float(csv_list[1]),
