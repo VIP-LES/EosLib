@@ -8,8 +8,13 @@ from EosLib.format.definitions import Type
 
 
 class EmptyFormat(BaseFormat):
+    """ This is an empty format class, primarily used for testing purposes. It only has one property, size, which
+    controls how many empty bytes are included in the format class.
+    """
 
     def __init__(self, num_bytes=0):
+        if num_bytes < 0:
+            raise ValueError("num_bytes must be equal to or greater than 0")
         self.num_bytes = num_bytes
 
     def __eq__(self, other):

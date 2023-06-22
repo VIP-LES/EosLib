@@ -6,6 +6,11 @@ from EosLib.format.base_format import BaseFormat
 
 
 class CsvFormat(BaseFormat, ABC):
+    @classmethod
+    def get_decoders(cls) -> {}:
+        return {bytes: cls.decode,
+                str: cls.decode_from_csv}
+
     @abstractmethod
     def get_csv_headers(self):
         raise NotImplementedError

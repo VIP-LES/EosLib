@@ -12,6 +12,10 @@ class BaseFormat(ABC):
         if not inspect.isabstract(cls):
             decode_factory.register_decoder(cls)
 
+    @classmethod
+    def get_decoders(cls) -> {}:
+        return {bytes: cls.decode}
+
     @abstractmethod
     def __init__(self):
         raise NotImplementedError
