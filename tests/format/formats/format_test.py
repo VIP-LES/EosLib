@@ -9,21 +9,19 @@ from EosLib.format.decode_factory import decode_factory
 class CheckFormat(abc.ABC):
 
     @abc.abstractmethod
-    def get_good_format_list(self):
-        """Provides a list of parameters that can be used by get_format_from_list to generate a valid instance of
-        the format. Used to automate validating __eq__()"""
+    def get_format(self):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def get_format_from_list(self, format_list: []):
-        """Takes a list of parameters and returns a valid instance of the format. Used to automate validating __eq__()
-        """
+    def get_good_format_params(self):
+        """Provides a list of parameters that can be used by get_format_from_list to generate a valid instance of
+        the format. Used to automate validating __eq__()"""
         raise NotImplementedError
 
     def get_good_format(self):
         """Returns a valid instance of the format being tested. This is a helper function combining get_good_format_list
         and get_format_from_list."""
-        return self.get_format_from_list(self.get_good_format_list())
+        return self.get_format()(*self.get_good_format_params())
 
     def test_is_eq(self):
         data_1 = self.get_good_format()
@@ -38,8 +36,8 @@ class CheckFormat(abc.ABC):
 
         # Iterates over each parameter given in get_good_format_list, creating a new instance of the format with that
         # parameter modified. It then verifies that this modification causes the instances to evaluate as not equal.
-        for i in range(len(self.get_good_format_list())):
-            new_data_list = copy.deepcopy(self.get_good_format_list())
+        for i in range(len(self.get_good_format_params())):
+            new_data_list = copy.deepcopy(self.get_good_format_params())
 
             # Modifies current parameter
             if isinstance(new_data_list[i], (int, float)):
@@ -47,7 +45,7 @@ class CheckFormat(abc.ABC):
             elif isinstance(new_data_list[i], datetime.datetime):
                 new_data_list[i] += datetime.timedelta(1)
 
-            data_2 = self.get_format_from_list(new_data_list)
+            data_2 = self.get_format()(*new_data_list)
 
             if data_1 == data_2:
                 test_passed = False

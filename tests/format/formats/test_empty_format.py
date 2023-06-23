@@ -12,8 +12,8 @@ def test_empty_format_length(test_size):
 
 
 class TestEmptyFormat(CheckFormat):
-    def get_format_from_list(self, format_list: []):
-        return EmptyFormat(format_list[0])
+    def get_format(self):
+        return EmptyFormat
 
-    def get_good_format_list(self):
+    def get_good_format_params(self):
         return [5]

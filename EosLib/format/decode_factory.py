@@ -1,6 +1,3 @@
-from EosLib.format import csv_format
-
-
 class DecodeFactory:
     def __init__(self):
         self._decoders = {}

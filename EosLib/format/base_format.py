@@ -13,7 +13,7 @@ class BaseFormat(ABC):
             decode_factory.register_decoder(cls)
 
     @classmethod
-    def get_decoders(cls) -> {}:
+    def get_decoders(cls) -> dict[type, callable]:
         return {bytes: cls.decode}
 
     @abstractmethod
