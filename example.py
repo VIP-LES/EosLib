@@ -1,10 +1,12 @@
 import random
 
 import EosLib.device
+import EosLib.format.definitions
 import EosLib.packet.definitions
 import EosLib.packet.packet
 import EosLib.packet.transmit_header
 from EosLib.packet.packet import DataHeader, TransmitHeader, Packet
+from EosLib.format.formats.empty_format import EmptyFormat
 sequence_number = 0
 
 
@@ -17,17 +19,17 @@ def collect_data() -> int:
 def log_data(data):
     data_header = DataHeader(
         EosLib.device.Device.PRESSURE,
-        EosLib.Type.DATA,
+        EosLib.format.Type.EMPTY,
         EosLib.Priority.DATA
     )
 
-    body = str(data)
-    body = body.encode()
+    # Please don't store your own data as number of empty bytes, make your own format.
+    body = EmptyFormat(data)
 
     created_packet = Packet(body, data_header)
 
     with open("TestData.dat", 'w') as f:
-        f.write(created_packet.encode_to_string())
+        f.write(created_packet.encode().hex())
 
     return created_packet
 

@@ -12,70 +12,11 @@ It is best to install EosLib via the requirements.txt files provided with both E
 can be installed directly via pip with `pip install git+https://github.com/VIP-LES/EosLib@main#egg=EosLib`, but this
 introduces the possibility of version conflicts and should be a last resort.
 
-## EosLib Packet Format
+## Further Documentation
 
-Each Packet is required to contain a `DataHeader`, which holds information about the source of the packet and
-information about what the body contains. Any Packet can also include a `TransmitHeader`, which holds information
-about the transmission of the packet, typically via radio.
+To avoid this readme getting out of hand, there are separate readme files for the `packet` and `format` modules.
+Real documentation is a work in progress.
 
-### `DataHeader` Contents
-
-| Field                | Variable Type           | Valid Range                  | Required? |
-|----------------------|-------------------------|------------------------------|-----------|
-| Packet Type          | PacketType enum         | Values in PacketType         | Yes       |
-| Packet Sender        | PacketDevice enum       | Values in Device             | Yes       |
-| Packet Priority      | PacketPriority enum\*\* | Values in PacketPriority\*\* | Yes       |
-| Packet Destination   | PacketDevice enum       | Values in Device             | No        |
-| Packet Generate Time | datetime                | Any valid date               | Yes\*     |
-
-### `TransmitHeader` Contents
-
-| Field                  | Variable Type | Valid Range    | Required? |
-|------------------------|---------------|----------------|-----------|
-| Packet Sequence Number | Int           | 0-255          | Yes       |
-| Packet Timestamp       | datetime      | Any valid date | Yes\*     |
-
-\* If no Timestamp is provided, a default value of `datetime.now()` is provided.
-
-\*\* Packet Priority can be any integer value between 0-255, but sensible defaults are provided via the PacketPriority
-enum. Unless you have good reason to provide your own value, use on of the options given in the enum.
-
-## EosLib Data Formats
-
-To avoid using strings in packet bodies, EosLib contains some pre-made data formats. Their contents are listed below.
-
-### `Position` Format
-
-| Field                | Variable Type    | Unit            |
-|----------------------|------------------|-----------------|
-| Timestamp            | datetime         | datetime        |
-| Latitude             | float            | decimal degrees |
-| Longitude            | float            | decimal degrees |
-| Altitude             | float            | feet            |
-| Speed                | float            | miles/hour      |
-| Number of Satellites | int              | number          |
-| Flight State         | FlightState enum | N/A             |
-
-The `FlightState` enum contains 5 possible states, `NOT_SET`, `UNKNOWN`, `ON_GROUND`, `ASCENT`, and `DESCENT`. Their
-use should be self-explanatory. `Position` also sets a `local_time` variable when decoded, which is currently used to
-verify that positions are current in `PositionAwareDriverBase` in EosPayload.
-
-`Position` objects also automatically set a `valid` field when decoded. The logic is still pretty primitive, but it's a
-good sanity check/first pass validity check.
-
-### `Telemetry` Format
-
-| Field       | Variable Type | Unit     |
-|-------------|---------------|----------|
-| Timestamp   | datetime      | datetime |
-| Temperature | float         | celsius  |
-| Pressure    | float         | mbar     |
-| Humidity    | float         | %RH      |
-| X-Rotation  | float         | degrees  |
-| Y-Rotation  | float         | degrees  |
-| Z-Rotation  | float         | degrees  |
-
-Likewise to `Position` objects, `TelemetryData` objects automatically set a `valid` field when decoded. The current state it's in is quite surface level and will need a better system in the future.
 
 ## Using EosLib
 
