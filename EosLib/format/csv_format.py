@@ -21,5 +21,5 @@ class CsvFormat(BaseFormat, ABC):
 
     @classmethod
     @abstractmethod
-    def decode_from_csv(cls, csv: str) -> Self:
+    def decode_from_csv(cls, csv_string: str) -> Self:
         raise NotImplementedError

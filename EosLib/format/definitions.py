@@ -12,4 +12,6 @@ class Type(IntEnum):
     RESPONSE = 6
     TELEMETRY_DATA = 7
     EMPTY = 8
+    DOWNLINK_HEADER = 9
+    DOWNLINK_CHUNK = 10
     ERROR = 255
