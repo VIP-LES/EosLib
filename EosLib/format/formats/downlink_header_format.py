@@ -1,37 +1,49 @@
 import csv
 import io
 import struct
+from enum import IntEnum, unique
 
 from typing_extensions import Self
 
-from EosLib.format import Type
+from EosLib.format.definitions import Type
 from EosLib.format.csv_format import CsvFormat
 
 
-class DownlinkHeaderFormat(CsvFormat):
-    # Format contains: File ID, File Size (In number of chunks), is acknowledgement,
+@unique
+class DownlinkCommand(IntEnum):
+    NO_COMMAND = 0
+    START_REQUEST = 1
+    START_ACKNOWLEDGEMENT = 2
+    STOP_TRANSMISSION = 3
+    ALL_CHUNKS_RECEIVED = 4
+
+
+class DownlinkCommandFormat(CsvFormat):
+    # Format contains: File ID, File Size (In number of chunks), command type
     format_string = "!" \
                     "H" \
                     "I" \
-                    "?"
+                    "B"
 
-    def __init__(self, file_id: int, num_chunks: int, is_ack: bool = False):
+    def __init__(self, file_id: int, num_chunks: int, command_type: DownlinkCommand):
         self.file_id = file_id
         self.num_chunks = num_chunks
-        self.is_ack = is_ack
+        self.command_type = command_type
 
     def __eq__(self, other):
-        return self.file_id == other.file_id and self.num_chunks == other.num_chunks and self.is_ack == other.is_ack
+        return self.file_id == other.file_id and\
+            self.num_chunks == other.num_chunks and\
+            self.command_type == other.command_type
 
     def get_csv_headers(self):
-        return ["file_id", "num_chunks", "is_ack"]
+        return ["file_id", "num_chunks", "command_type"]
 
     def encode_to_csv(self) -> str:
         output = io.StringIO()
         writer = csv.writer(output)
         writer.writerow([self.file_id,
                          self.num_chunks,
-                         self.is_ack])
+                         self.command_type])
 
         return output.getvalue()
 
@@ -40,17 +52,17 @@ class DownlinkHeaderFormat(CsvFormat):
         reader = csv.reader([csv_string])
         csv_list = list(reader)[0]
 
-        return DownlinkHeaderFormat(*csv_list)
+        return DownlinkCommandFormat(*csv_list)
 
     @staticmethod
     def get_format_type() -> Type:
-        return Type.DOWNLINK_HEADER
+        return Type.DOWNLINK_COMMAND
 
     def encode(self) -> bytes:
-        return struct.pack(self.format_string, self.file_id, self.num_chunks, self.is_ack)
+        return struct.pack(self.format_string, self.file_id, self.num_chunks, self.command_type)
 
     @classmethod
     def decode(cls, data: bytes) -> Self:
-        unpacked_data = struct.unpack(DownlinkHeaderFormat.format_string, data)
+        unpacked_data = struct.unpack(DownlinkCommandFormat.format_string, data)
 
-        return DownlinkHeaderFormat(*unpacked_data)
+        return DownlinkCommandFormat(*unpacked_data)

@@ -1,10 +1,11 @@
 import math
 import os
 import queue
+import random
 
 from typing import BinaryIO
 
-from EosLib.format.formats.downlink_header_format import DownlinkHeaderFormat
+from EosLib.format.formats.downlink_header_format import DownlinkCommandFormat, DownlinkCommand
 from EosLib.format.formats.downlink_chunk_format import DownlinkChunkFormat
 
 
@@ -24,8 +25,11 @@ class DownlinkTransmitter:
 
         self.is_acknowledged = False
 
-    def get_downlink_header(self) -> DownlinkHeaderFormat:
-        return DownlinkHeaderFormat(self.file_id, self.num_chunks)
+        for i in range(0, self.num_chunks):
+            self.chunk_queue.put(i)
+
+    def get_downlink_header(self) -> DownlinkCommandFormat:
+        return DownlinkCommandFormat(self.file_id, self.num_chunks, DownlinkCommand.START_REQUEST)
 
     def get_chunk(self, chunk_num: int) -> DownlinkChunkFormat:
         self.downlink_file.seek(chunk_num * DownlinkChunkFormat.get_chunk_size())
@@ -38,8 +42,10 @@ class DownlinkTransmitter:
 
         return self.get_chunk(self.chunk_queue.get())
 
-    def add_ack(self, ack: DownlinkHeaderFormat) -> bool:
-        if ack.file_id == self.file_id and ack.num_chunks == self.num_chunks and ack.is_ack:
+    def add_ack(self, ack: DownlinkCommandFormat) -> bool:
+        if ack.file_id == self.file_id and\
+                ack.num_chunks == self.num_chunks and\
+                ack.command_type == DownlinkCommand.START_ACKNOWLEDGEMENT:
             self.is_acknowledged = True
             return True
         else:
