@@ -11,7 +11,9 @@ class DownlinkReceiver:
     def __init__(self, downlink_header_packet: Packet,
                  downlink_header: DownlinkCommandFormat,
                  destination_dir: str = None):
+        #
         if destination_dir is None:
+            # sets destination_dir as current directory
             self.destination_dir = Path(".")
 
         self.file_id = downlink_header.file_id
@@ -20,11 +22,16 @@ class DownlinkReceiver:
         self.last_chunk_received = -1
 
         self.file_name = f"{downlink_header_packet.data_header.sender.name}-{downlink_header.file_id}.png"
+
+        # concatenates file to name to create destination path and opens that file for writing
         self.destination_path = self.destination_dir / self.file_name
         self.destination_file: BinaryIO = io.open(self.destination_path, "wb")
 
+    #
     def write_chunk(self, incoming_chunk: DownlinkChunkFormat):
+        # finds place in file to place chunk
         self.destination_file.seek(incoming_chunk.chunk_num*incoming_chunk.get_chunk_size())
+        # write chunk to that part
         self.destination_file.write(incoming_chunk.chunk_body)
 
     def cleanup(self):

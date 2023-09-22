@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import math
 import os
 import queue
@@ -14,17 +16,16 @@ class DownlinkTransmitter:
         self.downlink_file = downlink_file
 
         self.file_id = file_id
-
+    # find size of file
         self.downlink_file.seek(0, os.SEEK_END)
         self.downlink_file_size = downlink_file.tell()
         self.downlink_file.seek(0)
-
+    # split the file into chunks based on max chunk file
         self.num_chunks = int(math.ceil(self.downlink_file_size / DownlinkChunkFormat.get_chunk_size()))
-
         self.chunk_queue = queue.SimpleQueue()
 
         self.is_acknowledged = False
-
+    # add chunks to queue
         for i in range(0, self.num_chunks):
             self.chunk_queue.put(i)
 
