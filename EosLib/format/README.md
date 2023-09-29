@@ -32,3 +32,16 @@ good sanity check/first pass validity check.
 | Z-Rotation  | float         | degrees  |
 
 Likewise to `Position` objects, `TelemetryData` objects automatically set a `valid` field when decoded. The current state it's in is quite surface level and will need a better system in the future.
+
+### `CutDown` Format
+
+| Field       | Variable Type | Unit     |
+|-------------|---------------|----------|
+| Time        | datetime      | datetime |
+| Sender      | int           | N/A      |
+| Packet Type | int           | N/A      |
+| Priority    | int           | N/A      |
+| Destination | int           | N/A      |
+| Body        | int           | N/A      |
+
+`Sender`, `Packet Type`, `Priority`, `Destination`, and `Body` are enums.
