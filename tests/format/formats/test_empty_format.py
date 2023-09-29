@@ -12,7 +12,7 @@ def test_empty_format_length(test_size):
 
 
 class TestEmptyFormat(CheckFormat):
-    def get_format(self):
+    def get_format_class(self):
         return EmptyFormat
 
     def get_good_format_params(self):

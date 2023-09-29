@@ -9,8 +9,17 @@ from EosLib.format.definitions import Type
 
 class BaseFormat(ABC):
     def __init_subclass__(cls, **kwargs):
-        if not inspect.isabstract(cls):
+        if not inspect.isabstract(cls) or cls._i_promise_all_abstract_methods_are_implemented():
             decode_factory.register_decoder(cls)
+
+    @staticmethod
+    def _i_promise_all_abstract_methods_are_implemented() -> bool:
+        """ This method exists because if you use a dataclass-based format ABC gets mad because it can't figure out
+            that the dataclass implements __init__, __eq__, etc.
+
+            :return: True if isabstract check should be bypassed, otherwise False
+        """
+        return False
 
     @classmethod
     def get_decoders(cls) -> dict[type, callable]:

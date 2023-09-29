@@ -41,7 +41,7 @@ def test_get_validity_bad_satellites():
 
 class TestPosition(CheckCsvFormat):
 
-    def get_format(self):
+    def get_format_class(self):
         return Position
 
     def get_good_format_params(self):
