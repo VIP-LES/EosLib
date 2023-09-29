@@ -35,13 +35,8 @@ Likewise to `Position` objects, `TelemetryData` objects automatically set a `val
 
 ### `CutDown` Format
 
-| Field       | Variable Type | Unit     |
-|-------------|---------------|----------|
-| Time        | datetime      | datetime |
-| Sender      | int           | N/A      |
-| Packet Type | int           | N/A      |
-| Priority    | int           | N/A      |
-| Destination | int           | N/A      |
-| Body        | int           | N/A      |
+| Field | Variable Type | Unit |
+|-------|---------------|------|
+| Ack   | unsigned char | N/A  |
 
-`Sender`, `Packet Type`, `Priority`, `Destination`, and `Body` are enums.
+`Ack` is an acknowledgement for the payload receiving our command, incrementing for each command sent.
