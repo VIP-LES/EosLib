@@ -7,7 +7,7 @@ from EosLib.format.base_format import BaseFormat
 class CutDown(BaseFormat):
     @staticmethod
     def get_format_type() -> Type:
-        return Type.COMMAND
+        return Type.CUTDOWN
 
     @staticmethod
     def get_format_string() -> str:
