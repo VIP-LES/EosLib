@@ -1,9 +1,10 @@
 import struct
 from typing_extensions import Self
 from EosLib.format.definitions import Type
+from EosLib.format.base_format import BaseFormat
 
 
-class CutDown:
+class CutDown(BaseFormat):
     @staticmethod
     def get_format_type() -> Type:
         return Type.COMMAND

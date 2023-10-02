@@ -1,4 +1,5 @@
 from EosLib.format.formats.cutdown import CutDown
+from tests.format.formats.format_test import CheckFormat
 
 
 good_data_list = [1]
@@ -27,3 +28,12 @@ def test_get_validity_bad_ack_upper():
     bad_sender_data = get_good_cut_down_data()
     bad_sender_data.ack = 256
     assert not bad_sender_data.get_validity()
+
+
+class TestCutDown(CheckFormat):
+
+    def get_format(self):
+        return CutDown
+
+    def get_good_format_params(self):
+        return good_data_list

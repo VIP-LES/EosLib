@@ -39,4 +39,4 @@ Likewise to `Position` objects, `TelemetryData` objects automatically set a `val
 |-------|---------------|------|
 | Ack   | unsigned char | N/A  |
 
-`Ack` is an acknowledgement for the payload receiving our command, incrementing for each command sent.
+`Ack` is an acknowledgement for the payload receiving our command, incrementing for each command sent. The payload should echo `Ack` back to the ground station if the command is received.
