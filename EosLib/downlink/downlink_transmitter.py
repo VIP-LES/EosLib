@@ -30,20 +30,23 @@ class DownlinkTransmitter:
             self.chunk_queue.put(i)
 
     def get_downlink_header(self) -> DownlinkCommandFormat:
+        # Generate and return a DownlinkCommandFormat for the downlink header
         return DownlinkCommandFormat(self.file_id, self.num_chunks, DownlinkCommand.START_REQUEST)
 
     def get_chunk(self, chunk_num: int) -> DownlinkChunkFormat:
+        # Read and return a specific chunk from the downlink_file
         self.downlink_file.seek(chunk_num * DownlinkChunkFormat.get_chunk_size())
         chunk_body = self.downlink_file.read(DownlinkChunkFormat.get_chunk_size())
         return DownlinkChunkFormat(chunk_num, chunk_body)
 
     def get_next_chunk(self) -> DownlinkChunkFormat | None:
+        # Get the next chunk from the queue
         if self.chunk_queue.empty():
             return None
-
         return self.get_chunk(self.chunk_queue.get())
 
     def add_ack(self, ack: DownlinkCommandFormat) -> bool:
+        # Check if the received acknowledgment matches the transmitter's info, if so set ack
         if ack.file_id == self.file_id and\
                 ack.num_chunks == self.num_chunks and\
                 ack.command_type == DownlinkCommand.START_ACKNOWLEDGEMENT:
