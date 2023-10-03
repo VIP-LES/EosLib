@@ -9,7 +9,10 @@ class Type(IntEnum):
     DATA = 3
     POSITION = 4
     COMMAND = 5
-    RESPONSE = 6
     TELEMETRY_DATA = 7
     EMPTY = 8
+    RESPONSE_START = 32
+    PING_RESPONSE = 33
+    CUTDOWN_RESPONSE = 34
+    RESPONSE_END = 35
     ERROR = 255
