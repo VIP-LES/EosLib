@@ -37,3 +37,6 @@ class BaseFormat(ABC):
     @abstractmethod
     def decode(cls, data: bytes) -> Self:
         raise NotImplementedError
+
+    def to_string(self) -> str:
+        return self.__class__.__name__
