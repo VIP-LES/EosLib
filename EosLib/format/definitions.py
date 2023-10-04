@@ -12,5 +12,4 @@ class Type(IntEnum):
     RESPONSE = 6
     TELEMETRY_DATA = 7
     EMPTY = 8
-    CUTDOWN = 9
     ERROR = 255
