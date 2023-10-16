@@ -20,7 +20,7 @@ class FlightState(IntEnum):
 class Position(CsvFormat):
 
     def __init__(self,
-                 gps_time: datetime.datetime.now(),
+                 gps_time: datetime.datetime | None,
                  latitude: float,
                  longitude: float,
                  speed: float,
@@ -64,7 +64,7 @@ class Position(CsvFormat):
 
     def encode(self) -> bytes:
         return struct.pack(self.get_format_string(),
-                           self.gps_time.timestamp(),
+                           self.gps_time.timestamp() if self.gps_time else 0,
                            self.latitude,
                            self.longitude,
                            self.speed,
@@ -90,7 +90,7 @@ class Position(CsvFormat):
     def encode_to_csv(self) -> str:
         output = io.StringIO()
         writer = csv.writer(output)
-        writer.writerow([self.gps_time.isoformat(),
+        writer.writerow([self.gps_time.isoformat() if self.gps_time else "None",
                          str(self.latitude),
                          str(self.longitude),
                          str(self.speed),
