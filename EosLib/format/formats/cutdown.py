@@ -7,7 +7,7 @@ from EosLib.format.base_format import BaseFormat
 class CutDown(BaseFormat):
     @staticmethod
     def get_format_type() -> Type:
-        return Type.COMMAND
+        return Type.CUTDOWN
 
     @staticmethod
     def get_format_string() -> str:
@@ -37,3 +37,6 @@ class CutDown(BaseFormat):
     def decode(cls, data: bytes) -> Self:
         unpacked_data = struct.unpack(cls.get_format_string(), data)
         return CutDown(unpacked_data[0])
+
+    def to_terminal_output_string(self) -> str:
+        return "Command sent: ACK " + str(self.ack)
