@@ -39,4 +39,4 @@ class CutDown(BaseFormat):
         return CutDown(unpacked_data[0])
 
     def to_terminal_output_string(self) -> str:
-        return "Command sent: ACK " + str(self.ack)
+        return "Received cutdown ACK: " + str(self.ack)

@@ -33,7 +33,7 @@ def test_get_validity_bad_ack_upper():
 def test_terminal_output_string():
     good_sender_data = get_good_cut_down_data()
     good_sender_data.ack = 1
-    assert good_sender_data.to_terminal_output_string() == "Command sent: ACK 1"
+    assert good_sender_data.to_terminal_output_string() == "Received cutdown ACK: 1"
 
 
 class TestCutDown(CheckFormat):
