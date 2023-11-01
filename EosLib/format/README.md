@@ -42,3 +42,12 @@ Likewise to `Position` objects, `TelemetryData` objects automatically set a `val
 | num   | int           | number |
 
 ping is a bool that is set to true when its a ping command and is set to false when its an ack command. num is a random number denoting which ping/ack it is. The payload then sends the related acknowledgment back. 
+
+
+### `CutDown` Format
+
+| Field | Variable Type | Unit |
+|-------|---------------|------|
+| Ack   | unsigned char | N/A  |
+
+`Ack` is an acknowledgement for the payload receiving our command, incrementing for each command sent. The payload should echo `Ack` back to the ground station if the command is received.
