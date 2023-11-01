@@ -5,8 +5,8 @@ from tests.format.formats.format_test import CheckFormat
 good_data_list = [True, 223]
 
 
-def get_ping_data_from_list(data_list: [int]):
-    return Ping(good_data_list[0], good_data_list[1])
+def get_ping_data_from_list(data_list: [bool, int]):
+    return Ping(data_list[0], data_list[1])
 
 
 def get_good_ping_data():
@@ -30,11 +30,18 @@ def test_get_validity_bad_ack_upper():
     assert not bad_sender_data.get_validity()
 
 
-def test_terminal_output_string():
+def test_terminal_output_string_ping():
     good_sender_data = get_good_ping_data()
-    good_sender_data.ping_ack = True
+    good_sender_data.ping = True
     good_sender_data.num = 1
     assert good_sender_data.to_terminal_output_string() == "Received Ping: 1"
+
+
+def test_terminal_output_string_ack():
+    good_sender_data = get_good_ping_data()
+    good_sender_data.ping = False
+    good_sender_data.num = 1
+    assert good_sender_data.to_terminal_output_string() == "Received ACK: 1"
 
 
 class TestPing(CheckFormat):

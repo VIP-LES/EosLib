@@ -7,7 +7,7 @@ from EosLib.format.base_format import BaseFormat
 class Ping(BaseFormat):
     @staticmethod
     def get_format_type() -> Type:
-        return Type.PING_ACK
+        return Type.PING
 
     @staticmethod
     def get_format_string() -> str:
@@ -16,13 +16,13 @@ class Ping(BaseFormat):
                "?" \
                "B"
 
-    def __init__(self, ping_ack: bool, num: int):
-        self.ping_ack = ping_ack
+    def __init__(self, ping: bool, num: int):
+        self.ping = ping
         self.num = num
         self.valid = self.get_validity()
 
     def __eq__(self, other):
-        return self.ping_ack == other.ping_ack and \
+        return self.ping == other.ping and \
                self.num == other.num and \
                self.valid == other.valid
 
@@ -34,7 +34,7 @@ class Ping(BaseFormat):
 
     def encode(self) -> bytes:
         return struct.pack(self.get_format_string(),
-                           self.ping_ack, self.num)
+                           self.ping, self.num)
 
     @classmethod
     def decode(cls, data: bytes) -> Self:
@@ -42,7 +42,7 @@ class Ping(BaseFormat):
         return Ping(unpacked_data[0], unpacked_data[1])
 
     def to_terminal_output_string(self) -> str:
-        if self.ping_ack:
+        if self.ping:
             return "Received Ping: " + str(self.num)
-        elif not self.ping_ack:
+        elif not self.ping:
             return "Received ACK: " + str(self.num)
