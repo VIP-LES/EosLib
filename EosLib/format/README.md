@@ -32,3 +32,11 @@ good sanity check/first pass validity check.
 | Z-Rotation  | float         | degrees  |
 
 Likewise to `Position` objects, `TelemetryData` objects automatically set a `valid` field when decoded. The current state it's in is quite surface level and will need a better system in the future.
+
+### `CutDown` Format
+
+| Field | Variable Type | Unit |
+|-------|---------------|------|
+| Ack   | unsigned char | N/A  |
+
+`Ack` is an acknowledgement for the payload receiving our command, incrementing for each command sent. The payload should echo `Ack` back to the ground station if the command is received.
