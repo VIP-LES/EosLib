@@ -33,6 +33,17 @@ good sanity check/first pass validity check.
 
 Likewise to `Position` objects, `TelemetryData` objects automatically set a `valid` field when decoded. The current state it's in is quite surface level and will need a better system in the future.
 
+
+### `Ping` Format
+
+| Field | Variable Type | Unit   |
+|-------|---------------|--------|
+| ping  | bool          | N/A    |
+| num   | int           | number |
+
+ping is a bool that is set to true when its a ping command and is set to false when its an ack command. num is a random number denoting which ping/ack it is. The payload then sends the related acknowledgment back. 
+
+
 ### `CutDown` Format
 
 | Field | Variable Type | Unit |

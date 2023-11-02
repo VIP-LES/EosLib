@@ -13,4 +13,5 @@ class Type(IntEnum):
     TELEMETRY_DATA = 7
     EMPTY = 8
     CUTDOWN = 9
+    PING = 10
     ERROR = 255
