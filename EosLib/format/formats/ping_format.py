@@ -3,6 +3,13 @@ from typing_extensions import Self
 from EosLib.format.definitions import Type
 from EosLib.format.base_format import BaseFormat
 
+from enum import Flag
+
+
+class PingEnum(Flag):
+    PING = True
+    ACK = False
+
 
 class Ping(BaseFormat):
     @staticmethod
@@ -16,7 +23,7 @@ class Ping(BaseFormat):
                "?" \
                "B"
 
-    def __init__(self, ping: bool, num: int):
+    def __init__(self, ping: PingEnum, num: int):
         self.ping = ping
         self.num = num
         self.valid = self.get_validity()
