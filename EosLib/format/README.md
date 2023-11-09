@@ -5,7 +5,7 @@ To avoid using strings in packet bodies, EosLib contains some pre-made data form
 ### `Position` Format
 
 | Field                | Variable Type    | Unit            |
-|----------------------|------------------|-----------------|
+| -------------------- | ---------------- | --------------- |
 | GPS Time             | datetime         | datetime        |
 | Latitude             | float            | decimal degrees |
 | Longitude            | float            | decimal degrees |
@@ -22,32 +22,38 @@ good sanity check/first pass validity check.
 
 ### `Telemetry` Format
 
-| Field       | Variable Type | Unit     |
-|-------------|---------------|----------|
-| Temperature | float         | celsius  |
-| Pressure    | float         | mbar     |
-| Humidity    | float         | %RH      |
-| X-Rotation  | float         | degrees  |
-| Y-Rotation  | float         | degrees  |
-| Z-Rotation  | float         | degrees  |
+| Field       | Variable Type | Unit    |
+| ----------- | ------------- | ------- |
+| Temperature | float         | celsius |
+| Pressure    | float         | mbar    |
+| Humidity    | float         | %RH     |
+| X-Rotation  | float         | degrees |
+| Y-Rotation  | float         | degrees |
+| Z-Rotation  | float         | degrees |
 
 Likewise to `Position` objects, `TelemetryData` objects automatically set a `valid` field when decoded. The current state it's in is quite surface level and will need a better system in the future.
-
 
 ### `Ping` Format
 
 | Field | Variable Type | Unit   |
-|-------|---------------|--------|
+| ----- | ------------- | ------ |
 | ping  | bool          | N/A    |
 | num   | int           | number |
 
-ping is a bool that is set to true when its a ping command and is set to false when its an ack command. num is a random number denoting which ping/ack it is. The payload then sends the related acknowledgment back. 
-
+ping is a bool that is set to true when its a ping command and is set to false when its an ack command. num is a random number denoting which ping/ack it is. The payload then sends the related acknowledgment back.
 
 ### `CutDown` Format
 
 | Field | Variable Type | Unit |
-|-------|---------------|------|
+| ----- | ------------- | ---- |
+| Ack   | unsigned char | N/A  |
+
+`Ack` is an acknowledgement for the payload receiving our command, incrementing for each command sent. The payload should echo `Ack` back to the ground station if the command is received.
+
+### `Valve` Format
+
+| Field | Variable Type | Unit |
+| ----- | ------------- | ---- |
 | Ack   | unsigned char | N/A  |
 
 `Ack` is an acknowledgement for the payload receiving our command, incrementing for each command sent. The payload should echo `Ack` back to the ground station if the command is received.
