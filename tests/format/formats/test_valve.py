@@ -38,7 +38,7 @@ def test_terminal_output_string():
 
 class TestValve(CheckFormat):
 
-    def get_format(self):
+    def get_format_class(self):
         return Valve
 
     def get_good_format_params(self):

@@ -38,7 +38,7 @@ def test_terminal_output_string():
 
 class TestCutDown(CheckFormat):
 
-    def get_format(self):
+    def get_format_class(self):
         return CutDown
 
     def get_good_format_params(self):
