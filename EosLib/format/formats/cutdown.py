@@ -23,7 +23,7 @@ class CutDown(BaseFormat):
         return self.ack == other.ack and \
                self.valid == other.valid
 
-    def get_validity(self):
+    def get_validity(self) -> bool:
         if self.ack < 0 or self.ack > 255:
             return False
         else:
