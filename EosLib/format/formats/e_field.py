@@ -11,7 +11,7 @@ class EField(CsvFormat):
 
     @staticmethod
     def get_format_type() -> Type:
-        return Type.TELEMETRY_DATA
+        return Type.E_FIELD
 
     @staticmethod
     def get_format_string() -> str:
@@ -22,9 +22,9 @@ class EField(CsvFormat):
                "d"
 
     def __init__(self,
-                 voltage_a: float = None,
-                 voltage_b: float = None,
-                 voltage_c: float = None):
+                 voltage_a: float,
+                 voltage_b: float,
+                 voltage_c: float):
         """Initializes data to parameters (default values otherwise)
 
         :param voltage_a: The temperature data
