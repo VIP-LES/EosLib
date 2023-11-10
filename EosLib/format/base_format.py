@@ -37,3 +37,7 @@ class BaseFormat(ABC):
     @abstractmethod
     def decode(cls, data: bytes) -> Self:
         raise NotImplementedError
+
+    @abstractmethod
+    def get_validity(self) -> bool:
+        raise NotImplementedError

@@ -5,6 +5,7 @@ import EosLib.format.definitions
 import EosLib.packet.definitions as definitions
 
 from EosLib.format.formats.empty_format import EmptyFormat
+from EosLib.format.formats.e_field import EField
 
 from datetime import datetime
 
@@ -152,6 +153,16 @@ def test_illegal_body_type(packet, illegal_body):
 
     with pytest.raises(PacketFormatError):
         packet.encode()
+
+
+def test_valid_body_format(packet):
+    packet.body = EField(0, 1.5, 1)
+    assert packet.body.get_validity()
+
+
+def test_invalid_body_format(packet):
+    packet.body = EField(-1, 1.5, 1)
+    assert not packet.body.get_validity()
 
 
 def test_allow_large_body_no_transmit(packet):

@@ -42,7 +42,7 @@ class EField(CsvFormat):
                self.voltage_c == other.voltage_c and \
                self.valid == other.valid
 
-    def get_validity(self):
+    def get_validity(self) -> bool:
         """Checks if data is valid
 
         voltage range will be between 0-1.5 volts

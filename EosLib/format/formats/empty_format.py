@@ -33,3 +33,6 @@ class EmptyFormat(BaseFormat):
 
     def get_format_string(self) -> str:
         return self.num_bytes * "x"
+
+    def get_validity(self) -> bool:
+        return self.num_bytes >= 0
