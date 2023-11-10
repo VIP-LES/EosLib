@@ -15,4 +15,5 @@ class Type(IntEnum):
     CUTDOWN = 9
     PING = 10
     VALVE = 11
+    E_FIELD = 12
     ERROR = 255
