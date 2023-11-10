@@ -33,7 +33,7 @@ class Ping(BaseFormat):
                self.num == other.num and \
                self.valid == other.valid
 
-    def get_validity(self):
+    def get_validity(self) -> bool:
         if self.num < 0 or self.num > 255:
             return False
         else:

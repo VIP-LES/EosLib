@@ -57,7 +57,7 @@ class TelemetryData(CsvFormat):
                self.z_rotation == other.z_rotation and \
                self.valid == other.valid
 
-    def get_validity(self):
+    def get_validity(self) -> bool:
         """Checks if data is valid (NEED A MORE CONCRETE WAY OF VALIDATING)
 
         """

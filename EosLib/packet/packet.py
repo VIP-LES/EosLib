@@ -84,6 +84,9 @@ class Packet:
         if not issubclass(self.body.__class__, BaseFormat):
             raise PacketFormatError("All packets must have a body that extends BaseFormat")
 
+        if self.body.get_validity() is False:
+            raise PacketFormatError("All packets must contain a valid format")
+
         if self.data_header.priority != Priority.NO_TRANSMIT:
             total_length = struct.calcsize(TransmitHeader.transmit_header_struct_format_string) + \
                            struct.calcsize(DataHeader.data_header_struct_format_string) + \

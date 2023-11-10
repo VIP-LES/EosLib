@@ -113,7 +113,7 @@ class Position(CsvFormat):
                         int(csv_list[5]),
                         FlightState(int(csv_list[6])))
 
-    def get_validity(self):
+    def get_validity(self) -> bool:
         if (self.number_of_satellites < 4 or
                 self.latitude == 0 or
                 self.longitude == 0):
