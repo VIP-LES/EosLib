@@ -15,7 +15,7 @@ class DecodeFactory:
         decoder = decoders_for_format.get(type(data))
         if decoder is None:
             raise TypeError(f"No decoder found for format type {Type(data_format).name} for data type {type(data)}."
-                            + "  Decoders are defined for: " + ', '.join(self._decoders.get(data_format).keys()))
+                            + "  Decoders are defined for: " + ', '.join([str(key) for key in self._decoders.get(data_format).keys()]))
         return decoder(data)
 
 
