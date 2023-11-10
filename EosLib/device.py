@@ -67,3 +67,4 @@ class Device(IntEnum):
     MISC_12 = 61
     MISC_13 = 62
     MISC_14 = 63
+    VALVE = 64

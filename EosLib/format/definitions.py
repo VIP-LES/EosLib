@@ -12,5 +12,8 @@ class Type(IntEnum):
     RESPONSE = 6
     TELEMETRY_DATA = 7
     EMPTY = 8
-    SCIENCE_DATA = 9
+    CUTDOWN = 9
+    PING = 10
+    VALVE = 11
+    SCIENCE_DATA = 12
     ERROR = 255
