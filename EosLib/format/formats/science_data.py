@@ -173,3 +173,6 @@ class ScienceData(CsvFormat):
             datetime.fromisoformat(csv_list[0]) if csv_list[0] is not None else None
         )
         return ret
+
+    def get_validity(self) -> bool:
+        return True  # i think this is a case where if one parameter is invalid

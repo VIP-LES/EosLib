@@ -31,7 +31,7 @@ def test_get_validity_bad_voltages(bad_voltage):
 
 class TestEField(CheckCsvFormat):
 
-    def get_format(self):
+    def get_format_class(self):
         return EField
 
     def get_good_format_params(self):
