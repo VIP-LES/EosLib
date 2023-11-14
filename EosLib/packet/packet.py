@@ -55,10 +55,10 @@ class Packet:
             output_string += "No data header\n"
         else:
             output_string += f"Data Header:\n" \
-                             f"\tSender: {Device(self.data_header.sender)}\n" \
-                             f"\tData type: {Type(self.data_header.data_type)}\n" \
-                             f"\tPriority: {Priority(self.data_header.priority)}\n" \
-                             f"\tDestination: {Device(self.data_header.destination)}\n" \
+                             f"\tSender: {Device(self.data_header.sender).name}\n" \
+                             f"\tData type: {Type(self.data_header.data_type).name}\n" \
+                             f"\tPriority: {Priority(self.data_header.priority).name}\n" \
+                             f"\tDestination: {Device(self.data_header.destination).name}\n" \
                              f"\tGenerate Time: {self.data_header.generate_time}\n"
 
         if self.body is None:
