@@ -1,7 +1,9 @@
 import struct
 
+from EosLib.device import Device
 import EosLib.format.decode_factory
 from EosLib.format.base_format import BaseFormat
+from EosLib.format.definitions import Type
 
 from EosLib.packet.transmit_header import TransmitHeader
 from EosLib.packet.data_header import DataHeader
@@ -53,10 +55,10 @@ class Packet:
             output_string += "No data header\n"
         else:
             output_string += f"Data Header:\n" \
-                             f"\tSender: {self.data_header.sender.name}\n" \
-                             f"\tData type: {self.data_header.data_type.name}\n" \
-                             f"\tPriority: {self.data_header.priority.name}\n" \
-                             f"\tDestination: {self.data_header.destination.name}\n" \
+                             f"\tSender: {Device(self.data_header.sender).name}\n" \
+                             f"\tData type: {Type(self.data_header.data_type).name}\n" \
+                             f"\tPriority: {Priority(self.data_header.priority).name}\n" \
+                             f"\tDestination: {Device(self.data_header.destination).name}\n" \
                              f"\tGenerate Time: {self.data_header.generate_time}\n"
 
         if self.body is None:
