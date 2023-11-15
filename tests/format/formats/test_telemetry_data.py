@@ -37,7 +37,7 @@ def test_get_validity_bad_pressure():
 
 class TestTelemetryData(CheckCsvFormat):
 
-    def get_format(self):
+    def get_format_class(self):
         return TelemetryData
 
     def get_good_format_params(self):

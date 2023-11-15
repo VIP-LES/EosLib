@@ -46,7 +46,7 @@ def test_terminal_output_string_ack():
 
 class TestPing(CheckFormat):
 
-    def get_format(self):
+    def get_format_class(self):
         return Ping
 
     def get_good_format_params(self):

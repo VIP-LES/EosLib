@@ -1,7 +1,9 @@
+from typing import Type
 import abc
 import copy
 import datetime
 
+from EosLib.format.base_format import BaseFormat
 from EosLib.format.decode_factory import decode_factory
 
 
@@ -9,19 +11,19 @@ from EosLib.format.decode_factory import decode_factory
 class CheckFormat(abc.ABC):
 
     @abc.abstractmethod
-    def get_format(self):
+    def get_format_class(self) -> Type[BaseFormat]:
         raise NotImplementedError
 
     @abc.abstractmethod
-    def get_good_format_params(self):
+    def get_good_format_params(self) -> list:
         """Provides a list of parameters that can be used by get_format_from_list to generate a valid instance of
         the format. Used to automate validating __eq__()"""
         raise NotImplementedError
 
-    def get_good_format(self):
+    def get_good_format(self) -> BaseFormat:
         """Returns a valid instance of the format being tested. This is a helper function combining get_good_format_list
         and get_format_from_list."""
-        return self.get_format()(*self.get_good_format_params())
+        return self.get_format_class()(*self.get_good_format_params())
 
     def test_is_eq(self):
         data_1 = self.get_good_format()
@@ -30,8 +32,6 @@ class CheckFormat(abc.ABC):
         assert data_1 == data_2
 
     def test_not_eq(self):
-        test_passed = True
-
         data_1 = self.get_good_format()
 
         # Iterates over each parameter given in get_good_format_list, creating a new instance of the format with that
@@ -45,12 +45,9 @@ class CheckFormat(abc.ABC):
             elif isinstance(new_data_list[i], datetime.datetime):
                 new_data_list[i] += datetime.timedelta(1)
 
-            data_2 = self.get_format()(*new_data_list)
+            data_2 = self.get_format_class()(*new_data_list)
 
-            if data_1 == data_2:
-                test_passed = False
-
-        assert test_passed
+            assert data_1 != data_2
 
     def test_encode_decode_bytes(self):
         base_format = self.get_good_format()

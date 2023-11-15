@@ -16,4 +16,5 @@ class Type(IntEnum):
     PING = 10
     VALVE = 11
     E_FIELD = 12
+    SCIENCE_DATA = 13
     ERROR = 255
