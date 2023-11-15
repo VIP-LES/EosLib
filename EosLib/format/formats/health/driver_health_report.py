@@ -18,11 +18,12 @@ class ThreadStatus(IntEnum):
 @dataclass
 class DriverHealthReport(BaseFormat):
 
-    is_healthy:              bool       # true if healthy                                                (bool)
-    custom_state_bitvector:  int        # may be used by the driver for any custom purpose               (uchar)
-    num_threads:             int        # of threads, including main and mqtt (uchar)
-    thread_statuses:         list[int]  # list of ThreadStatuses of size num_threads - 1, starting with  (uchar[])
-                                        # mqtt and then registered threads in order of registration
+    is_healthy:              bool                # true if healthy                                           (bool)
+    custom_state_bitvector:  int                 # may be used by the driver for any custom purpose          (uchar)
+    num_threads:             int                 # of threads, including main and mqtt (uchar)
+    thread_statuses:         list[ThreadStatus]  # list of ThreadStatuses of size num_threads - 1, starting  (uchar[])
+                                                 # witb mqtt and then registered threads in order of
+                                                 # registration
 
     @staticmethod
     def _i_promise_all_abstract_methods_are_implemented() -> bool:
