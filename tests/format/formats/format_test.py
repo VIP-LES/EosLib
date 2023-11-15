@@ -44,6 +44,8 @@ class CheckFormat(abc.ABC):
                 new_data_list[i] += 1
             elif isinstance(new_data_list[i], datetime.datetime):
                 new_data_list[i] += datetime.timedelta(1)
+            elif isinstance(new_data_list[i], list):
+                continue
 
             data_2 = self.get_format_class()(*new_data_list)
 
@@ -54,3 +56,6 @@ class CheckFormat(abc.ABC):
         base_position_bytes = base_format.encode()
         new_format = decode_factory.decode(self.get_good_format().get_format_type(), base_position_bytes)
         assert base_format == new_format
+
+    def test_get_validity_happy_path(self):
+        assert self.get_good_format().get_validity()
