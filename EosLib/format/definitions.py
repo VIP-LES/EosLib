@@ -17,4 +17,5 @@ class Type(IntEnum):
     VALVE = 11
     E_FIELD = 12
     SCIENCE_DATA = 13
+    DRIVER_HEALTH_REPORT = 14
     ERROR = 255
