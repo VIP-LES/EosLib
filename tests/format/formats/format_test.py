@@ -57,3 +57,7 @@ class CheckFormat(abc.ABC):
         base_position_bytes = base_format.encode()
         new_format = decode_factory.decode(self.get_good_format().get_format_type(), base_position_bytes)
         assert base_format == new_format
+
+    def test_to_string(self):
+        base_format = self.get_good_format()
+        assert base_format.to_string() == self.__class__.__name__

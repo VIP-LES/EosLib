@@ -1,18 +1,27 @@
 from enum import unique, IntEnum
 
 
-@unique
 class Type(IntEnum):
     NO_TYPE = 0
     TELEMETRY = 1
     WARNING = 2
     DATA = 3
     POSITION = 4
-    COMMAND = 5
-    RESPONSE = 6
-    TELEMETRY_DATA = 7
-    EMPTY = 8
+    TELEMETRY_DATA = 5
+    EMPTY = 6
     DOWNLINK_COMMAND = 9
     DOWNLINK_CHUNK = 10
     DOWNLINK_CHUNK_LIST = 11
+    RESPONSE_START = 32
+    RESPONSE_1 = 32
+    RESPONSE_2 = 33
+    RESPONSE_3 = 34
+    RESPONSE_4 = 35
+    RESPONSE_END = 35
+    COMMAND_START = 40
+    COMMAND_1 = 40
+    COMMAND_2 = 41
+    COMMAND_3 = 42
+    COMMAND_4 = 43
+    COMMAND_END = 43
     ERROR = 255

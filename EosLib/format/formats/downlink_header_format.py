@@ -19,31 +19,35 @@ class DownlinkCommand(IntEnum):
 
 
 class DownlinkCommandFormat(CsvFormat):
-    # Format contains: File ID, File Size (In number of chunks), command type
+    # Format contains: File ID, File Size (In number of chunks), command type, missing chunks (set of chunk nums)
     format_string = "!" \
                     "H" \
                     "I" \
-                    "B"
+                    "B" \
+                    "s"
 
-    def __init__(self, file_id: int, num_chunks: int, command_type: DownlinkCommand):
+    def __init__(self, file_id: int, num_chunks: int, command_type: DownlinkCommand, missing_chunks=None):
         self.file_id = file_id
         self.num_chunks = num_chunks
         self.command_type = command_type
+        self.missing_chunks = missing_chunks
 
     def __eq__(self, other):
         return self.file_id == other.file_id and\
             self.num_chunks == other.num_chunks and\
-            self.command_type == other.command_type
+            self.command_type == other.command_type and\
+            self.missing_chunks == other.missing_chunks
 
     def get_csv_headers(self):
-        return ["file_id", "num_chunks", "command_type"]
+        return ["file_id", "num_chunks", "command_type", "missing_chunks"]
 
     def encode_to_csv(self) -> str:
         output = io.StringIO()
         writer = csv.writer(output)
         writer.writerow([self.file_id,
                          self.num_chunks,
-                         self.command_type])
+                         self.command_type,
+                         self.missing_chunks])
 
         return output.getvalue()
 
@@ -59,7 +63,7 @@ class DownlinkCommandFormat(CsvFormat):
         return Type.DOWNLINK_COMMAND
 
     def encode(self) -> bytes:
-        return struct.pack(self.format_string, self.file_id, self.num_chunks, self.command_type)
+        return struct.pack(self.format_string, self.file_id, self.num_chunks, self.command_type, self.missing_chunks)
 
     @classmethod
     def decode(cls, data: bytes) -> Self:

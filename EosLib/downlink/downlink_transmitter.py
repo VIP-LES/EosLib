@@ -24,7 +24,7 @@ class DownlinkTransmitter:
         self.num_chunks = int(math.ceil(self.downlink_file_size / DownlinkChunkFormat.get_chunk_size()))
         self.chunk_queue = queue.SimpleQueue()
 
-        self.is_acknowledged = False
+        self.unacknowledged_chunks = set(range(self.num_chunks))
     # add chunks to queue
         for i in range(0, self.num_chunks):
             self.chunk_queue.put(i)
@@ -43,14 +43,27 @@ class DownlinkTransmitter:
         # Get the next chunk from the queue
         if self.chunk_queue.empty():
             return None
-        return self.get_chunk(self.chunk_queue.get())
+
+        # Skip acknowledged chunks and move to the next one
+        chunk_num = self.chunk_queue.get()
+        if chunk_num not in self.unacknowledged_chunks:
+            return self.get_next_chunk()
+        return self.get_chunk(chunk_num)
 
     def add_ack(self, ack: DownlinkCommandFormat) -> bool:
         # Check if the received acknowledgment matches the transmitter's info, if so set ack
         if ack.file_id == self.file_id and\
                 ack.num_chunks == self.num_chunks and\
                 ack.command_type == DownlinkCommand.START_ACKNOWLEDGEMENT:
-            self.is_acknowledged = True
+            # Find missing chunks (gives an empty set if none)
+            if ack.missing_chunks:
+                received_chunks = set(range(self.num_chunks)).difference_update(ack.missing_chunks)
+                self.unacknowledged_chunks.difference_update(received_chunks)
             return True
         else:
             return False
+
+    def retransmit_chunks(self, missing_chunks):
+        for chunk_num in missing_chunks:
+            self.chunk_queue.put(chunk_num)
+            self.unacknowledged_chunks.add(chunk_num)
