@@ -1,6 +1,4 @@
 import io
-import random
-
 from pathlib import Path
 from typing import BinaryIO
 from PIL import Image
@@ -36,15 +34,12 @@ class DownlinkReceiver:
 
     #
     def write_chunk(self, incoming_chunk: DownlinkChunkFormat):
-        # test throwing away packets (remove when actually implementing)
-        rand_num = random.random()
-        if rand_num < 0.7:
-            # Find place in file to place chunk
-            self.destination_file.seek(incoming_chunk.chunk_num*incoming_chunk.get_chunk_size())
-            # Write chunk to that part
-            self.destination_file.write(incoming_chunk.chunk_body)
-            # Mark the chunk as received
-            self.received_chunks.add(incoming_chunk.chunk_num)
+        # Find place in file to place chunk
+        self.destination_file.seek(incoming_chunk.chunk_num*incoming_chunk.get_chunk_size())
+        # Write chunk to that part
+        self.destination_file.write(incoming_chunk.chunk_body)
+        # Mark the chunk as received
+        self.received_chunks.add(incoming_chunk.chunk_num)
 
     def cleanup(self):
         pass
