@@ -18,4 +18,6 @@ class Type(IntEnum):
     E_FIELD = 12
     SCIENCE_DATA = 13
     DRIVER_HEALTH_REPORT = 14
+    DOWNLINK_COMMAND = 15
+    DOWNLINK_CHUNK = 16
     ERROR = 255
