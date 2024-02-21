@@ -19,7 +19,7 @@ if __name__ == "__main__":
         os.makedirs(png_dir, exist_ok=True)
 
     # reading file in binary mode
-    with io.open("error.png", "rb") as downlink_file:
+    with io.open("sample-large-zip-file.zip", "rb") as downlink_file:
         transmitter = DownlinkTransmitter(downlink_file, 10)
         print(transmitter.num_chunks)
         # create a packet
@@ -35,11 +35,11 @@ if __name__ == "__main__":
                 # print(cur_chunk.chunk_body)
 
                 # Simulate packet drops
-                if random.random() >= 0.97:
+                if random.random() >= 0.3:
                     receiver.write_chunk(cur_chunk)
                 else:
-                    print(f"Chunk {cur_chunk.chunk_num} has been dropped")
-
+                    # print(f"Chunk {cur_chunk.chunk_num} has been dropped")
+                    pass
         # Get chunks for first time
         receive_chunks()
 
@@ -55,8 +55,9 @@ if __name__ == "__main__":
             time.sleep(0.1)
             ack_packet = receiver.get_ack()
             num_retransmits += 1
+            print(f"Number of retransmission attempts: {num_retransmits}")
 
         if ack_packet.missing_chunks:
             print(f"Missing chunks {ack_packet.missing_chunks}, image is corrupted :/")
 
-        print(f"Received Chunks: {receiver.received_chunks}")
+        #print(f"Received Chunks: {receiver.received_chunks}")
