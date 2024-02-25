@@ -18,4 +18,5 @@ class Type(IntEnum):
     E_FIELD = 12
     SCIENCE_DATA = 13
     DRIVER_HEALTH_REPORT = 14
+    FIELDMILL = 15
     ERROR = 255
