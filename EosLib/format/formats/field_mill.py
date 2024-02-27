@@ -10,9 +10,8 @@ from EosLib.format.csv_format import CsvFormat
 class FieldMill(CsvFormat):
     # Placeholder values for max and min values
     # Replace with correct values for validity check
-    MAX_FREQUENCY = 999.9
-    MIN_FREQUENCY = 0.0
-    MAX_VOLTAGE = 999.9
+    MAX_FREQUENCY = 100.0
+    MAX_VOLTAGE = 1.0
     MIN_VOLTAGE = 0.0
 
     @staticmethod
@@ -52,7 +51,7 @@ class FieldMill(CsvFormat):
         """
         if self.frequency is None or self.voltage is None:
             return False
-        elif self.frequency < self.MIN_FREQUENCY or self.frequency > self.MAX_FREQUENCY or \
+        elif self.frequency > self.MAX_FREQUENCY or \
                 self.voltage < self.MIN_VOLTAGE or self.voltage > self.MAX_VOLTAGE:
             return False
         else:
