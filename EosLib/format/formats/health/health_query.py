@@ -8,20 +8,22 @@ from EosLib.device import Device
 from EosLib.format.base_format import BaseFormat
 from EosLib.format.definitions import Type
 
-
+@unique
+class QueryType(IntEnum):
+    DEVICE = 0
+    DEVICE_HISTORY = 1
+    LOGS = 2
 @dataclass
 class HealthQuery(BaseFormat):
 
-    def __init__(self, device_id: Device, device: IntEnum, requested_fields_bitmask: int):
+    def __init__(self, device_id: Device, query_type: QueryType):
         self.device_id = device_id
-        self.device = device
-        self.requested_fields_bitmask = requested_fields_bitmask
+        self.query_type = query_type
         self.valid = self.get_validity()
 
     @staticmethod
     def get_format_string(self) -> str:
         return "!" \
-               "B" \
                "B" \
                "B"
 
@@ -45,9 +47,7 @@ class HealthQuery(BaseFormat):
     def encode(self) -> bytes:
         return struct.pack(self.get_format_string(),
                            self.device_id,
-                           self.device,
-                           self.requested_fields_bitmask
-
+                           self.query_type
                            )
         # raise NotImplementedError
 
@@ -55,13 +55,13 @@ class HealthQuery(BaseFormat):
     @abstractmethod
     def decode(cls, data: bytes) -> Self:
         unpacked_data = struct.unpack(cls.get_format_string(), data)
-        return HealthQuery(unpacked_data[0], unpacked_data[1], unpacked_data[2])
+        return HealthQuery(unpacked_data[0], unpacked_data[1])
         # raise NotImplementedError
 
     @abstractmethod
     def get_validity(self) -> bool:
         return (
                 0 <= self.device_id <= len(Device)
-                and 0 <= self.requested_fields_bitmask <= 255
+                and 0 <= self.query_type <= len(QueryType)
         )
         # raise NotImplementedError
