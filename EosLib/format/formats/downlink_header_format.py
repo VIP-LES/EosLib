@@ -15,7 +15,6 @@ class DownlinkCommand(IntEnum):
     START_REQUEST = 1
     RETRANSMIT_MISSING_CHUNKS = 2
     STOP_TRANSMISSION = 3
-    ALL_CHUNKS_RECEIVED = 4
 
 
 class DownlinkCommandFormat(CsvFormat):
