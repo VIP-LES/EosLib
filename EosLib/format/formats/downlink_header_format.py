@@ -30,12 +30,14 @@ class DownlinkCommandFormat(CsvFormat):
         self.num_chunks = num_chunks
         self.command_type = command_type
         self.missing_chunks = missing_chunks
+        self.valid = self.get_validity()
 
     def __eq__(self, other):
         return self.file_id == other.file_id and\
             self.num_chunks == other.num_chunks and\
             self.command_type == other.command_type and\
-            self.missing_chunks == other.missing_chunks
+            self.missing_chunks == other.missing_chunks and\
+            self.valid == other.valid
 
     def _i_promise_all_abstract_methods_are_implemented(self) -> bool:
         return True
