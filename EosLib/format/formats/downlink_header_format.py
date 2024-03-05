@@ -13,8 +13,10 @@ from EosLib.format.csv_format import CsvFormat
 class DownlinkCommand(IntEnum):
     NO_COMMAND = 0
     START_REQUEST = 1
-    RETRANSMIT_MISSING_CHUNKS = 2
-    STOP_TRANSMISSION = 3
+    START_ACK = 2
+    RETRANSMIT_MISSING_CHUNKS = 3
+    STOP_TRANSMISSION = 4
+    ERROR = 255
 
 
 class DownlinkCommandFormat(CsvFormat):
