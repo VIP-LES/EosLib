@@ -38,16 +38,8 @@ class DownlinkChunkFormat(BaseFormat):
 
         return DownlinkChunkFormat(chunk_num, data_body)
 
-    @staticmethod
-    def get_chunk_size():
-        return Packet.radio_body_max_bytes - struct.calcsize(DownlinkChunkFormat.chunk_header_format_string)
-
     def get_validity(self) -> bool:
         if self.chunk_num < 0 or self.chunk_body is None:
             return False
         else:
             return True
-
-
-if __name__ == "__main__":
-    print(DownlinkChunkFormat.get_chunk_size())
