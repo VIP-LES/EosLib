@@ -2,7 +2,6 @@ import struct
 
 from typing_extensions import Self
 
-from EosLib.packet import Packet
 from EosLib.format.definitions import Type
 from EosLib.format.base_format import BaseFormat
 
