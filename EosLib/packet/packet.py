@@ -141,6 +141,7 @@ class Packet:
             decoded_data_header = decoded_data_header
             packet_bytes = packet_bytes[struct.calcsize(DataHeader.data_header_struct_format_string):]
         else:
+            print(f"Unexpected packet header: {packet_bytes[0]}, should be: {HeaderPreamble.DATA}")
             raise PacketFormatError("Packet does not contain a header")
 
         decoded_packet = Packet(EosLib.format.decode_factory.decode_factory.decode(decoded_data_header.data_type,
