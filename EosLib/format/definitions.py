@@ -21,4 +21,5 @@ class Type(IntEnum):
     FIELDMILL = 15
     HEALTH_QUERY = 16
     HEALTH_RESPONSE = 17
+    SYSTEM_HEALTH_REPORT = 18
     ERROR = 255
