@@ -25,7 +25,7 @@ class DownlinkCommandFormat(CsvFormat):
                     "H" \
                     "I" \
                     "B" \
-                    "s"
+                    "p"
 
     def __init__(self, file_id: int, num_chunks: int, command_type: DownlinkCommand, missing_chunks=None):
         self.file_id = file_id
