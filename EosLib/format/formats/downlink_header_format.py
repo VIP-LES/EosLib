@@ -25,7 +25,7 @@ class DownlinkCommandFormat(CsvFormat):
                     "H" \
                     "I" \
                     "B" \
-                    "i*"
+                    "2i"
 
     def __init__(self, file_id: int, num_chunks: int, command_type: DownlinkCommand, missing_chunks=None):
         self.file_id = file_id
@@ -69,6 +69,8 @@ class DownlinkCommandFormat(CsvFormat):
         return Type.DOWNLINK_COMMAND
 
     def encode(self) -> bytes:
+        #if self.missing_chunks:
+            #new_format_string = self.format_string + ('i' * len(self.missing_chunks))
         return struct.pack(self.format_string, self.file_id, self.num_chunks, self.command_type, self.missing_chunks)
 
     @classmethod
