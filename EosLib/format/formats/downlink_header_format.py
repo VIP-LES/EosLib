@@ -74,9 +74,8 @@ class DownlinkCommandFormat(CsvFormat):
     def encode(self) -> bytes:
         return struct.pack(self.format_string, self.file_id, self.num_chunks, self.command_type, *self.missing_chunks)
 
-    @classmethod
-    def decode(cls, data: bytes) -> Self:
-        unpacked_data = struct.unpack(DownlinkCommandFormat.format_string, data)
+    def decode(self, data: bytes) -> Self:
+        unpacked_data = struct.unpack(self.format_string, data)
 
         return DownlinkCommandFormat(*unpacked_data)
 
