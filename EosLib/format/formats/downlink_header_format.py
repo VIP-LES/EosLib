@@ -80,7 +80,7 @@ class DownlinkCommandFormat(CsvFormat):
         return DownlinkCommandFormat(*unpacked_data)
 
     def get_validity(self) -> bool:
-        if self.num_chunks < 0:
+        if self.num_chunks < 0 or self.num_chunks < len(self.missing_chunks):
             return False
         else:
             return True
