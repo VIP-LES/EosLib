@@ -31,8 +31,10 @@ class DownlinkCommandFormat(CsvFormat):
         self.num_chunks = num_chunks
         self.command_type = command_type
         self.missing_chunks = missing_chunks
-        if self.missing_chunks:
+        if self.missing_chunks and len(self.missing_chunks) > 0:
             self.format_string += 'i'*len(self.missing_chunks)
+        else:
+            self.missing_chunks = []
         self.valid = self.get_validity()
 
     def __eq__(self, other):
